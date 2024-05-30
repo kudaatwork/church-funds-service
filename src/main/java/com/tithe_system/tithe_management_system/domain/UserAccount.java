@@ -25,6 +25,7 @@ public class UserAccount {
     private String lastName;
     private String gender;
     private String email;
+    @Enumerated(value = EnumType.STRING)
     private Title title;
     private String primaryPhoneNumber;
     private String secondaryPhoneNumber;
