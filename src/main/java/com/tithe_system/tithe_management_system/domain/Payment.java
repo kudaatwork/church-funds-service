@@ -29,6 +29,8 @@ public class Payment {
     private PaymentType paymentType;
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
+    private PaymentMethod paymentMethod;
+    private PaymentStatus paymentStatus;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assembly_id", referencedColumnName = "id")
     private Assembly assembly;
@@ -100,6 +102,30 @@ public class Payment {
         this.paymentType = paymentType;
     }
 
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
     public Assembly getAssembly() {
         return assembly;
     }
@@ -149,6 +175,9 @@ public class Payment {
                 ", transactionReference='" + transactionReference + '\'' +
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
+                ", currency=" + currency +
+                ", paymentMethod=" + paymentMethod +
+                ", paymentStatus=" + paymentStatus +
                 ", assembly=" + assembly +
                 ", userAccount=" + userAccount +
                 ", dateCreated=" + dateCreated +

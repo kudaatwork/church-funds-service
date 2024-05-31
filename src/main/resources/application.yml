@@ -17,3 +17,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
+
+constants:
+  max-image-size: 2000KB

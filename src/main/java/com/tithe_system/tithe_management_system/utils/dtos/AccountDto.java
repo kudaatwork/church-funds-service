@@ -1,47 +1,28 @@
-package com.tithe_system.tithe_management_system.domain;
+package com.tithe_system.tithe_management_system.utils.dtos;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Account {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class AccountDto {
     private Long id;
     private String accountNumber;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assembly_id", referencedColumnName = "id")
-    private Assembly assembly;
+    private AssemblyDto assemblyDto;
     private BigDecimal debitBalance;
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
     private String transactionReference;
-    @Enumerated(value = EnumType.STRING)
-    private Currency currency;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_account_id", referencedColumnName = "id")
-    private UserAccount userAccount;
+    private UserAccountDto userAccountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     @Column(name = "entity_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private EntityStatus entityStatus;
-
-    @PreUpdate
-    public void update(){
-        dateLastModified = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void create(){
-        dateCreated = LocalDateTime.now();
-        entityStatus = EntityStatus.ACTIVE;
-    }
 
     public Long getId() {
         return id;
@@ -59,12 +40,12 @@ public class Account {
         this.accountNumber = accountNumber;
     }
 
-    public Assembly getAssembly() {
-        return assembly;
+    public AssemblyDto getAssemblyDto() {
+        return assemblyDto;
     }
 
-    public void setAssembly(Assembly assembly) {
-        this.assembly = assembly;
+    public void setAssemblyDto(AssemblyDto assemblyDto) {
+        this.assemblyDto = assemblyDto;
     }
 
     public BigDecimal getDebitBalance() {
@@ -99,20 +80,12 @@ public class Account {
         this.transactionReference = transactionReference;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public UserAccountDto getUserAccountDto() {
+        return userAccountDto;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
+    public void setUserAccountDto(UserAccountDto userAccountDto) {
+        this.userAccountDto = userAccountDto;
     }
 
     public LocalDateTime getDateCreated() {
@@ -141,16 +114,15 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{" +
+        return "AccountDto{" +
                 "id=" + id +
                 ", accountNumber='" + accountNumber + '\'' +
-                ", assembly=" + assembly +
+                ", assemblyDto=" + assemblyDto +
                 ", debitBalance=" + debitBalance +
                 ", creditBalance=" + creditBalance +
                 ", cumulativeBalance=" + cumulativeBalance +
                 ", transactionReference='" + transactionReference + '\'' +
-                ", currency=" + currency +
-                ", userAccount=" + userAccount +
+                ", userAccountDto=" + userAccountDto +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +

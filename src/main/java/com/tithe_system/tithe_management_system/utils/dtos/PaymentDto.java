@@ -1,8 +1,10 @@
 package com.tithe_system.tithe_management_system.utils.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.PaymentChannel;
+import com.tithe_system.tithe_management_system.domain.PaymentMethod;
 import com.tithe_system.tithe_management_system.domain.PaymentType;
 import java.time.LocalDateTime;
 
@@ -12,6 +14,8 @@ public class PaymentDto {
     private String amount;
     private String popUrl;
     private String transactionReference;
+    private Currency currency;
+    private PaymentMethod paymentMethod;
     private PaymentChannel paymentChannel;
     private PaymentType paymentType;
     private AssemblyDto assemblyDto;
@@ -50,6 +54,22 @@ public class PaymentDto {
 
     public void setTransactionReference(String transactionReference) {
         this.transactionReference = transactionReference;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public PaymentChannel getPaymentChannel() {
@@ -115,6 +135,8 @@ public class PaymentDto {
                 ", amount='" + amount + '\'' +
                 ", popUrl='" + popUrl + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
+                ", currency=" + currency +
+                ", paymentMethod=" + paymentMethod +
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
                 ", assemblyDto=" + assemblyDto +

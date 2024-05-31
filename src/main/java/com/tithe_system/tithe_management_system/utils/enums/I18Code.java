@@ -43,7 +43,12 @@ public enum I18Code {
     MESSAGE_ASSEMBLY_DOES_NOT_EXIST("message.assembly.does.not.exist"),
     MESSAGE_ASSEMBLY_NOT_FOUND("message.assembly.not.found"),
     MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY("message.assembly.deleted.successfully"),
-    MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY("message.assembly.retrieved.successfully");
+    MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY("message.assembly.retrieved.successfully"),
+
+    MESSAGE_USER_ACCOUNT_NOT_FOUND("message.user.account.not.found"),
+
+    MESSAGE_CREATE_PAYMENT_INVALID_REQUEST("message.create.payment.invalid.request"),
+    MESSAGE_PAYMENT_INITIATED_SUCCESSFULLY("message.payment.initiated.successfully");
     private final String code;
 
     I18Code(String code) {

@@ -1,31 +1,41 @@
 package com.tithe_system.tithe_management_system.utils.requests;
 
-import com.tithe_system.tithe_management_system.domain.PaymentChannel;
-import com.tithe_system.tithe_management_system.domain.PaymentType;
+import org.springframework.web.multipart.MultipartFile;
+import java.math.BigDecimal;
 
 public class CreatePaymentRequest {
-    private String amount;
-    private String popUrl;
+    private BigDecimal amount;
+    private MultipartFile proofOfPayment;
+    private String currency;
     private String transactionReference;
-    private PaymentChannel paymentChannel;
-    private PaymentType paymentType;
+    private String paymentChannel;
+    private String  paymentType;
+    private String paymentStatus;
     private Long assemblyId;
     private Long userAccountId;
 
-    public String getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public String getPopUrl() {
-        return popUrl;
+    public MultipartFile getProofOfPayment() {
+        return proofOfPayment;
     }
 
-    public void setPopUrl(String popUrl) {
-        this.popUrl = popUrl;
+    public void setProofOfPayment(MultipartFile proofOfPayment) {
+        this.proofOfPayment = proofOfPayment;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getTransactionReference() {
@@ -36,20 +46,28 @@ public class CreatePaymentRequest {
         this.transactionReference = transactionReference;
     }
 
-    public PaymentChannel getPaymentChannel() {
+    public String getPaymentChannel() {
         return paymentChannel;
     }
 
-    public void setPaymentChannel(PaymentChannel paymentChannel) {
+    public void setPaymentChannel(String paymentChannel) {
         this.paymentChannel = paymentChannel;
     }
 
-    public PaymentType getPaymentType() {
+    public String getPaymentType() {
         return paymentType;
     }
 
-    public void setPaymentType(PaymentType paymentType) {
+    public void setPaymentType(String paymentType) {
         this.paymentType = paymentType;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public Long getAssemblyId() {
@@ -71,11 +89,13 @@ public class CreatePaymentRequest {
     @Override
     public String toString() {
         return "CreatePaymentRequest{" +
-                "amount='" + amount + '\'' +
-                ", popUrl='" + popUrl + '\'' +
+                "amount=" + amount +
+                ", proofOfPayment=" + proofOfPayment +
+                ", currency='" + currency + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
-                ", paymentChannel=" + paymentChannel +
-                ", paymentType=" + paymentType +
+                ", paymentChannel='" + paymentChannel + '\'' +
+                ", paymentType='" + paymentType + '\'' +
+                ", paymentStatus='" + paymentStatus + '\'' +
                 ", assemblyId=" + assemblyId +
                 ", userAccountId=" + userAccountId +
                 '}';
