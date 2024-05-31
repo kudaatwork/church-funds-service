@@ -10,18 +10,22 @@ import com.tithe_system.tithe_management_system.business.auditables.impl.Assembl
 import com.tithe_system.tithe_management_system.business.auditables.impl.DistrictServiceAuditableImpl;
 import com.tithe_system.tithe_management_system.business.auditables.impl.ProvinceServiceAuditableImpl;
 import com.tithe_system.tithe_management_system.business.auditables.impl.RegionServiceAuditableImpl;
+import com.tithe_system.tithe_management_system.business.logic.api.AccountService;
 import com.tithe_system.tithe_management_system.business.logic.api.AssemblyService;
 import com.tithe_system.tithe_management_system.business.logic.api.DistrictService;
 import com.tithe_system.tithe_management_system.business.logic.api.ProvinceService;
 import com.tithe_system.tithe_management_system.business.logic.api.RegionService;
+import com.tithe_system.tithe_management_system.business.logic.impl.AccountServiceImpl;
 import com.tithe_system.tithe_management_system.business.logic.impl.AssemblyServiceImpl;
 import com.tithe_system.tithe_management_system.business.logic.impl.DistrictServiceImpl;
 import com.tithe_system.tithe_management_system.business.logic.impl.ProvinceServiceImpl;
 import com.tithe_system.tithe_management_system.business.logic.impl.RegionServiceImpl;
+import com.tithe_system.tithe_management_system.business.validations.api.AccountServiceValidator;
 import com.tithe_system.tithe_management_system.business.validations.api.AssemblyServiceValidator;
 import com.tithe_system.tithe_management_system.business.validations.api.DistrictServiceValidator;
 import com.tithe_system.tithe_management_system.business.validations.api.ProvinceServiceValidator;
 import com.tithe_system.tithe_management_system.business.validations.api.RegionServiceValidator;
+import com.tithe_system.tithe_management_system.business.validations.impl.AccountServiceValidatorImpl;
 import com.tithe_system.tithe_management_system.business.validations.impl.AssemblyServiceValidatorImpl;
 import com.tithe_system.tithe_management_system.business.validations.impl.DistrictServiceValidatorImpl;
 import com.tithe_system.tithe_management_system.business.validations.impl.ProvinceServiceValidatorImpl;
@@ -133,5 +137,18 @@ public class BusinessConfig {
                                                        messageService) {
         return new AssemblyServiceImpl(assemblyServiceValidator, assemblyRepository, districtRepository,
                 provinceRepository, regionRepository, userAccountRepository, modelMapper, assemblyServiceAuditable, accountServiceAuditable, messageService);
+    }
+
+    @Bean
+    public AccountServiceValidator accountServiceValidator(){
+        return new AccountServiceValidatorImpl();
+    }
+
+    @Bean
+    public AccountService accountService(AccountServiceValidator accountServiceValidator, AccountServiceAuditable accountServiceAuditable,
+                                         AccountRepository accountRepository, ModelMapper modelMapper,
+                                         MessageService messageService){
+        return new AccountServiceImpl(accountServiceValidator, accountServiceAuditable, accountRepository, modelMapper,
+                messageService);
     }
 }

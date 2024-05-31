@@ -224,6 +224,16 @@ public class AssemblyServiceImpl implements AssemblyService {
                     null);
         }
 
+        Optional<UserAccount> userAccountRetrieved = userAccountRepository.findByIdAndEntityStatusNot(
+                editAssemblyRequest.getUserAccountId(), EntityStatus.DELETED);
+
+        if (userAccountRetrieved.isEmpty()) {
+            message = messageService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+            return buildAssemblyResponse(400, false, message, null, null,
+                    null);
+        }
+
         Optional<Assembly> assemblyRetrieved = assemblyRepository.findByIdAndEntityStatusNot(
                 editAssemblyRequest.getId(), EntityStatus.DELETED);
 

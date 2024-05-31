@@ -9,7 +9,6 @@ public class EditAssemblyRequest {
     private Long districtId;
     private Long regionId;
     private Long provinceId;
-    private Long accountId;
     private Long userAccountId;
 
     public Long getId() {
@@ -76,6 +75,14 @@ public class EditAssemblyRequest {
         this.provinceId = provinceId;
     }
 
+    public Long getUserAccountId() {
+        return userAccountId;
+    }
+
+    public void setUserAccountId(Long userAccountId) {
+        this.userAccountId = userAccountId;
+    }
+
     @Override
     public String toString() {
         return "EditAssemblyRequest{" +
@@ -87,6 +94,7 @@ public class EditAssemblyRequest {
                 ", districtId=" + districtId +
                 ", regionId=" + regionId +
                 ", provinceId=" + provinceId +
+                ", userAccountId=" + userAccountId +
                 '}';
     }
 }

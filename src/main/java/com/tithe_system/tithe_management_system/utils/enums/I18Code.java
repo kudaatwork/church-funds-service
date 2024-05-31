@@ -48,7 +48,8 @@ public enum I18Code {
     MESSAGE_USER_ACCOUNT_NOT_FOUND("message.user.account.not.found"),
 
     MESSAGE_CREATE_PAYMENT_INVALID_REQUEST("message.create.payment.invalid.request"),
-    MESSAGE_PAYMENT_INITIATED_SUCCESSFULLY("message.payment.initiated.successfully");
+    MESSAGE_PAYMENT_INITIATED_SUCCESSFULLY("message.payment.initiated.successfully"),
+    MESSAGE_CREATE_ACCOUNT_INVALID_REQUEST("message.create.account.invalid.request");
     private final String code;
 
     I18Code(String code) {
