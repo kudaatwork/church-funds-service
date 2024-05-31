@@ -2,30 +2,39 @@ package com.tithe_system.tithe_management_system.domain;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "account")
 public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accountNumber;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assembly_id", referencedColumnName = "id")
-    private Assembly assembly;
     private BigDecimal debitBalance;
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
-    private String transactionReference;
+    private String name;
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_account_id", referencedColumnName = "id")
     private UserAccount userAccount;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "assembly_id", referencedColumnName = "id")
+    private Assembly assembly;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     @Column(name = "entity_status", nullable = false)
@@ -59,14 +68,6 @@ public class Account {
         this.accountNumber = accountNumber;
     }
 
-    public Assembly getAssembly() {
-        return assembly;
-    }
-
-    public void setAssembly(Assembly assembly) {
-        this.assembly = assembly;
-    }
-
     public BigDecimal getDebitBalance() {
         return debitBalance;
     }
@@ -91,12 +92,12 @@ public class Account {
         this.cumulativeBalance = cumulativeBalance;
     }
 
-    public String getTransactionReference() {
-        return transactionReference;
+    public String getName() {
+        return name;
     }
 
-    public void setTransactionReference(String transactionReference) {
-        this.transactionReference = transactionReference;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Currency getCurrency() {
@@ -113,6 +114,14 @@ public class Account {
 
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
+    }
+
+    public Assembly getAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(Assembly assembly) {
+        this.assembly = assembly;
     }
 
     public LocalDateTime getDateCreated() {
@@ -144,13 +153,13 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", accountNumber='" + accountNumber + '\'' +
-                ", assembly=" + assembly +
                 ", debitBalance=" + debitBalance +
                 ", creditBalance=" + creditBalance +
                 ", cumulativeBalance=" + cumulativeBalance +
-                ", transactionReference='" + transactionReference + '\'' +
+                ", name='" + name + '\'' +
                 ", currency=" + currency +
                 ", userAccount=" + userAccount +
+                ", assembly=" + assembly +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +

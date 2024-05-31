@@ -8,6 +8,7 @@ public class CreateAssemblyRequest {
     private Long districtId;
     private Long regionId;
     private Long provinceId;
+    private Long userAccountId;
 
     public String getName() {
         return name;
@@ -65,6 +66,14 @@ public class CreateAssemblyRequest {
         this.provinceId = provinceId;
     }
 
+    public Long getUserAccountId() {
+        return userAccountId;
+    }
+
+    public void setUserAccountId(Long userAccountId) {
+        this.userAccountId = userAccountId;
+    }
+
     @Override
     public String toString() {
         return "CreateAssemblyRequest{" +
@@ -75,6 +84,7 @@ public class CreateAssemblyRequest {
                 ", districtId=" + districtId +
                 ", regionId=" + regionId +
                 ", provinceId=" + provinceId +
+                ", userAccountId=" + userAccountId +
                 '}';
     }
 }

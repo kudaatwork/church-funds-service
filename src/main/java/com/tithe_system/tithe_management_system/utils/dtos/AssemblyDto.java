@@ -14,6 +14,8 @@ public class AssemblyDto {
     private DistrictDto districtDto;
     private RegionDto regionDto;
     private ProvinceDto provinceDto;
+    private UserAccountDto userAccountDto;
+    private AccountDto accountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     private EntityStatus entityStatus;
@@ -82,6 +84,41 @@ public class AssemblyDto {
         this.provinceDto = provinceDto;
     }
 
+    public UserAccountDto getUserAccountDto() {
+        return userAccountDto;
+    }
+
+    public void setUserAccountDto(UserAccountDto userAccountDto) {
+        this.userAccountDto = userAccountDto;
+    }
+
+    @Override
+    public String toString() {
+        return "AssemblyDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", contactPhoneNumber='" + contactPhoneNumber + '\'' +
+                ", contactEmail='" + contactEmail + '\'' +
+                ", address='" + address + '\'' +
+                ", districtDto=" + districtDto +
+                ", regionDto=" + regionDto +
+                ", provinceDto=" + provinceDto +
+                ", userAccountDto=" + userAccountDto +
+                ", accountDto=" + accountDto +
+                ", dateCreated=" + dateCreated +
+                ", dateLastModified=" + dateLastModified +
+                ", entityStatus=" + entityStatus +
+                '}';
+    }
+
+    public AccountDto getAccountDto() {
+        return accountDto;
+    }
+
+    public void setAccountDto(AccountDto accountDto) {
+        this.accountDto = accountDto;
+    }
+
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
@@ -106,20 +143,4 @@ public class AssemblyDto {
         this.entityStatus = entityStatus;
     }
 
-    @Override
-    public String toString() {
-        return "AssemblyDto{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", contactPhoneNumber='" + contactPhoneNumber + '\'' +
-                ", contactEmail='" + contactEmail + '\'' +
-                ", address='" + address + '\'' +
-                ", districtDto=" + districtDto +
-                ", regionDto=" + regionDto +
-                ", provinceDto=" + provinceDto +
-                ", dateCreated=" + dateCreated +
-                ", dateLastModified=" + dateLastModified +
-                ", entityStatus=" + entityStatus +
-                '}';
-    }
 }

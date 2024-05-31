@@ -1,9 +1,11 @@
 package com.tithe_system.tithe_management_system.business.config;
 
+import com.tithe_system.tithe_management_system.business.auditables.api.AccountServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.AssemblyServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.DistrictServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.ProvinceServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.RegionServiceAuditable;
+import com.tithe_system.tithe_management_system.business.auditables.impl.AccountServiceAuditableImpl;
 import com.tithe_system.tithe_management_system.business.auditables.impl.AssemblyServiceAuditableImpl;
 import com.tithe_system.tithe_management_system.business.auditables.impl.DistrictServiceAuditableImpl;
 import com.tithe_system.tithe_management_system.business.auditables.impl.ProvinceServiceAuditableImpl;
@@ -24,10 +26,12 @@ import com.tithe_system.tithe_management_system.business.validations.impl.Assemb
 import com.tithe_system.tithe_management_system.business.validations.impl.DistrictServiceValidatorImpl;
 import com.tithe_system.tithe_management_system.business.validations.impl.ProvinceServiceValidatorImpl;
 import com.tithe_system.tithe_management_system.business.validations.impl.RegionServiceValidatorImpl;
+import com.tithe_system.tithe_management_system.repository.AccountRepository;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
+import com.tithe_system.tithe_management_system.repository.UserAccountRepository;
 import com.tithe_system.tithe_management_system.repository.config.DataConfig;
 import com.tithe_system.tithe_management_system.utils.config.UtilsConfig;
 import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
@@ -115,12 +119,19 @@ public class BusinessConfig {
     }
 
     @Bean
+    public AccountServiceAuditable accountServiceAuditable(AccountRepository accountRepository){
+        return new AccountServiceAuditableImpl(accountRepository);
+    }
+
+    @Bean
     public AssemblyService assemblyService(AssemblyServiceValidator assemblyServiceValidator, AssemblyRepository
             assemblyRepository, DistrictRepository districtRepository, ProvinceRepository provinceRepository,
-                                           RegionRepository regionRepository, ModelMapper modelMapper,
-                                           AssemblyServiceAuditable assemblyServiceAuditable, MessageService
+                                           RegionRepository regionRepository, UserAccountRepository userAccountRepository,
+                                           ModelMapper modelMapper,
+                                           AssemblyServiceAuditable assemblyServiceAuditable,
+                                           AccountServiceAuditable accountServiceAuditable, MessageService
                                                        messageService) {
         return new AssemblyServiceImpl(assemblyServiceValidator, assemblyRepository, districtRepository,
-                provinceRepository, regionRepository, modelMapper, assemblyServiceAuditable, messageService);
+                provinceRepository, regionRepository, userAccountRepository, modelMapper, assemblyServiceAuditable, accountServiceAuditable, messageService);
     }
 }

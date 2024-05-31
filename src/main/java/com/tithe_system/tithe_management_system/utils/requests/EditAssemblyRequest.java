@@ -9,6 +9,8 @@ public class EditAssemblyRequest {
     private Long districtId;
     private Long regionId;
     private Long provinceId;
+    private Long accountId;
+    private Long userAccountId;
 
     public Long getId() {
         return id;
