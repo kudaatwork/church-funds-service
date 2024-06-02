@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.business.logic.impl;
 
 import com.tithe_system.tithe_management_system.business.auditables.api.AccountServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.AssemblyServiceAuditable;
+import com.tithe_system.tithe_management_system.business.logic.api.AccountService;
 import com.tithe_system.tithe_management_system.business.logic.api.AssemblyService;
 import com.tithe_system.tithe_management_system.business.validations.api.AssemblyServiceValidator;
 import com.tithe_system.tithe_management_system.domain.Account;
@@ -12,6 +13,7 @@ import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.Province;
 import com.tithe_system.tithe_management_system.domain.Region;
 import com.tithe_system.tithe_management_system.domain.UserAccount;
+import com.tithe_system.tithe_management_system.repository.AccountRepository;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
@@ -26,17 +28,20 @@ import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.UniqueCodesGenerator;
 import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
+import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditAssemblyRequest;
+import com.tithe_system.tithe_management_system.utils.responses.AccountResponse;
 import com.tithe_system.tithe_management_system.utils.responses.AssemblyResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,31 +50,36 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class AssemblyServiceImpl implements AssemblyService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AssemblyServiceValidator assemblyServiceValidator;
     private final AssemblyRepository assemblyRepository;
     private final DistrictRepository districtRepository;
     private final ProvinceRepository provinceRepository;
     private final RegionRepository regionRepository;
     private final UserAccountRepository userAccountRepository;
+    private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
     private final AssemblyServiceAuditable assemblyServiceAuditable;
     private final AccountServiceAuditable accountServiceAuditable;
     private final MessageService messageService;
+    private final AccountService accountService;
 
     public AssemblyServiceImpl(AssemblyServiceValidator assemblyServiceValidator, AssemblyRepository assemblyRepository,
                                DistrictRepository districtRepository, ProvinceRepository provinceRepository,
-                               RegionRepository regionRepository, UserAccountRepository userAccountRepository, ModelMapper modelMapper, AssemblyServiceAuditable
-                                       assemblyServiceAuditable, AccountServiceAuditable accountServiceAuditable, MessageService messageService) {
+                               RegionRepository regionRepository, UserAccountRepository userAccountRepository, AccountRepository accountRepository, ModelMapper modelMapper, AssemblyServiceAuditable
+                                       assemblyServiceAuditable, AccountServiceAuditable accountServiceAuditable, MessageService messageService, AccountService accountService) {
         this.assemblyServiceValidator = assemblyServiceValidator;
         this.assemblyRepository = assemblyRepository;
         this.districtRepository = districtRepository;
         this.provinceRepository = provinceRepository;
         this.regionRepository = regionRepository;
         this.userAccountRepository = userAccountRepository;
+        this.accountRepository = accountRepository;
         this.modelMapper = modelMapper;
         this.assemblyServiceAuditable = assemblyServiceAuditable;
         this.accountServiceAuditable = accountServiceAuditable;
         this.messageService = messageService;
+        this.accountService = accountService;
     }
 
     @Override
@@ -155,22 +165,23 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         Assembly assemblySaved = assemblyServiceAuditable.create(assemblyToBeSaved, locale, username);
 
-        Account newAssemblyAccount = createNewAccount(assemblySaved);
+        CreateAccountRequest createAccountRequest = buildCreateAccountRequest(assemblySaved);
 
-        Account assemblyAccountSaved = accountServiceAuditable.create(newAssemblyAccount, locale, username);
+        logger.info("Incoming request to create an account : {}", createAccountRequest);
+
+        AccountResponse accountResponse = accountService.createAccount(createAccountRequest, username, locale);
+
+        logger.info("Outgoing response after creating an account : {}", accountResponse);
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserAccountDto userAccountDto = modelMapper.map(userAccountRetrieved.get(), UserAccountDto.class);
-
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        AccountDto accountDto = modelMapper.map(assemblyAccountSaved, AccountDto.class);
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblySaved, AssemblyDto.class);
         assemblyDtoReturned.setRegionDto(regionDto);
         assemblyDtoReturned.setProvinceDto(provinceDto);
         assemblyDtoReturned.setDistrictDto(districtDto);
-        assemblyDtoReturned.setAccountDto(accountDto);
+        assemblyDtoReturned.setAccountDto(accountResponse.getAccountDto());
         assemblyDtoReturned.setUserAccountDto(userAccountDto);
 
         message = messageService.getMessage(I18Code.MESSAGE_ASSEMBLY_CREATED_SUCCESSFULLY.getCode(), new String[]{},
@@ -325,8 +336,21 @@ public class AssemblyServiceImpl implements AssemblyService {
         Optional<Assembly> assemblyRetrieved = assemblyRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (assemblyRetrieved.isEmpty()) {
+
             message = messageService.getMessage(I18Code.MESSAGE_ASSEMBLY_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
+
+            return buildAssemblyResponse(404, false, message, null, null,
+                    null);
+        }
+
+        Optional<Account> accountRetrieved = accountRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
+
+        if (accountRetrieved.isEmpty()) {
+
+            message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
+                    locale);
+
             return buildAssemblyResponse(404, false, message, null, null,
                     null);
         }
@@ -334,9 +358,16 @@ public class AssemblyServiceImpl implements AssemblyService {
         Assembly assemblyToBeDeleted = assemblyRetrieved.get();
         assemblyToBeDeleted.setEntityStatus(EntityStatus.DELETED);
         assemblyToBeDeleted.setName(assemblyToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
+
         Assembly assemblyDeleted = assemblyServiceAuditable.delete(assemblyToBeDeleted, locale);
 
+        Account accountDeleted = accountServiceAuditable.delete(accountRetrieved.get(), locale);
+
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblyDeleted, AssemblyDto.class);
+
+        AccountDto accountDto = modelMapper.map(accountDeleted, AccountDto.class);
+
+        assemblyDtoReturned.setAccountDto(accountDto);
 
         message = messageService.getMessage(I18Code.MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
@@ -427,19 +458,15 @@ public class AssemblyServiceImpl implements AssemblyService {
                 null, assemblyDtoPage);
     }
 
-    private static Account createNewAccount(Assembly assemblySaved) {
+    private static CreateAccountRequest buildCreateAccountRequest(Assembly assemblySaved) {
 
-        Account newAssemblyAccount = new Account();
-        newAssemblyAccount.setAccountNumber("ASS-" + UniqueCodesGenerator.getUniqueId());
-        newAssemblyAccount.setAssembly(assemblySaved);
-        newAssemblyAccount.setCreditBalance(BigDecimal.ZERO);
-        newAssemblyAccount.setDebitBalance(BigDecimal.ZERO);
-        newAssemblyAccount.setCumulativeBalance(BigDecimal.ZERO);
-        newAssemblyAccount.setName(assemblySaved.getName());
-        newAssemblyAccount.setCurrency(Currency.USD);
-        newAssemblyAccount.setUserAccount(assemblySaved.getUserAccount());
+        CreateAccountRequest createAccountRequest = new CreateAccountRequest();
+        createAccountRequest.setAssemblyId(assemblySaved.getId());
+        createAccountRequest.setUserAccountId(assemblySaved.getUserAccount().getId());
+        createAccountRequest.setCurrency(Currency.USD.getCurrency());
+        createAccountRequest.setName(assemblySaved.getName());
 
-        return newAssemblyAccount;
+        return createAccountRequest;
     }
 
     private Page<AssemblyDto> convertAssemblyEntityToAssemblyDto(Page<Assembly> assemblyPage){

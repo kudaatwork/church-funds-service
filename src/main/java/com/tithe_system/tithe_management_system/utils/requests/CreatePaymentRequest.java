@@ -11,8 +11,10 @@ public class CreatePaymentRequest {
     private String paymentChannel;
     private String  paymentType;
     private String paymentStatus;
+    private String narration;
     private Long assemblyId;
     private Long userAccountId;
+    private Long accountId;
 
     public BigDecimal getAmount() {
         return amount;
@@ -70,6 +72,14 @@ public class CreatePaymentRequest {
         this.paymentStatus = paymentStatus;
     }
 
+    public String getNarration() {
+        return narration;
+    }
+
+    public void setNarration(String narration) {
+        this.narration = narration;
+    }
+
     public Long getAssemblyId() {
         return assemblyId;
     }
@@ -86,6 +96,14 @@ public class CreatePaymentRequest {
         this.userAccountId = userAccountId;
     }
 
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
     @Override
     public String toString() {
         return "CreatePaymentRequest{" +
@@ -96,8 +114,10 @@ public class CreatePaymentRequest {
                 ", paymentChannel='" + paymentChannel + '\'' +
                 ", paymentType='" + paymentType + '\'' +
                 ", paymentStatus='" + paymentStatus + '\'' +
+                ", narration='" + narration + '\'' +
                 ", assemblyId=" + assemblyId +
                 ", userAccountId=" + userAccountId +
+                ", accountId=" + accountId +
                 '}';
     }
 }

@@ -21,4 +21,9 @@ public class AccountServiceAuditableImpl implements AccountServiceAuditable {
     public Account update(Account assemblyAccount, Locale locale, String username) {
         return accountRepository.save(assemblyAccount);
     }
+
+    @Override
+    public Account delete(Account assemblyAccount, Locale locale) {
+        return accountRepository.save(assemblyAccount);
+    }
 }

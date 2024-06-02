@@ -7,4 +7,5 @@ import java.util.Locale;
 public interface AccountServiceAuditable {
     Account create(Account assemblyAccount, Locale locale, String username);
     Account update(Account assemblyAccount, Locale locale, String username);
+    Account delete(Account assemblyAccount, Locale locale);
 }

@@ -1,0 +1,13 @@
+package com.tithe_system.tithe_management_system.service.processor.api;
+
+import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.responses.PaymentResponse;
+import java.util.Locale;
+
+public interface PaymentServiceProcessor {
+    PaymentResponse create(CreatePaymentRequest createPaymentRequest, String username, Locale locale);
+    PaymentResponse reverse(ReversePaymentRequest reversePaymentRequest, String username, Locale locale);
+    PaymentResponse findById(Long id, Locale locale);
+    PaymentResponse findPaymentsAsPages(int page, int size, Locale locale, String username);
+}

@@ -7,4 +7,8 @@ public enum AccountNarration {
     AccountNarration(String accountNarration) {
         this.accountNarration = accountNarration;
     }
+
+    public String getAccountNarration() {
+        return accountNarration;
+    }
 }

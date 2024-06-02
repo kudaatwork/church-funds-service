@@ -23,6 +23,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accountNumber;
+    private String transactionReference;
     private BigDecimal debitBalance;
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
@@ -66,6 +67,33 @@ public class Account {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", transactionReference='" + transactionReference + '\'' +
+                ", debitBalance=" + debitBalance +
+                ", creditBalance=" + creditBalance +
+                ", cumulativeBalance=" + cumulativeBalance +
+                ", name='" + name + '\'' +
+                ", currency=" + currency +
+                ", userAccount=" + userAccount +
+                ", assembly=" + assembly +
+                ", dateCreated=" + dateCreated +
+                ", dateLastModified=" + dateLastModified +
+                ", entityStatus=" + entityStatus +
+                '}';
+    }
+
+    public String getTransactionReference() {
+        return transactionReference;
+    }
+
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
     }
 
     public BigDecimal getDebitBalance() {
@@ -148,21 +176,4 @@ public class Account {
         this.entityStatus = entityStatus;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", debitBalance=" + debitBalance +
-                ", creditBalance=" + creditBalance +
-                ", cumulativeBalance=" + cumulativeBalance +
-                ", name='" + name + '\'' +
-                ", currency=" + currency +
-                ", userAccount=" + userAccount +
-                ", assembly=" + assembly +
-                ", dateCreated=" + dateCreated +
-                ", dateLastModified=" + dateLastModified +
-                ", entityStatus=" + entityStatus +
-                '}';
-    }
 }

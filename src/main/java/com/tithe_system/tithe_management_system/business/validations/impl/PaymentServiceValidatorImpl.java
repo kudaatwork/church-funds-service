@@ -1,11 +1,13 @@
 package com.tithe_system.tithe_management_system.business.validations.impl;
 
 import com.tithe_system.tithe_management_system.business.validations.api.PaymentServiceValidator;
+import com.tithe_system.tithe_management_system.domain.AccountNarration;
 import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.PaymentChannel;
 import com.tithe_system.tithe_management_system.domain.PaymentStatus;
 import com.tithe_system.tithe_management_system.domain.PaymentType;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatch;
@@ -66,6 +68,10 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
             return false;
         }
 
+        if (!isNarrationValid(createPaymentRequest.getNarration())) {
+            return false;
+        }
+
         if (createPaymentRequest.getProofOfPayment() != null
                 && createPaymentRequest.getProofOfPayment().isEmpty()) {
             return false;
@@ -84,6 +90,29 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isRequestValidForReversal(ReversePaymentRequest reversePaymentRequest) {
+
+        if (reversePaymentRequest == null){
+            return false;
+        }
+
+        if (!isNarrationValid(reversePaymentRequest.getNarration())) {
+            return false;
+        }
+
+        if (reversePaymentRequest.getAmount().compareTo(BigDecimal.ZERO) < 1){
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isIdValid(Long id) {
+        return id != null && id > 1;
     }
 
     private boolean isImageValid(MultipartFile multipartFile) throws IOException {
@@ -141,6 +170,27 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         } catch (Exception ex) {
 
             logger.info("Error encountered while converting currency value from request : {}", currencySupplied);
+
+            return false;
+        }
+    }
+
+    private boolean isNarrationValid(String narrationSupplied) {
+
+        try {
+
+            AccountNarration[] narrations = AccountNarration.values();
+
+            for (AccountNarration narration : narrations)
+
+                if (narration.getAccountNarration().equals(narrationSupplied)){
+                    return true;
+                }
+
+            return false;
+        } catch (Exception ex) {
+
+            logger.info("Error encountered while converting narration value from request : {}", narrationSupplied);
 
             return false;
         }

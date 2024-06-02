@@ -23,12 +23,11 @@ public class UserAccount {
     private Long id;
     private String firstName;
     private String lastName;
-    private String gender;
-    private String email;
+    @Enumerated(value = EnumType.STRING)
+    private Gender gender;
     @Enumerated(value = EnumType.STRING)
     private Title title;
-    private String primaryPhoneNumber;
-    private String secondaryPhoneNumber;
+    private String phoneNumber;
     private String emailAddress;
     private String username;
     private String password;
@@ -82,20 +81,12 @@ public class UserAccount {
         this.lastName = lastName;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Title getTitle() {
@@ -106,20 +97,12 @@ public class UserAccount {
         this.title = title;
     }
 
-    public String getPrimaryPhoneNumber() {
-        return primaryPhoneNumber;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPrimaryPhoneNumber(String primaryPhoneNumber) {
-        this.primaryPhoneNumber = primaryPhoneNumber;
-    }
-
-    public String getSecondaryPhoneNumber() {
-        return secondaryPhoneNumber;
-    }
-
-    public void setSecondaryPhoneNumber(String secondaryPhoneNumber) {
-        this.secondaryPhoneNumber = secondaryPhoneNumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmailAddress() {
@@ -208,11 +191,9 @@ public class UserAccount {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", gender='" + gender + '\'' +
-                ", email='" + email + '\'' +
+                ", gender=" + gender +
                 ", title=" + title +
-                ", primaryPhoneNumber='" + primaryPhoneNumber + '\'' +
-                ", secondaryPhoneNumber='" + secondaryPhoneNumber + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +

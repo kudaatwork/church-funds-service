@@ -24,6 +24,7 @@ public class Payment {
     private String amount;
     private String popUrl;
     private String transactionReference;
+    private String accountNumber;
     private PaymentChannel paymentChannel;
     @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
@@ -84,6 +85,14 @@ public class Payment {
 
     public void setTransactionReference(String transactionReference) {
         this.transactionReference = transactionReference;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public PaymentChannel getPaymentChannel() {
@@ -173,6 +182,7 @@ public class Payment {
                 ", amount='" + amount + '\'' +
                 ", popUrl='" + popUrl + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
+                ", accountNumber='" + accountNumber + '\'' +
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
                 ", currency=" + currency +

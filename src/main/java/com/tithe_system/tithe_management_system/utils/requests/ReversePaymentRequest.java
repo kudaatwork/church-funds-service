@@ -3,16 +3,16 @@ package com.tithe_system.tithe_management_system.utils.requests;
 import java.math.BigDecimal;
 
 public class ReversePaymentRequest {
-    private Long paymentId;
+    private String narration;
     private String transactionReference;
     private BigDecimal amount;
 
-    public Long getPaymentId() {
-        return paymentId;
+    public String getNarration() {
+        return narration;
     }
 
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
+    public void setNarration(String narration) {
+        this.narration = narration;
     }
 
     public String getTransactionReference() {
@@ -34,7 +34,7 @@ public class ReversePaymentRequest {
     @Override
     public String toString() {
         return "ReversePaymentRequest{" +
-                "paymentId=" + paymentId +
+                "narration='" + narration + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
                 ", amount=" + amount +
                 '}';

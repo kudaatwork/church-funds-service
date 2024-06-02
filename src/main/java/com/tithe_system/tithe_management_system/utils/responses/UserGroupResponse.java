@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserGroupResponse {
+public class UserGroupResponse extends CommonResponse{
     private UserGroupDto userGroupDto;
     private List<UserGroupDto> userGroupDtoList;
     private Page<UserGroupDto> userGroupDtoPage;

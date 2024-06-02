@@ -8,6 +8,7 @@ public class UpdateAccountRequest {
     private BigDecimal amount;
     private String currency;
     private String narration;
+    private String transactionReference;
 
     public Long getId() {
         return id;
@@ -57,7 +58,16 @@ public class UpdateAccountRequest {
                 ", amount=" + amount +
                 ", currency='" + currency + '\'' +
                 ", narration='" + narration + '\'' +
+                ", transactionReference='" + transactionReference + '\'' +
                 '}';
+    }
+
+    public String getTransactionReference() {
+        return transactionReference;
+    }
+
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
     }
 
 }

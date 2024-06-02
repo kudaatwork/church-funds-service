@@ -6,10 +6,8 @@ import com.tithe_system.tithe_management_system.utils.responses.PaymentResponse;
 import java.util.Locale;
 
 public interface PaymentService {
-    PaymentResponse createPayment(CreatePaymentRequest createPaymentRequest, String username, Locale locale);
-    PaymentResponse reversePayment(ReversePaymentRequest reversePaymentRequest, String username, Locale locale);
-    PaymentResponse findByTransactionReference(String transactionReference, String username, Locale locale);
-    PaymentResponse findById(String transactionReference, Locale locale);
-    PaymentResponse findByPaymentStatus(String paymentStatus, String username, Locale locale);
+    PaymentResponse create(CreatePaymentRequest createPaymentRequest, String username, Locale locale);
+    PaymentResponse reverse(ReversePaymentRequest reversePaymentRequest, String username, Locale locale);
+    PaymentResponse findById(Long id, Locale locale);
     PaymentResponse findPaymentsAsPages(int page, int size, Locale locale, String username);
 }
