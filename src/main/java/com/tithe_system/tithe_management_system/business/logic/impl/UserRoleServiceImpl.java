@@ -30,14 +30,16 @@ public class UserRoleServiceImpl implements UserRoleService {
     private final UserRoleServiceValidator userGroupServiceValidator;
     private final UserRoleRepository userRoleRepository;
     private final ModelMapper modelMapper;
-    private final UserRoleServiceAuditable userGroupServiceAuditable;
+    private final UserRoleServiceAuditable userRoleServiceAuditable;
     private final MessageService messageService;
 
-    public UserRoleServiceImpl(UserRoleServiceValidator userGroupServiceValidator, UserRoleRepository userRoleRepository, ModelMapper modelMapper, UserRoleServiceAuditable userGroupServiceAuditable, MessageService messageService) {
+    public UserRoleServiceImpl(UserRoleServiceValidator userGroupServiceValidator, UserRoleRepository userRoleRepository,
+                               ModelMapper modelMapper, UserRoleServiceAuditable userRoleServiceAuditable,
+                               MessageService messageService) {
         this.userGroupServiceValidator = userGroupServiceValidator;
         this.userRoleRepository = userRoleRepository;
         this.modelMapper = modelMapper;
-        this.userGroupServiceAuditable = userGroupServiceAuditable;
+        this.userRoleServiceAuditable = userRoleServiceAuditable;
         this.messageService = messageService;
     }
 
@@ -71,7 +73,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserRole userRoleToBeSaved = modelMapper.map(createUserRoleRequest, UserRole.class);
 
-        UserRole userRoleSaved = userGroupServiceAuditable.create(userRoleToBeSaved, locale, username);
+        UserRole userRoleSaved = userRoleServiceAuditable.create(userRoleToBeSaved, locale, username);
 
         UserRoleDto userRoleDtoReturned = modelMapper.map(userRoleSaved, UserRoleDto.class);
 
@@ -129,7 +131,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             }
         }
 
-        UserRole userRoleEdited = userGroupServiceAuditable.edit(userRoleToBeEdited, locale, username);
+        UserRole userRoleEdited = userRoleServiceAuditable.edit(userRoleToBeEdited, locale, username);
 
         UserRoleDto userRoleDto = modelMapper.map(userRoleEdited, UserRoleDto.class);
 
@@ -171,7 +173,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         userRoleToBeDeleted.setEntityStatus(EntityStatus.DELETED);
         userRoleToBeDeleted.setName(userRoleToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
 
-        UserRole userRoleDeleted = userGroupServiceAuditable.delete(userRoleToBeDeleted, locale);
+        UserRole userRoleDeleted = userRoleServiceAuditable.delete(userRoleToBeDeleted, locale);
 
         UserRoleDto userRoleDtoReturned = modelMapper.map(userRoleDeleted, UserRoleDto.class);
 

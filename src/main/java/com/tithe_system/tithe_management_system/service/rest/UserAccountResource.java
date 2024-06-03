@@ -1,0 +1,106 @@
+package com.tithe_system.tithe_management_system.service.rest;
+
+import com.tithe_system.tithe_management_system.service.processor.api.UserAccountServiceProcessor;
+import com.tithe_system.tithe_management_system.utils.constants.Constants;
+import com.tithe_system.tithe_management_system.utils.requests.CreateUserAccountRequest;
+import com.tithe_system.tithe_management_system.utils.requests.EditUserAccountRequest;
+import com.tithe_system.tithe_management_system.utils.responses.UserAccountResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.Locale;
+
+@RestController
+@CrossOrigin
+@RequestMapping("/tithe-management/v1/user-account")
+public class UserAccountResource {
+    private final UserAccountServiceProcessor userAccountServiceProcessor;
+
+    public UserAccountResource(UserAccountServiceProcessor userAccountServiceProcessor) {
+        this.userAccountServiceProcessor = userAccountServiceProcessor;
+    }
+
+    @Operation(summary = "Create a user account")
+    @PostMapping(value = "")
+    public UserAccountResponse create(@Valid @RequestBody final CreateUserAccountRequest createUserAccountRequest,
+                                      @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                           description = "Bearer token", required = true)
+                                   String authenticationToken,
+                                      @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                   @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                           defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.create(createUserAccountRequest, authenticationToken, locale);
+    }
+
+    @Operation(summary = "Edit a user account")
+    @PutMapping(value = "")
+    public UserAccountResponse edit(@Valid @RequestBody final EditUserAccountRequest editUserAccountRequest,
+                                 @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                         description = "Bearer token", required = true)
+                                 String authenticationToken,
+                                 @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                 @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                         defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.edit(editUserAccountRequest, authenticationToken, locale);
+    }
+
+    @Operation(summary = "Delete a user account")
+    @DeleteMapping(value = "/delete/id/{id}")
+    public UserAccountResponse delete(@PathVariable("id") final Long id,
+                                   @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                   @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                           defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.delete(id, locale);
+    }
+
+    @Operation(summary = "Find a user account by id")
+    @GetMapping(value = "/id/{id}")
+    public UserAccountResponse findById(@PathVariable("id") final Long id,
+                                     @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                     @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                             defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.findById(id, locale);
+    }
+
+    @Operation(summary = "Find all user accounts as a list")
+    @GetMapping(value = "/list")
+    public UserAccountResponse findAllAsAList(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
+            description = "Bearer token", required = true)
+                                           String authenticationToken,
+                                           @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                           @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                                   defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.findAllAsAList(authenticationToken, locale);
+    }
+
+    @Operation(summary = "Find all user accounts as pages")
+    @GetMapping(value = "/pages")
+    public UserAccountResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
+            description = "Bearer token", required = true)
+                                           String authenticationToken,
+                                           @RequestParam(value = "page", defaultValue = "0") int page,
+                                           @RequestParam(value = "size", defaultValue = "10") int size,
+                                           @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                           @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                                   defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+    }
+}

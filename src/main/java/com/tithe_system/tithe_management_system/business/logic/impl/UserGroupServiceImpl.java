@@ -32,7 +32,9 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupServiceAuditable userGroupServiceAuditable;
     private final MessageService messageService;
 
-    public UserGroupServiceImpl(UserGroupServiceValidator userGroupServiceValidator, UserGroupRepository userGroupRepository, ModelMapper modelMapper, UserGroupServiceAuditable userGroupServiceAuditable, MessageService messageService) {
+    public UserGroupServiceImpl(UserGroupServiceValidator userGroupServiceValidator, UserGroupRepository userGroupRepository,
+                                ModelMapper modelMapper, UserGroupServiceAuditable userGroupServiceAuditable,
+                                MessageService messageService) {
         this.userGroupServiceValidator = userGroupServiceValidator;
         this.userGroupRepository = userGroupRepository;
         this.modelMapper = modelMapper;
