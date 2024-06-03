@@ -1,7 +1,7 @@
 package com.tithe_system.tithe_management_system.business.validations.impl;
 
 import com.tithe_system.tithe_management_system.business.validations.api.PaymentServiceValidator;
-import com.tithe_system.tithe_management_system.domain.AccountNarration;
+import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.PaymentChannel;
 import com.tithe_system.tithe_management_system.domain.PaymentStatus;
@@ -47,8 +47,7 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         if (createPaymentRequest.getProofOfPayment() == null || createPaymentRequest.getProofOfPayment().isEmpty() ||
         createPaymentRequest.getCurrency() == null || createPaymentRequest.getCurrency().isEmpty() ||
                 createPaymentRequest.getPaymentChannel() == null || createPaymentRequest.getPaymentChannel().isEmpty() ||
-        createPaymentRequest.getPaymentType() == null ||  createPaymentRequest.getPaymentType().isEmpty() ||
-                createPaymentRequest.getPaymentStatus() == null || createPaymentRequest.getPaymentStatus().isEmpty()) {
+        createPaymentRequest.getPaymentType() == null ||  createPaymentRequest.getPaymentType().isEmpty()) {
             return false;
         }
 
@@ -61,10 +60,6 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         }
 
         if (!isPaymentTypeValid(createPaymentRequest.getPaymentType())) {
-            return false;
-        }
-
-        if (!isPaymentStatusValid(createPaymentRequest.getPaymentStatus())) {
             return false;
         }
 
@@ -179,9 +174,9 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
 
         try {
 
-            AccountNarration[] narrations = AccountNarration.values();
+            Narration[] narrations = Narration.values();
 
-            for (AccountNarration narration : narrations)
+            for (Narration narration : narrations)
 
                 if (narration.getAccountNarration().equals(narrationSupplied)){
                     return true;

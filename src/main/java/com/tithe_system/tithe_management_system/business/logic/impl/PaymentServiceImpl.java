@@ -7,6 +7,7 @@ import com.tithe_system.tithe_management_system.business.validations.api.Payment
 import com.tithe_system.tithe_management_system.domain.Account;
 import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Payment;
 import com.tithe_system.tithe_management_system.domain.PaymentStatus;
 import com.tithe_system.tithe_management_system.domain.UserAccount;
@@ -119,17 +120,17 @@ public class PaymentServiceImpl implements PaymentService {
                     null);
         }
 
-        createPaymentRequest.setTransactionReference("CFM" + AccountAndReferencesGenerator.getTransactionReference().toString());
-
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Payment paymentToBeSaved = modelMapper.map(createPaymentRequest, Payment.class);
+        paymentToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
         paymentToBeSaved.setAssembly(assemblyRetrieved.get());
         paymentToBeSaved.setUserAccount(userAccountRetrieved.get());
         paymentToBeSaved.setPaymentStatus(PaymentStatus.INITIATED);
+        paymentToBeSaved.setNarration(Narration.PAYMENT.getAccountNarration());
 
         Payment paymentSaved = paymentServiceAuditable.create(paymentToBeSaved, locale, username);
 
-        UpdateAccountRequest updateAccountRequest = buildUpdateAccountRequest(createPaymentRequest, accountRetrieved.get());
+        UpdateAccountRequest updateAccountRequest = buildUpdateAccountRequest(paymentSaved, accountRetrieved.get());
 
         logger.info("Incoming request to update an account : {}", updateAccountRequest);
 
@@ -197,9 +198,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Payment paymentToBeSaved = modelMapper.map(reversePaymentRequest, Payment.class);
+        paymentToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
         paymentToBeSaved.setAssembly(paymentRetrieved.get().getAssembly());
         paymentToBeSaved.setUserAccount(paymentRetrieved.get().getUserAccount());
-        paymentToBeSaved.setPaymentStatus(PaymentStatus.REVERSED);
+        paymentToBeSaved.setPaymentStatus(PaymentStatus.INITIATED);
+        paymentToBeSaved.setNarration(Narration.REVERSAL.getAccountNarration());
 
         Payment paymentSaved = paymentServiceAuditable.create(paymentToBeSaved, locale, username);
 
@@ -295,14 +298,13 @@ public class PaymentServiceImpl implements PaymentService {
                 null, paymentDtoPage);
     }
 
-    private static UpdateAccountRequest buildUpdateAccountRequest(CreatePaymentRequest createPaymentRequest, Account accountRetrieved) {
+    private static UpdateAccountRequest buildUpdateAccountRequest(Payment payment, Account accountRetrieved) {
 
         UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest();
         updateAccountRequest.setAccountNumber(accountRetrieved.getAccountNumber());
-        updateAccountRequest.setAmount(createPaymentRequest.getAmount());
-        updateAccountRequest.setCurrency(createPaymentRequest.getCurrency());
-        updateAccountRequest.setNarration(createPaymentRequest.getNarration());
-        updateAccountRequest.setTransactionReference(createPaymentRequest.getTransactionReference());
+        updateAccountRequest.setAmount(payment.getAmount());
+        updateAccountRequest.setCurrency(payment.getCurrency().toString());
+        updateAccountRequest.setNarration(payment.getNarration());
 
         return updateAccountRequest;
     }

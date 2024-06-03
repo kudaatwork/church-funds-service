@@ -7,10 +7,8 @@ public class CreatePaymentRequest {
     private BigDecimal amount;
     private MultipartFile proofOfPayment;
     private String currency;
-    private String transactionReference;
     private String paymentChannel;
     private String  paymentType;
-    private String paymentStatus;
     private String narration;
     private Long assemblyId;
     private Long userAccountId;
@@ -40,14 +38,6 @@ public class CreatePaymentRequest {
         this.currency = currency;
     }
 
-    public String getTransactionReference() {
-        return transactionReference;
-    }
-
-    public void setTransactionReference(String transactionReference) {
-        this.transactionReference = transactionReference;
-    }
-
     public String getPaymentChannel() {
         return paymentChannel;
     }
@@ -62,14 +52,6 @@ public class CreatePaymentRequest {
 
     public void setPaymentType(String paymentType) {
         this.paymentType = paymentType;
-    }
-
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
     }
 
     public String getNarration() {
@@ -110,10 +92,8 @@ public class CreatePaymentRequest {
                 "amount=" + amount +
                 ", proofOfPayment=" + proofOfPayment +
                 ", currency='" + currency + '\'' +
-                ", transactionReference='" + transactionReference + '\'' +
                 ", paymentChannel='" + paymentChannel + '\'' +
                 ", paymentType='" + paymentType + '\'' +
-                ", paymentStatus='" + paymentStatus + '\'' +
                 ", narration='" + narration + '\'' +
                 ", assemblyId=" + assemblyId +
                 ", userAccountId=" + userAccountId +

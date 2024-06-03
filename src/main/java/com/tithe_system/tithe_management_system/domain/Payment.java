@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,10 +22,11 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String amount;
+    private BigDecimal amount;
     private String popUrl;
     private String transactionReference;
     private String accountNumber;
+    private String narration;
     private PaymentChannel paymentChannel;
     @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
@@ -63,11 +65,11 @@ public class Payment {
         this.id = id;
     }
 
-    public String getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -93,6 +95,14 @@ public class Payment {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public String getNarration() {
+        return narration;
+    }
+
+    public void setNarration(String narration) {
+        this.narration = narration;
     }
 
     public PaymentChannel getPaymentChannel() {
@@ -179,10 +189,11 @@ public class Payment {
     public String toString() {
         return "Payment{" +
                 "id=" + id +
-                ", amount='" + amount + '\'' +
+                ", amount=" + amount +
                 ", popUrl='" + popUrl + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
                 ", accountNumber='" + accountNumber + '\'' +
+                ", narration='" + narration + '\'' +
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
                 ", currency=" + currency +

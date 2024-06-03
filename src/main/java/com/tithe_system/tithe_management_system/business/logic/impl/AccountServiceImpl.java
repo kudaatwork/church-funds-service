@@ -4,7 +4,7 @@ import com.tithe_system.tithe_management_system.business.auditables.api.AccountS
 import com.tithe_system.tithe_management_system.business.logic.api.AccountService;
 import com.tithe_system.tithe_management_system.business.validations.api.AccountServiceValidator;
 import com.tithe_system.tithe_management_system.domain.Account;
-import com.tithe_system.tithe_management_system.domain.AccountNarration;
+import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.repository.AccountRepository;
@@ -99,6 +99,7 @@ public class AccountServiceImpl implements AccountService {
         accountToBeSaved.setDebitBalance(BigDecimal.ZERO);
         accountToBeSaved.setCumulativeBalance(BigDecimal.ZERO);
         accountToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
+        accountToBeSaved.setNarration(Narration.ACCOUNT_CREATION.getAccountNarration());
 
         Account accountSaved = accountServiceAuditable.create(accountToBeSaved, locale, username);
 
@@ -137,14 +138,14 @@ public class AccountServiceImpl implements AccountService {
 
         Account accountToBeUpdated = accountRetrieved.get();
 
-        if (updateAccountRequest.getNarration().equals(AccountNarration.PAYMENT.toString())) {
+        if (updateAccountRequest.getNarration().equals(Narration.PAYMENT.toString())) {
 
             accountToBeUpdated.setDebitBalance(updateAccountRequest.getAmount());
             accountToBeUpdated.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
                     .add(updateAccountRequest.getAmount()));
         }
 
-        if (updateAccountRequest.getNarration().equals(AccountNarration.REVERSAL.toString())) {
+        if (updateAccountRequest.getNarration().equals(Narration.REVERSAL.toString())) {
 
             accountToBeUpdated.setCreditBalance(updateAccountRequest.getAmount());
             accountToBeUpdated.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()

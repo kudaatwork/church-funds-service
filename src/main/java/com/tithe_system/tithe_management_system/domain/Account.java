@@ -28,6 +28,7 @@ public class Account {
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
     private String name;
+    private String narration;
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -69,25 +70,6 @@ public class Account {
         this.accountNumber = accountNumber;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", transactionReference='" + transactionReference + '\'' +
-                ", debitBalance=" + debitBalance +
-                ", creditBalance=" + creditBalance +
-                ", cumulativeBalance=" + cumulativeBalance +
-                ", name='" + name + '\'' +
-                ", currency=" + currency +
-                ", userAccount=" + userAccount +
-                ", assembly=" + assembly +
-                ", dateCreated=" + dateCreated +
-                ", dateLastModified=" + dateLastModified +
-                ", entityStatus=" + entityStatus +
-                '}';
-    }
-
     public String getTransactionReference() {
         return transactionReference;
     }
@@ -126,6 +108,14 @@ public class Account {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNarration() {
+        return narration;
+    }
+
+    public void setNarration(String accountNarration) {
+        this.narration = accountNarration;
     }
 
     public Currency getCurrency() {
@@ -176,4 +166,23 @@ public class Account {
         this.entityStatus = entityStatus;
     }
 
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", transactionReference='" + transactionReference + '\'' +
+                ", debitBalance=" + debitBalance +
+                ", creditBalance=" + creditBalance +
+                ", cumulativeBalance=" + cumulativeBalance +
+                ", name='" + name + '\'' +
+                ", accountNarration='" + narration + '\'' +
+                ", currency=" + currency +
+                ", userAccount=" + userAccount +
+                ", assembly=" + assembly +
+                ", dateCreated=" + dateCreated +
+                ", dateLastModified=" + dateLastModified +
+                ", entityStatus=" + entityStatus +
+                '}';
+    }
 }
