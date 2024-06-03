@@ -5,7 +5,6 @@ public class CreateAccountRequest {
     private String name;
     private String currency;
     private Long assemblyId;
-    private Long userAccountId;
 
     public String getAccountNumber() {
         return accountNumber;
@@ -39,14 +38,6 @@ public class CreateAccountRequest {
         this.assemblyId = assemblyId;
     }
 
-    public Long getUserAccountId() {
-        return userAccountId;
-    }
-
-    public void setUserAccountId(Long userAccountId) {
-        this.userAccountId = userAccountId;
-    }
-
     @Override
     public String toString() {
         return "CreateAccountRequest{" +
@@ -54,7 +45,6 @@ public class CreateAccountRequest {
                 ", name='" + name + '\'' +
                 ", currency='" + currency + '\'' +
                 ", assemblyId=" + assemblyId +
-                ", userAccountId=" + userAccountId +
                 '}';
     }
 }

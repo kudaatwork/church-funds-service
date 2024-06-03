@@ -19,7 +19,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.PaymentDto;
 import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
-import com.tithe_system.tithe_management_system.utils.generators.UniqueCodesGenerator;
+import com.tithe_system.tithe_management_system.utils.generators.AccountAndReferencesGenerator;
 import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
@@ -119,7 +119,7 @@ public class PaymentServiceImpl implements PaymentService {
                     null);
         }
 
-        createPaymentRequest.setTransactionReference("CFM" + UniqueCodesGenerator.getUniqueId().toString());
+        createPaymentRequest.setTransactionReference("CFM" + AccountAndReferencesGenerator.getTransactionReference().toString());
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Payment paymentToBeSaved = modelMapper.map(createPaymentRequest, Payment.class);

@@ -15,6 +15,7 @@ import com.tithe_system.tithe_management_system.utils.requests.EditUserRoleReque
 import com.tithe_system.tithe_management_system.utils.responses.UserRoleResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -71,6 +72,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                     null);
         }
 
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserRole userRoleToBeSaved = modelMapper.map(createUserRoleRequest, UserRole.class);
 
         UserRole userRoleSaved = userRoleServiceAuditable.create(userRoleToBeSaved, locale, username);

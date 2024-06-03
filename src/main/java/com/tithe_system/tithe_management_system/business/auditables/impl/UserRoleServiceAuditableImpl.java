@@ -15,16 +15,16 @@ public class UserRoleServiceAuditableImpl implements UserRoleServiceAuditable {
 
     @Override
     public UserRole create(UserRole userRole, Locale locale, String username) {
-        return null;
+        return userRoleRepository.save(userRole);
     }
 
     @Override
     public UserRole edit(UserRole userRole, Locale locale, String username) {
-        return null;
+        return userRoleRepository.save(userRole);
     }
 
     @Override
     public UserRole delete(UserRole userRole, Locale locale) {
-        return null;
+        return userRoleRepository.save(userRole);
     }
 }

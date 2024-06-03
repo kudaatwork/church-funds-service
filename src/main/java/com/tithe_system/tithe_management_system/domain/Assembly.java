@@ -35,9 +35,6 @@ public class Assembly {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "province_id", referencedColumnName = "id")
     private Province province;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_account_id", referencedColumnName = "id")
-    private UserAccount userAccount;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     @Column(name = "entity_status", nullable = false)
@@ -119,14 +116,6 @@ public class Assembly {
         this.province = province;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
-    }
-
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
@@ -162,7 +151,6 @@ public class Assembly {
                 ", district=" + district +
                 ", region=" + region +
                 ", province=" + province +
-                ", userAccount=" + userAccount +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +

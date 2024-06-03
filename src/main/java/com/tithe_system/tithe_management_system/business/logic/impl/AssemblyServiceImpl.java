@@ -24,9 +24,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
 import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
-import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
-import com.tithe_system.tithe_management_system.utils.generators.UniqueCodesGenerator;
 import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAssemblyRequest;
@@ -127,16 +125,6 @@ public class AssemblyServiceImpl implements AssemblyService {
                     null);
         }
 
-        Optional<UserAccount> userAccountRetrieved = userAccountRepository.findByIdAndEntityStatusNot(
-                createAssemblyRequest.getUserAccountId(), EntityStatus.DELETED);
-
-        if (userAccountRetrieved.isEmpty()) {
-            message = messageService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
-                    locale);
-            return buildAssemblyResponse(400, false, message, null, null,
-                    null);
-        }
-
         Optional<Assembly> assemblyRetrieved = assemblyRepository.findByNameAndEntityStatusNot(
                 createAssemblyRequest.getName(), EntityStatus.DELETED);
 
@@ -174,15 +162,11 @@ public class AssemblyServiceImpl implements AssemblyService {
         logger.info("Outgoing response after creating an account : {}", accountResponse);
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        UserAccountDto userAccountDto = modelMapper.map(userAccountRetrieved.get(), UserAccountDto.class);
-
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblySaved, AssemblyDto.class);
         assemblyDtoReturned.setRegionDto(regionDto);
         assemblyDtoReturned.setProvinceDto(provinceDto);
         assemblyDtoReturned.setDistrictDto(districtDto);
         assemblyDtoReturned.setAccountDto(accountResponse.getAccountDto());
-        assemblyDtoReturned.setUserAccountDto(userAccountDto);
 
         message = messageService.getMessage(I18Code.MESSAGE_ASSEMBLY_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
@@ -462,7 +446,6 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         CreateAccountRequest createAccountRequest = new CreateAccountRequest();
         createAccountRequest.setAssemblyId(assemblySaved.getId());
-        createAccountRequest.setUserAccountId(assemblySaved.getUserAccount().getId());
         createAccountRequest.setCurrency(Currency.USD.getCurrency());
         createAccountRequest.setName(assemblySaved.getName());
 

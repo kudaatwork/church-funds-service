@@ -15,16 +15,16 @@ public class UserGroupServiceAuditableImpl implements UserGroupServiceAuditable 
 
     @Override
     public UserGroup create(UserGroup userGroup, Locale locale, String username) {
-        return null;
+        return userGroupRepository.save(userGroup);
     }
 
     @Override
     public UserGroup edit(UserGroup userGroup, Locale locale, String username) {
-        return null;
+        return userGroupRepository.save(userGroup);
     }
 
     @Override
     public UserGroup delete(UserGroup userGroup, Locale locale) {
-        return null;
+        return userGroupRepository.save(userGroup);
     }
 }

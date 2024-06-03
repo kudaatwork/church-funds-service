@@ -32,8 +32,8 @@ public class AccountServiceValidatorImpl implements AccountServiceValidator {
             return false;
         }
 
-        if (createAccountRequest.getAssemblyId() == null || createAccountRequest.getUserAccountId() == null ||
-        createAccountRequest.getAssemblyId() < 1 || createAccountRequest.getUserAccountId() < 1) {
+        if (createAccountRequest.getAssemblyId() == null ||
+        createAccountRequest.getAssemblyId() < 1) {
             return false;
         }
 

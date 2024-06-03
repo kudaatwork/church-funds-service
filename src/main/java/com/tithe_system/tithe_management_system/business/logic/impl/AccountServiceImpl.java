@@ -7,13 +7,12 @@ import com.tithe_system.tithe_management_system.domain.Account;
 import com.tithe_system.tithe_management_system.domain.AccountNarration;
 import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
-import com.tithe_system.tithe_management_system.domain.UserAccount;
 import com.tithe_system.tithe_management_system.repository.AccountRepository;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.UserAccountRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.AccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
-import com.tithe_system.tithe_management_system.utils.generators.UniqueCodesGenerator;
+import com.tithe_system.tithe_management_system.utils.generators.AccountAndReferencesGenerator;
 import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
@@ -24,6 +23,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,24 +78,12 @@ public class AccountServiceImpl implements AccountService {
                     null);
         }
 
-        Optional<UserAccount> userAccountRetrieved = userAccountRepository.findByIdAndEntityStatusNot(
-                createAccountRequest.getUserAccountId(), EntityStatus.DELETED);
-
-        if (userAccountRetrieved.isEmpty()) {
-
-            message = messageService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
-                    locale);
-
-            return buildAccountResponse(400, false, message, null, null,
-                    null);
-        }
-
-        createAccountRequest.setAccountNumber("ASS-" + UniqueCodesGenerator.getUniqueId());
+        createAccountRequest.setAccountNumber(AccountAndReferencesGenerator.getAccountNumber());
 
         Optional<Account> accountRetrieved = accountRepository.findByAccountNumberAndEntityStatusNot(
                 createAccountRequest.getAccountNumber(), EntityStatus.DELETED);
 
-        if (accountRetrieved.isEmpty()) {
+        if (accountRetrieved.isPresent()) {
 
             message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
@@ -105,6 +94,11 @@ public class AccountServiceImpl implements AccountService {
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Account accountToBeSaved = modelMapper.map(createAccountRequest, Account.class);
+        accountToBeSaved.setAssembly(assemblyRetrieved.get());
+        accountToBeSaved.setCreditBalance(BigDecimal.ZERO);
+        accountToBeSaved.setDebitBalance(BigDecimal.ZERO);
+        accountToBeSaved.setCumulativeBalance(BigDecimal.ZERO);
+        accountToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
 
         Account accountSaved = accountServiceAuditable.create(accountToBeSaved, locale, username);
 

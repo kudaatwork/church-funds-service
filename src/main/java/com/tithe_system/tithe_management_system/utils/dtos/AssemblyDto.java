@@ -14,7 +14,6 @@ public class AssemblyDto {
     private DistrictDto districtDto;
     private RegionDto regionDto;
     private ProvinceDto provinceDto;
-    private UserAccountDto userAccountDto;
     private AccountDto accountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
@@ -84,14 +83,6 @@ public class AssemblyDto {
         this.provinceDto = provinceDto;
     }
 
-    public UserAccountDto getUserAccountDto() {
-        return userAccountDto;
-    }
-
-    public void setUserAccountDto(UserAccountDto userAccountDto) {
-        this.userAccountDto = userAccountDto;
-    }
-
     @Override
     public String toString() {
         return "AssemblyDto{" +
@@ -103,7 +94,6 @@ public class AssemblyDto {
                 ", districtDto=" + districtDto +
                 ", regionDto=" + regionDto +
                 ", provinceDto=" + provinceDto +
-                ", userAccountDto=" + userAccountDto +
                 ", accountDto=" + accountDto +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +

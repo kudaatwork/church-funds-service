@@ -3,16 +3,15 @@ package com.tithe_system.tithe_management_system.utils.generators;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class UniqueCodesGenerator {
+public class AccountAndReferencesGenerator {
 
-    public static String getTicketId(String vehicleReg) {
+    public static String getAccountNumber() {
         LocalDateTime date = LocalDateTime.now();
         String s = date.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS"));
-        String ticketId = "ECO" + vehicleReg + s.replace(".", "");
-        return ticketId;
+        return s.replace(".", "");
     }
 
-    public static Long getUniqueId() {
+    public static Long getTransactionReference() {
 
         Long l = System.currentTimeMillis();
         StringBuilder builder = new StringBuilder();

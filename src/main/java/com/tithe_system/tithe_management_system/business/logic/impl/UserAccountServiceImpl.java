@@ -14,6 +14,7 @@ import com.tithe_system.tithe_management_system.repository.UserAccountRepository
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
+import com.tithe_system.tithe_management_system.utils.generators.PasswordEncryptionAlgorithm;
 import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserAccountRequest;
@@ -104,6 +105,8 @@ public class UserAccountServiceImpl implements UserAccountService {
             return buildUserAccountResponse(400, false, message, null, null,
                     null);
         }
+
+        PasswordEncryptionAlgorithm.encrypt(createUserAccountRequest.getPassword());
 
         UserAccount userAccountToBeSaved = modelMapper.map(createUserAccountRequest, UserAccount.class);
 
