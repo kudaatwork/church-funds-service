@@ -222,13 +222,38 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         Province provinceToBeDeleted = provinceRetrieved.get();
         provinceToBeDeleted.setEntityStatus(EntityStatus.DELETED);
-        provinceToBeDeleted.setName(provinceToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
+        provinceToBeDeleted.setName(provinceToBeDeleted.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+        List<District> districtsListToBeDeleted = new ArrayList<>();
+        List<Assembly> assembliesListToBeDeleted = new ArrayList<>();
 
         List<District> districtsRetrieved = districtRepository.findByProvinceIdAndEntityStatusNot(provinceToBeDeleted.getId(),
                 EntityStatus.DELETED);
 
         List<Assembly> assembliesRetrieved = assemblyRepository.findByProvinceIdAndEntityStatusNot(provinceToBeDeleted.getId(),
                 EntityStatus.DELETED);
+
+        if (!districtsRetrieved.isEmpty()) {
+
+            for (District district: districtsRetrieved) {
+
+                district.setEntityStatus(EntityStatus.DELETED);
+                district.setName(district.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+                districtsListToBeDeleted.add(district);
+            }
+        }
+
+        if (!assembliesRetrieved.isEmpty()) {
+
+            for (Assembly assembly: assembliesRetrieved) {
+
+                assembly.setEntityStatus(EntityStatus.DELETED);
+                assembly.setName(assembly.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+                assembliesListToBeDeleted.add(assembly);
+            }
+        }
 
         Province provinceDeleted = provinceServiceAuditable.delete(provinceToBeDeleted, locale);
 
