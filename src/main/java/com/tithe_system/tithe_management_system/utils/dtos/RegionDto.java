@@ -14,7 +14,6 @@ public class RegionDto {
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     private EntityStatus entityStatus;
-    private ProvinceDto provinceDto;
 
     public Long getId() {
         return id;
@@ -72,14 +71,6 @@ public class RegionDto {
         this.entityStatus = entityStatus;
     }
 
-    public ProvinceDto getProvinceDto() {
-        return provinceDto;
-    }
-
-    public void setProvinceDto(ProvinceDto provinceDto) {
-        this.provinceDto = provinceDto;
-    }
-
     @Override
     public String toString() {
         return "RegionDto{" +
@@ -90,7 +81,6 @@ public class RegionDto {
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +
-                ", provinceDto=" + provinceDto +
                 '}';
     }
 }

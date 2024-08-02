@@ -18,7 +18,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
 import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
-import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
+import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateDistrictRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditDistrictRequest;
 import com.tithe_system.tithe_management_system.utils.responses.DistrictResponse;
@@ -45,9 +45,9 @@ public class DistrictServiceImpl implements DistrictService {
     private final ModelMapper modelMapper;
     private final DistrictServiceAuditable districtServiceAuditable;
     private final AssemblyServiceAuditable assemblyServiceAuditable;
-    private final MessageService messageService;
+    private final ApplicationMessagesService applicationMessagesService;
 
-    public DistrictServiceImpl(DistrictServiceValidator districtServiceValidator, DistrictRepository districtRepository, ProvinceRepository provinceRepository, RegionRepository regionRepository, AssemblyRepository assemblyRepository, ModelMapper modelMapper, DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable, MessageService messageService) {
+    public DistrictServiceImpl(DistrictServiceValidator districtServiceValidator, DistrictRepository districtRepository, ProvinceRepository provinceRepository, RegionRepository regionRepository, AssemblyRepository assemblyRepository, ModelMapper modelMapper, DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable, ApplicationMessagesService applicationMessagesService) {
         this.districtServiceValidator = districtServiceValidator;
         this.districtRepository = districtRepository;
         this.provinceRepository = provinceRepository;
@@ -56,7 +56,7 @@ public class DistrictServiceImpl implements DistrictService {
         this.modelMapper = modelMapper;
         this.districtServiceAuditable = districtServiceAuditable;
         this.assemblyServiceAuditable = assemblyServiceAuditable;
-        this.messageService = messageService;
+        this.applicationMessagesService = applicationMessagesService;
     }
 
 
@@ -68,7 +68,7 @@ public class DistrictServiceImpl implements DistrictService {
         boolean isRequestValid = districtServiceValidator.isRequestValidForCreation(createDistrictRequest);
 
         if (!isRequestValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_CREATE_DISTRICT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_DISTRICT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -80,7 +80,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (provinceRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -92,7 +92,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (regionRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -104,7 +104,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (districtRetrieved.isPresent()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -127,7 +127,7 @@ public class DistrictServiceImpl implements DistrictService {
         districtDtoReturned.setRegionDto(regionDto);
         districtDtoReturned.setProvinceDto(provinceDto);
 
-        message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildDistrictResponse(201, true, message, districtDtoReturned, null,
@@ -143,7 +143,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if(!isRequestValid){
 
-            message = messageService.getMessage(I18Code.MESSAGE_EDIT_DISTRICT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_DISTRICT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -155,7 +155,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (provinceRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -167,7 +167,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (regionRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -179,7 +179,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (districtRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -191,7 +191,7 @@ public class DistrictServiceImpl implements DistrictService {
         if (Objects.equals(districtToBeEdited.getId(), editDistrictRequest.getId()) &&
                 Objects.equals(districtToBeEdited.getName().toLowerCase(), editDistrictRequest.getName().toLowerCase())) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null,
@@ -212,7 +212,7 @@ public class DistrictServiceImpl implements DistrictService {
         districtDtoReturned.setProvinceDto(provinceDto);
         districtDtoReturned.setRegionDto(regionDto);
 
-        message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildDistrictResponse(201, true, message, districtDtoReturned, null,
@@ -227,7 +227,7 @@ public class DistrictServiceImpl implements DistrictService {
         boolean isIdValid = districtServiceValidator.isIdValid(id);
 
         if (!isIdValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_INVALID_DISTRICT_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_DISTRICT_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -237,7 +237,7 @@ public class DistrictServiceImpl implements DistrictService {
         Optional<District> districtRetrieved = districtRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (districtRetrieved.isEmpty()) {
-            message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
             return buildDistrictResponse(404, false, message, null, null,
                     null);
@@ -260,7 +260,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         districtDtoReturned.setAssemblyDtoList(assemblyDtoList);
 
-        message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildDistrictResponse(200, true, message, districtDtoReturned, null,
@@ -275,7 +275,7 @@ public class DistrictServiceImpl implements DistrictService {
         boolean isIdValid = districtServiceValidator.isIdValid(id);
 
         if(!isIdValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_INVALID_DISTRICT_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_DISTRICT_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
             return buildDistrictResponse(400, false, message, null, null,
                     null);
@@ -285,7 +285,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         if (districtRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(404, false, message, null, null,
@@ -296,7 +296,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         DistrictDto districtDto = modelMapper.map(districtReturned, DistrictDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildDistrictResponse(200, true, message, districtDto, null,
@@ -311,7 +311,7 @@ public class DistrictServiceImpl implements DistrictService {
         List<District> districtList = districtRepository.findByEntityStatusNot(EntityStatus.DELETED);
 
         if(districtList.isEmpty()) {
-            message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]
                     {}, locale);
             return buildDistrictResponse(404, false, message, null,
                     null, null);
@@ -319,7 +319,7 @@ public class DistrictServiceImpl implements DistrictService {
 
         List<DistrictDto> districtDtoList = modelMapper.map(districtList, new TypeToken<List<DistrictDto>>(){}.getType());
 
-        message = messageService.getMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildDistrictResponse(200, true, message, null,
@@ -339,14 +339,14 @@ public class DistrictServiceImpl implements DistrictService {
 
         if(districtPage.getContent().isEmpty()){
 
-            message =  messageService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildDistrictResponse(404, false, message, null, null,
                     districtDtoPage);
         }
 
-        message =  messageService.getMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildDistrictResponse(200, true, message, null,

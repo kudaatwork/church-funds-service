@@ -3,7 +3,6 @@ package com.tithe_system.tithe_management_system.utils.requests;
 public class EditRegionRequest {
     private Long id;
     private String name;
-    private Long provinceId;
 
     public Long getId() {
         return id;
@@ -21,20 +20,11 @@ public class EditRegionRequest {
         this.name = name;
     }
 
-    public Long getProvinceId() {
-        return provinceId;
-    }
-
-    public void setProvinceId(Long provinceId) {
-        this.provinceId = provinceId;
-    }
-
     @Override
     public String toString() {
         return "EditRegionRequest{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", provinceId=" + provinceId +
                 '}';
     }
 }

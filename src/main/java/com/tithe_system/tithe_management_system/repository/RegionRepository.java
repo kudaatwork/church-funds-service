@@ -15,5 +15,4 @@ public interface RegionRepository extends JpaRepository<Region, Long>, JpaSpecif
     Optional<Region> findByNameAndEntityStatusNot(String name, EntityStatus entityStatus);
     List<Region> findByEntityStatusNot(EntityStatus entityStatus);
     Page<Region> findByEntityStatusNot(EntityStatus entityStatus, Pageable pageable);
-    List<Region> findByProvinceIdAndEntityStatusNot(Long provinceId, EntityStatus entityStatus);
 }

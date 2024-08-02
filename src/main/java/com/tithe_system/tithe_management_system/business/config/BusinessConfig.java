@@ -65,7 +65,7 @@ import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
 import com.tithe_system.tithe_management_system.repository.UserRoleRepository;
 import com.tithe_system.tithe_management_system.repository.config.DataConfig;
 import com.tithe_system.tithe_management_system.utils.config.UtilsConfig;
-import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
+import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -92,10 +92,10 @@ public class BusinessConfig {
                                            ModelMapper modelMapper, ProvinceServiceAuditable
                                            provinceServiceAuditable, RegionServiceAuditable regionServiceAuditable,
                                            DistrictServiceAuditable districtServiceAuditable,
-                                           AssemblyServiceAuditable assemblyServiceAuditable, MessageService messageService) {
+                                           AssemblyServiceAuditable assemblyServiceAuditable, ApplicationMessagesService applicationMessagesService) {
         return new ProvinceServiceImpl(provinceServiceValidator, provinceRepository, regionRepository, districtRepository,
                 assemblyRepository, modelMapper, provinceServiceAuditable, regionServiceAuditable, districtServiceAuditable,
-                assemblyServiceAuditable, messageService);
+                assemblyServiceAuditable, applicationMessagesService);
     }
 
     @Bean
@@ -113,9 +113,9 @@ public class BusinessConfig {
             districtRepository, ProvinceRepository provinceRepository, RegionRepository regionRepository, AssemblyRepository
             assemblyRepository, ModelMapper modelMapper, DistrictServiceAuditable
                                                    districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable,
-                                           MessageService messageService) {
+                                           ApplicationMessagesService applicationMessagesService) {
         return new DistrictServiceImpl(districtServiceValidator, districtRepository, provinceRepository, regionRepository,
-                assemblyRepository, modelMapper, districtServiceAuditable, assemblyServiceAuditable, messageService);
+                assemblyRepository, modelMapper, districtServiceAuditable, assemblyServiceAuditable, applicationMessagesService);
     }
 
     @Bean
@@ -133,10 +133,10 @@ public class BusinessConfig {
                                        ProvinceRepository provinceRepository, DistrictRepository districtRepository,
                                        AssemblyRepository assemblyRepository, ModelMapper modelMapper, RegionServiceAuditable
                                                    regionServiceAuditable, DistrictServiceAuditable districtServiceAuditable,
-                                       AssemblyServiceAuditable assemblyServiceAuditable, MessageService messageService) {
+                                       AssemblyServiceAuditable assemblyServiceAuditable, ApplicationMessagesService applicationMessagesService) {
         return new RegionServiceImpl(regionServiceValidator, regionRepository, districtRepository,
                 assemblyRepository, provinceRepository, modelMapper, regionServiceAuditable, districtServiceAuditable, assemblyServiceAuditable,
-                messageService);
+                applicationMessagesService);
     }
 
     @Bean
@@ -161,11 +161,11 @@ public class BusinessConfig {
                                            AccountRepository accountRepository,
                                            ModelMapper modelMapper,
                                            AssemblyServiceAuditable assemblyServiceAuditable,
-                                           AccountServiceAuditable accountServiceAuditable, MessageService
-                                                       messageService, AccountService accountService) {
+                                           AccountServiceAuditable accountServiceAuditable, ApplicationMessagesService
+                                                   applicationMessagesService, AccountService accountService) {
         return new AssemblyServiceImpl(assemblyServiceValidator, assemblyRepository, districtRepository,
                 provinceRepository, regionRepository, userAccountRepository, accountRepository, modelMapper, assemblyServiceAuditable,
-                accountServiceAuditable, messageService, accountService);
+                accountServiceAuditable, applicationMessagesService, accountService);
     }
 
     @Bean
@@ -177,19 +177,19 @@ public class BusinessConfig {
     public AccountService accountService(AccountServiceValidator accountServiceValidator, AccountServiceAuditable accountServiceAuditable,
                                          AccountRepository accountRepository, AssemblyRepository assemblyRepository,
                                          UserAccountRepository userAccountRepository, ModelMapper modelMapper,
-                                         MessageService messageService){
+                                         ApplicationMessagesService applicationMessagesService){
         return new AccountServiceImpl(accountServiceValidator, accountServiceAuditable, accountRepository,
-                assemblyRepository, userAccountRepository, modelMapper, messageService);
+                assemblyRepository, userAccountRepository, modelMapper, applicationMessagesService);
     }
 
     @Bean
     public PaymentService paymentService(PaymentServiceValidator paymentServiceValidator, PaymentRepository paymentRepository,
                                          AssemblyRepository assemblyRepository, UserAccountRepository userAccountRepository,
                                          AccountRepository accountRepository, ModelMapper modelMapper, PaymentServiceAuditable
-                                                     paymentServiceAuditable, MessageService messageService, AccountService
+                                                     paymentServiceAuditable, ApplicationMessagesService applicationMessagesService, AccountService
                                                      accountService){
         return new PaymentServiceImpl(paymentServiceValidator, paymentRepository, assemblyRepository,
-                userAccountRepository, accountRepository, modelMapper, paymentServiceAuditable, messageService, accountService);
+                userAccountRepository, accountRepository, modelMapper, paymentServiceAuditable, applicationMessagesService, accountService);
     }
 
     @Bean
@@ -216,9 +216,9 @@ public class BusinessConfig {
     public UserAccountService userAccountService(UserAccountServiceValidator userAccountServiceValidator, UserAccountRepository
             userAccountRepository, UserGroupRepository userGroupRepository, AssemblyRepository assemblyRepository,
                                                  ModelMapper modelMapper, UserAccountServiceAuditable userAccountServiceAuditable,
-                                                 MessageService messageService){
+                                                 ApplicationMessagesService applicationMessagesService){
         return new UserAccountServiceImpl(userAccountServiceValidator, userAccountRepository, userGroupRepository,
-              assemblyRepository, modelMapper, userAccountServiceAuditable, messageService);
+              assemblyRepository, modelMapper, userAccountServiceAuditable, applicationMessagesService);
     }
 
     @Bean
@@ -232,9 +232,9 @@ public class BusinessConfig {
     @Bean
     public UserGroupService userGroupService(UserGroupServiceValidator userGroupServiceValidator, UserGroupRepository userGroupRepository,
                                              ModelMapper modelMapper, UserGroupServiceAuditable userGroupServiceAuditable,
-                                             MessageService messageService){
+                                             ApplicationMessagesService applicationMessagesService){
         return new UserGroupServiceImpl(userGroupServiceValidator, userGroupRepository, modelMapper,
-                userGroupServiceAuditable, messageService);
+                userGroupServiceAuditable, applicationMessagesService);
     }
 
     @Bean
@@ -248,8 +248,8 @@ public class BusinessConfig {
     @Bean
     public UserRoleService userRoleService(UserRoleServiceValidator userGroupServiceValidator, UserRoleRepository userRoleRepository,
                                             ModelMapper modelMapper, UserRoleServiceAuditable userRoleServiceAuditable,
-                                            MessageService messageService){
+                                            ApplicationMessagesService applicationMessagesService){
         return new UserRoleServiceImpl(userGroupServiceValidator, userRoleRepository, modelMapper,
-                userRoleServiceAuditable, messageService);
+                userRoleServiceAuditable, applicationMessagesService);
     }
 }

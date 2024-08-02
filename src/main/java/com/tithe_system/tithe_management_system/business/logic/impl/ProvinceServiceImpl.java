@@ -10,7 +10,6 @@ import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.District;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.Province;
-import com.tithe_system.tithe_management_system.domain.Region;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
@@ -18,9 +17,8 @@ import com.tithe_system.tithe_management_system.repository.RegionRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
-import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
-import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
+import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateProvinceRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditProvinceRequest;
 import com.tithe_system.tithe_management_system.utils.responses.ProvinceResponse;
@@ -49,12 +47,12 @@ public class ProvinceServiceImpl implements ProvinceService {
     private final RegionServiceAuditable regionServiceAuditable;
     private final DistrictServiceAuditable districtServiceAuditable;
     private final AssemblyServiceAuditable assemblyServiceAuditable;
-    private final MessageService messageService;
+    private final ApplicationMessagesService applicationMessagesService;
 
     public ProvinceServiceImpl(ProvinceServiceValidator provinceServiceValidator, ProvinceRepository provinceRepository,
                                RegionRepository regionRepository, DistrictRepository districtRepository,
                                AssemblyRepository assemblyRepository, ModelMapper modelMapper, ProvinceServiceAuditable
-                                       provinceServiceAuditable, RegionServiceAuditable regionServiceAuditable, DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable, MessageService messageService) {
+                                       provinceServiceAuditable, RegionServiceAuditable regionServiceAuditable, DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable, ApplicationMessagesService applicationMessagesService) {
         this.provinceServiceValidator = provinceServiceValidator;
         this.provinceRepository = provinceRepository;
         this.regionRepository = regionRepository;
@@ -65,7 +63,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         this.regionServiceAuditable = regionServiceAuditable;
         this.districtServiceAuditable = districtServiceAuditable;
         this.assemblyServiceAuditable = assemblyServiceAuditable;
-        this.messageService = messageService;
+        this.applicationMessagesService = applicationMessagesService;
     }
 
     @Override
@@ -77,7 +75,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (!isRequestValid) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_CREATE_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -89,7 +87,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (provinceRetrieved.isPresent()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -102,7 +100,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         ProvinceDto provinceDtoReturned = modelMapper.map(provinceSaved, ProvinceDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(201, true, message, provinceDtoReturned, null,
@@ -118,7 +116,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(!isRequestValid){
 
-            message = messageService.getMessage(I18Code.MESSAGE_EDIT_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -130,7 +128,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (provinceRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -142,7 +140,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         if (Objects.equals(provinceToBeEdited.getId(), editProvinceRequest.getId()) &&
                 Objects.equals(provinceToBeEdited.getName().toLowerCase(), editProvinceRequest.getName().toLowerCase())) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null,
@@ -157,7 +155,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         ProvinceDto provinceDtoReturned = modelMapper.map(provinceEdited, ProvinceDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(201, true, message, provinceDtoReturned, null,
@@ -172,7 +170,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         boolean isIdValid = provinceServiceValidator.isIdValid(id);
 
         if (!isIdValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -182,7 +180,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (provinceRetrieved.isEmpty()) {
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
             return buildProvinceResponse(404, false, message, null, null,
                     null);
@@ -192,9 +190,6 @@ public class ProvinceServiceImpl implements ProvinceService {
         provinceToBeDeleted.setEntityStatus(EntityStatus.DELETED);
         provinceToBeDeleted.setName(provinceToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
 
-        List<Region> regionsRetrieved  = regionRepository.findByProvinceIdAndEntityStatusNot(provinceToBeDeleted.getId(),
-                EntityStatus.DELETED);
-
         List<District> districtsRetrieved = districtRepository.findByProvinceIdAndEntityStatusNot(provinceToBeDeleted.getId(),
                 EntityStatus.DELETED);
 
@@ -203,21 +198,18 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         Province provinceDeleted = provinceServiceAuditable.delete(provinceToBeDeleted, locale);
 
-        List<Region> regionListDeleted = regionServiceAuditable.deleteAll(regionsRetrieved, locale);
         List<District> districtListDeleted = districtServiceAuditable.deleteAll(districtsRetrieved, locale);
         List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesRetrieved, locale);
 
         ProvinceDto provinceDtoReturned = modelMapper.map(provinceDeleted, ProvinceDto.class);
 
-        List<RegionDto> regionDtoList = modelMapper.map(regionListDeleted, new TypeToken<List<RegionDto>>(){}.getType());
         List<DistrictDto> districtDtoList = modelMapper.map(districtListDeleted, new TypeToken<List<DistrictDto>>(){}.getType());
         List<AssemblyDto> assemblyDtoList = modelMapper.map(assembliesListDeleted, new TypeToken<List<AssemblyDto>>(){}.getType());
 
-        provinceDtoReturned.setRegionDtoList(regionDtoList);
         provinceDtoReturned.setDistrictDtoList(districtDtoList);
         provinceDtoReturned.setAssemblyDtoList(assemblyDtoList);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(200, true, message, provinceDtoReturned, null,
@@ -233,7 +225,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(!isIdValid) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -244,7 +236,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (provinceRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(404, false, message, null, null,
@@ -255,7 +247,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         ProvinceDto provinceDto = modelMapper.map(provinceReturned, ProvinceDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(200, true, message, provinceDto, null,
@@ -271,7 +263,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(provinceList.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]
                     {}, locale);
 
             return buildProvinceResponse(404, false, message, null,
@@ -280,7 +272,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         List<ProvinceDto> provinceDtoList = modelMapper.map(provinceList, new TypeToken<List<ProvinceDto>>(){}.getType());
 
-        message = messageService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildProvinceResponse(200, true, message, null,
@@ -300,14 +292,14 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(provincePage.getContent().isEmpty()){
 
-            message =  messageService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildProvinceResponse(404, false, message, null, null,
                     provinceDtoPage);
         }
 
-        message =  messageService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildProvinceResponse(200, true, message, null,

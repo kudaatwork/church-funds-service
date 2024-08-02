@@ -13,7 +13,7 @@ import com.tithe_system.tithe_management_system.repository.UserAccountRepository
 import com.tithe_system.tithe_management_system.utils.dtos.AccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.AccountAndReferencesGenerator;
-import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
+import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AccountResponse;
@@ -37,18 +37,18 @@ public class AccountServiceImpl implements AccountService {
     private final AssemblyRepository assemblyRepository;
     private final UserAccountRepository userAccountRepository;
     private final ModelMapper modelMapper;
-    private final MessageService messageService;
+    private final ApplicationMessagesService applicationMessagesService;
 
     public AccountServiceImpl(AccountServiceValidator accountServiceValidator, AccountServiceAuditable accountServiceAuditable,
                               AccountRepository accountRepository, AssemblyRepository assemblyRepository, UserAccountRepository userAccountRepository, ModelMapper modelMapper,
-                              MessageService messageService) {
+                              ApplicationMessagesService applicationMessagesService) {
         this.accountServiceValidator = accountServiceValidator;
         this.accountServiceAuditable = accountServiceAuditable;
         this.accountRepository = accountRepository;
         this.assemblyRepository = assemblyRepository;
         this.userAccountRepository = userAccountRepository;
         this.modelMapper = modelMapper;
-        this.messageService = messageService;
+        this.applicationMessagesService = applicationMessagesService;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
         boolean isRequestValid = accountServiceValidator.isCreateRequestValid(createAccountRequest);
 
         if (!isRequestValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_CREATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -71,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (assemblyRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -85,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountRetrieved.isPresent()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -105,7 +105,7 @@ public class AccountServiceImpl implements AccountService {
 
         AccountDto accountDtoReturned = modelMapper.map(accountSaved, AccountDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAccountResponse(201, true, message, accountDtoReturned, null,
@@ -120,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
        boolean isRequestValid = accountServiceValidator.isUpdateRequestValid(updateAccountRequest);
 
         if (!isRequestValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_UPDATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_UPDATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -130,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountRetrieved = accountRepository.findByIdAndEntityStatusNot(updateAccountRequest.getId(), EntityStatus.DELETED);
 
         if (accountRetrieved.isEmpty()) {
-            message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
             return buildAccountResponse(404, false, message, null, null,
                     null);
@@ -156,7 +156,7 @@ public class AccountServiceImpl implements AccountService {
 
         AccountDto accountDtoReturned = modelMapper.map(accountSaved, AccountDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_UPDATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_UPDATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
         return buildAccountResponse(201, false, message, null, null,
                 null);
@@ -171,7 +171,7 @@ public class AccountServiceImpl implements AccountService {
 
         if(!isIdValid) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_INVALID_ACCOUNT_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_ACCOUNT_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -182,7 +182,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(404, false, message, null, null,
@@ -193,7 +193,7 @@ public class AccountServiceImpl implements AccountService {
 
         AccountDto accountDto = modelMapper.map(accountReturned, AccountDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAccountResponse(200, true, message, accountDto, null,
@@ -214,14 +214,14 @@ public class AccountServiceImpl implements AccountService {
 
         if(accountDtoPage.getContent().isEmpty()){
 
-            message =  messageService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildAccountResponse(404, false, message, null, null,
                     accountDtoPage);
         }
 
-        message =  messageService.getMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildAccountResponse(200, true, message, null,

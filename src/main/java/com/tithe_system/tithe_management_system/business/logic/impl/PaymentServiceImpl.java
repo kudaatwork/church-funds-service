@@ -21,7 +21,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.PaymentDto;
 import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.AccountAndReferencesGenerator;
-import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
+import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
@@ -50,13 +50,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
     private final PaymentServiceAuditable paymentServiceAuditable;
-    private final MessageService messageService;
+    private final ApplicationMessagesService applicationMessagesService;
     private final AccountService accountService;
 
     public PaymentServiceImpl(PaymentServiceValidator paymentServiceValidator, PaymentRepository paymentRepository,
                               AssemblyRepository assemblyRepository, UserAccountRepository userAccountRepository,
                               AccountRepository accountRepository, ModelMapper modelMapper, PaymentServiceAuditable
-                                      paymentServiceAuditable, MessageService messageService, AccountService
+                                      paymentServiceAuditable, ApplicationMessagesService applicationMessagesService, AccountService
                                       accountService) {
         this.paymentServiceValidator = paymentServiceValidator;
         this.paymentRepository = paymentRepository;
@@ -65,7 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.accountRepository = accountRepository;
         this.modelMapper = modelMapper;
         this.paymentServiceAuditable = paymentServiceAuditable;
-        this.messageService = messageService;
+        this.applicationMessagesService = applicationMessagesService;
         this.accountService = accountService;
     }
 
@@ -77,7 +77,7 @@ public class PaymentServiceImpl implements PaymentService {
         boolean isRequestValid = paymentServiceValidator.isRequestValidForCreation(createPaymentRequest);
 
         if (!isRequestValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_CREATE_PAYMENT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_PAYMENT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -89,7 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (assemblyRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -101,7 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (userAccountRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -113,7 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (accountRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -150,7 +150,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentDtoReturned.setAssemblyDto(assemblyDto);
         paymentDtoReturned.setUserAccountDto(userAccountDto);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PAYMENT_INITIATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_INITIATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildPaymentResponse(201, true, message, paymentDtoReturned, null,
@@ -165,7 +165,7 @@ public class PaymentServiceImpl implements PaymentService {
         boolean isRequestValid = paymentServiceValidator.isRequestValidForReversal(reversePaymentRequest);
 
         if (!isRequestValid) {
-            message = messageService.getMessage(I18Code.MESSAGE_REVERSE_PAYMENT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REVERSE_PAYMENT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -177,7 +177,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (paymentRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -189,7 +189,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (accountRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -226,7 +226,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentDtoReturned.setAssemblyDto(assemblyDto);
         paymentDtoReturned.setUserAccountDto(userAccountDto);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PAYMENT_REVERSED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_REVERSED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildPaymentResponse(201, true, message, paymentDtoReturned, null,
@@ -242,7 +242,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if(!isIdValid) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_INVALID_PAYMENT_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_PAYMENT_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -253,7 +253,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (paymentRetrieved.isEmpty()) {
 
-            message = messageService.getMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(404, false, message, null, null,
@@ -264,7 +264,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         PaymentDto paymentDto = modelMapper.map(paymentReturned, PaymentDto.class);
 
-        message = messageService.getMessage(I18Code.MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildPaymentResponse(200, true, message, paymentDto, null,
@@ -284,14 +284,14 @@ public class PaymentServiceImpl implements PaymentService {
 
         if(paymentDtoPage.getContent().isEmpty()){
 
-            message =  messageService.getMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildPaymentResponse(404, false, message, null, null,
                     paymentDtoPage);
         }
 
-        message =  messageService.getMessage(I18Code.MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildPaymentResponse(200, true, message, null,

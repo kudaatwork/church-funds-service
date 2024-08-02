@@ -13,10 +13,6 @@ public class RegionServiceValidatorImpl implements RegionServiceValidator {
             return false;
         }
 
-        if (createRegionRequest.getProvinceId() == null || createRegionRequest.getProvinceId() < 1) {
-            return false;
-        }
-
         if (createRegionRequest.getName() == null || createRegionRequest.getName().isEmpty()) {
             return false;
         }
@@ -35,11 +31,7 @@ public class RegionServiceValidatorImpl implements RegionServiceValidator {
             return false;
         }
 
-        if (editRegionRequest.getId() == null || editRegionRequest.getProvinceId() == null) {
-            return false;
-        }
-
-        if (editRegionRequest.getId() < 1 || editRegionRequest.getProvinceId() < 1) {
+        if (editRegionRequest.getId() < 1) {
             return false;
         }
 

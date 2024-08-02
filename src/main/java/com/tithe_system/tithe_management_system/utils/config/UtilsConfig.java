@@ -1,7 +1,7 @@
 package com.tithe_system.tithe_management_system.utils.config;
 
-import com.tithe_system.tithe_management_system.utils.i18.api.MessageService;
-import com.tithe_system.tithe_management_system.utils.i18.impl.MessageServiceImpl;
+import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
+import com.tithe_system.tithe_management_system.utils.i18.impl.ApplicationMessagesServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +21,8 @@ public class UtilsConfig {
     }
 
     @Bean
-    public MessageService messageService() {
-        return new MessageServiceImpl(customMessageSource());
+    public ApplicationMessagesService messageService() {
+        return new ApplicationMessagesServiceImpl(customMessageSource());
     }
 
     @Bean
