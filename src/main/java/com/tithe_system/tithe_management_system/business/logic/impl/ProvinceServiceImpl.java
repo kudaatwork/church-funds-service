@@ -10,6 +10,7 @@ import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.District;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.Province;
+import com.tithe_system.tithe_management_system.domain.Region;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
@@ -17,6 +18,7 @@ import com.tithe_system.tithe_management_system.repository.RegionRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
+import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateProvinceRequest;
@@ -82,6 +84,18 @@ public class ProvinceServiceImpl implements ProvinceService {
                     null);
         }
 
+        Optional<Region> regionRetrieved = regionRepository.findByIdAndEntityStatusNot(
+                createProvinceRequest.getRegionId(), EntityStatus.DELETED);
+
+        if (regionRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildProvinceResponse(400, false, message, null, null,
+                    null);
+        }
+
         Optional<Province> provinceRetrieved = provinceRepository.findByNameAndEntityStatusNot(
                 createProvinceRequest.getName(), EntityStatus.DELETED);
 
@@ -99,6 +113,8 @@ public class ProvinceServiceImpl implements ProvinceService {
         Province provinceSaved = provinceServiceAuditable.create(provinceToBeSaved, locale, username);
 
         ProvinceDto provinceDtoReturned = modelMapper.map(provinceSaved, ProvinceDto.class);
+        RegionDto regionDto = modelMapper.map(regionRetrieved.get(), RegionDto.class);
+        provinceDtoReturned.setRegionDto(regionDto);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);

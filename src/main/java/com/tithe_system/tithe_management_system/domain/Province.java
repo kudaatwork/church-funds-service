@@ -1,5 +1,6 @@
 package com.tithe_system.tithe_management_system.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -20,6 +23,9 @@ public class Province {
     @Column(nullable = false)
     private Long id;
     private String name;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "region_id", referencedColumnName = "id")
+    private Region region;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     @Column(name = "entity_status", nullable = false)
@@ -53,6 +59,14 @@ public class Province {
         this.name = name;
     }
 
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
@@ -82,6 +96,7 @@ public class Province {
         return "Province{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", region=" + region +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +

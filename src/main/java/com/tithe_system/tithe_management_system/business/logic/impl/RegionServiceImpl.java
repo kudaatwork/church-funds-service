@@ -8,6 +8,7 @@ import com.tithe_system.tithe_management_system.business.validations.api.RegionS
 import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.District;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.Province;
 import com.tithe_system.tithe_management_system.domain.Region;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
@@ -39,6 +40,7 @@ public class RegionServiceImpl implements RegionService {
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final AssemblyRepository assemblyRepository;
+    private final ProvinceRepository provinceRepository;
     private final ModelMapper modelMapper;
     private final RegionServiceAuditable regionServiceAuditable;
     private final DistrictServiceAuditable districtServiceAuditable;
@@ -46,14 +48,15 @@ public class RegionServiceImpl implements RegionService {
     private final ApplicationMessagesService applicationMessagesService;
 
     public RegionServiceImpl(RegionServiceValidator regionServiceValidator, RegionRepository regionRepository,
-                             DistrictRepository districtRepository, AssemblyRepository assemblyRepository,
-                            ModelMapper modelMapper, RegionServiceAuditable regionServiceAuditable,
+                             DistrictRepository districtRepository, AssemblyRepository assemblyRepository, ProvinceRepository provinceRepository,
+                             ModelMapper modelMapper, RegionServiceAuditable regionServiceAuditable,
                              DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable,
                              ApplicationMessagesService applicationMessagesService) {
         this.regionServiceValidator = regionServiceValidator;
         this.regionRepository = regionRepository;
         this.districtRepository = districtRepository;
         this.assemblyRepository = assemblyRepository;
+        this.provinceRepository = provinceRepository;
         this.modelMapper = modelMapper;
         this.regionServiceAuditable = regionServiceAuditable;
         this.districtServiceAuditable = districtServiceAuditable;
@@ -177,6 +180,17 @@ public class RegionServiceImpl implements RegionService {
                     null);
         }
 
+        Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
+
+        if (provinceRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildRegionResponse(404, false, message, null, null,
+                    null);
+        }
+
         Optional<Region> regionRetrieved = regionRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (regionRetrieved.isEmpty()) {
@@ -189,6 +203,9 @@ public class RegionServiceImpl implements RegionService {
         Region regionToBeDeleted = regionRetrieved.get();
         regionToBeDeleted.setEntityStatus(EntityStatus.DELETED);
         regionToBeDeleted.setName(regionToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
+
+//        List<Province> provincesRetrieved = provinceRepository.findBy(regionToBeDeleted.getId(),
+//                EntityStatus.DELETED);
 
         List<District> districtsRetrieved = districtRepository.findByRegionIdAndEntityStatusNot(regionToBeDeleted.getId(),
                 EntityStatus.DELETED);
