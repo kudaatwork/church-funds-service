@@ -243,19 +243,22 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         if (editAssemblyRequest.getName() != null) {
 
-            if (Objects.equals(assemblyToBeEdited.getId(), editAssemblyRequest.getId()) &&
-                    Objects.equals(assemblyToBeEdited.getName().toLowerCase(), editAssemblyRequest.getName().toLowerCase())) {
+            Optional<Assembly> checkForDuplicateAssembly = assemblyRepository.findByNameAndEntityStatusNot(
+                    editAssemblyRequest.getName(), EntityStatus.DELETED);
 
-                message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_ALREADY_EXISTS.getCode(), new String[]{},
-                        locale);
+            if (checkForDuplicateAssembly.isPresent()) {
 
-                return buildAssemblyResponse(400, false, message, null,
-                        null, null);
+                if (!checkForDuplicateAssembly.get().getId().equals(editAssemblyRequest.getId())) {
+
+                    message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
+                            new String[]{}, locale);
+
+                    return buildAssemblyResponse(400, false, message, null,
+                            null, null);
+                }
             }
-            else {
 
-                assemblyToBeEdited.setName(editAssemblyRequest.getName());
-            }
+            assemblyToBeEdited.setName(editAssemblyRequest.getName());
         }
 
         if (editAssemblyRequest.getAddress() != null) {

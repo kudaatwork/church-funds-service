@@ -150,24 +150,24 @@ public class DistrictServiceImpl implements DistrictService {
                     null);
         }
 
-        Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(
-                editDistrictRequest.getProvinceId(), EntityStatus.DELETED);
-
-        if (provinceRetrieved.isEmpty()) {
-
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
-                    locale);
-
-            return buildDistrictResponse(400, false, message, null, null,
-                    null);
-        }
-
         Optional<Region> regionRetrieved = regionRepository.findByIdAndEntityStatusNot(
                 editDistrictRequest.getRegionId(), EntityStatus.DELETED);
 
         if (regionRetrieved.isEmpty()) {
 
             message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildDistrictResponse(400, false, message, null, null,
+                    null);
+        }
+
+        Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(
+                editDistrictRequest.getProvinceId(), EntityStatus.DELETED);
+
+        if (provinceRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildDistrictResponse(400, false, message, null, null,
@@ -188,19 +188,22 @@ public class DistrictServiceImpl implements DistrictService {
 
         District districtToBeEdited = districtRetrieved.get();
 
-        if (Objects.equals(districtToBeEdited.getId(), editDistrictRequest.getId()) &&
-                Objects.equals(districtToBeEdited.getName().toLowerCase(), editDistrictRequest.getName().toLowerCase())) {
+        Optional<District> checkForDuplicateDistrict = districtRepository.findByNameAndEntityStatusNot(
+                editDistrictRequest.getName(), EntityStatus.DELETED);
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_ALREADY_EXISTS.getCode(), new String[]{},
-                    locale);
+        if (checkForDuplicateDistrict.isPresent()) {
 
-            return buildDistrictResponse(400, false, message, null,
-                    null, null);
+            if (!checkForDuplicateDistrict.get().getId().equals(editDistrictRequest.getId())) {
+
+                message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
+                        new String[]{}, locale);
+
+                return buildDistrictResponse(400, false, message, null,
+                        null, null);
+            }
         }
-        else {
 
-            districtToBeEdited.setName(editDistrictRequest.getName());
-        }
+        districtToBeEdited.setName(editDistrictRequest.getName());
 
         District districtEdited = districtServiceAuditable.edit(districtToBeEdited, locale, username);
 
