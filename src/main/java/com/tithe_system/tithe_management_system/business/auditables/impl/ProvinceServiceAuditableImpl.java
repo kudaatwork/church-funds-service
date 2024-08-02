@@ -1,6 +1,7 @@
 package com.tithe_system.tithe_management_system.business.auditables.impl;
 
 import com.tithe_system.tithe_management_system.business.auditables.api.ProvinceServiceAuditable;
+import com.tithe_system.tithe_management_system.domain.District;
 import com.tithe_system.tithe_management_system.domain.Province;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.utils.trackers.AuditCreateEvent;
@@ -36,5 +37,12 @@ public class ProvinceServiceAuditableImpl implements ProvinceServiceAuditable {
     public Province delete(Province province, Locale locale) {
 
         return provinceRepository.save(province);
+    }
+
+    @AuditDeleteEvent
+    @Override
+    public List<Province> deleteAll(List<Province> provinceList, Locale locale) {
+
+        return provinceRepository.saveAll(provinceList);
     }
 }

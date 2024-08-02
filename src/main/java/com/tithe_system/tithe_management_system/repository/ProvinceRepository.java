@@ -14,4 +14,5 @@ public interface ProvinceRepository extends JpaRepository<Province, Long>, JpaSp
     Optional<Province> findByIdAndEntityStatusNot(Long id, EntityStatus entityStatus);
     List<Province> findByEntityStatusNot(EntityStatus entityStatus);
     Page<Province> findByEntityStatusNot(EntityStatus entityStatus, Pageable pageable);
+    List<Province> findByRegionIdAndEntityStatusNot(Long regionId, EntityStatus entityStatus);
 }

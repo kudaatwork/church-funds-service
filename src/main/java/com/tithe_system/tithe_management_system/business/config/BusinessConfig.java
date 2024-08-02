@@ -133,11 +133,12 @@ public class BusinessConfig {
                                        DistrictRepository districtRepository, AssemblyRepository assemblyRepository,
                                        ProvinceRepository provinceRepository, ModelMapper modelMapper, RegionServiceAuditable
                                                    regionServiceAuditable, DistrictServiceAuditable districtServiceAuditable,
-                                       AssemblyServiceAuditable assemblyServiceAuditable, ApplicationMessagesService
+                                       AssemblyServiceAuditable assemblyServiceAuditable, ProvinceServiceAuditable
+                                                   provinceServiceAuditable, ApplicationMessagesService
                                                    applicationMessagesService) {
         return new RegionServiceImpl(regionServiceValidator, regionRepository, districtRepository,
                 assemblyRepository, provinceRepository, modelMapper, regionServiceAuditable, districtServiceAuditable,
-                assemblyServiceAuditable, applicationMessagesService);
+                assemblyServiceAuditable, provinceServiceAuditable, applicationMessagesService);
     }
 
     @Bean

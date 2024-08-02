@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.business.logic.impl;
 
 import com.tithe_system.tithe_management_system.business.auditables.api.AssemblyServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.DistrictServiceAuditable;
+import com.tithe_system.tithe_management_system.business.auditables.api.ProvinceServiceAuditable;
 import com.tithe_system.tithe_management_system.business.auditables.api.RegionServiceAuditable;
 import com.tithe_system.tithe_management_system.business.logic.api.RegionService;
 import com.tithe_system.tithe_management_system.business.validations.api.RegionServiceValidator;
@@ -16,6 +17,7 @@ import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
+import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
 import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
@@ -45,12 +47,13 @@ public class RegionServiceImpl implements RegionService {
     private final RegionServiceAuditable regionServiceAuditable;
     private final DistrictServiceAuditable districtServiceAuditable;
     private final AssemblyServiceAuditable assemblyServiceAuditable;
+    private final ProvinceServiceAuditable provinceServiceAuditable;
     private final ApplicationMessagesService applicationMessagesService;
 
     public RegionServiceImpl(RegionServiceValidator regionServiceValidator, RegionRepository regionRepository,
                              DistrictRepository districtRepository, AssemblyRepository assemblyRepository, ProvinceRepository provinceRepository,
                              ModelMapper modelMapper, RegionServiceAuditable regionServiceAuditable,
-                             DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable,
+                             DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable, ProvinceServiceAuditable provinceServiceAuditable,
                              ApplicationMessagesService applicationMessagesService) {
         this.regionServiceValidator = regionServiceValidator;
         this.regionRepository = regionRepository;
@@ -61,6 +64,7 @@ public class RegionServiceImpl implements RegionService {
         this.regionServiceAuditable = regionServiceAuditable;
         this.districtServiceAuditable = districtServiceAuditable;
         this.assemblyServiceAuditable = assemblyServiceAuditable;
+        this.provinceServiceAuditable = provinceServiceAuditable;
         this.applicationMessagesService = applicationMessagesService;
     }
 
@@ -180,17 +184,6 @@ public class RegionServiceImpl implements RegionService {
                     null);
         }
 
-        Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
-
-        if (provinceRetrieved.isEmpty()) {
-
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
-                    locale);
-
-            return buildRegionResponse(404, false, message, null, null,
-                    null);
-        }
-
         Optional<Region> regionRetrieved = regionRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (regionRetrieved.isEmpty()) {
@@ -202,10 +195,14 @@ public class RegionServiceImpl implements RegionService {
 
         Region regionToBeDeleted = regionRetrieved.get();
         regionToBeDeleted.setEntityStatus(EntityStatus.DELETED);
-        regionToBeDeleted.setName(regionToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
+        regionToBeDeleted.setName(regionToBeDeleted.getName().replace(" ", "_") + "_" + LocalDateTime.now());
 
-//        List<Province> provincesRetrieved = provinceRepository.findBy(regionToBeDeleted.getId(),
-//                EntityStatus.DELETED);
+        List<Province> provincesListToBeDeleted = new ArrayList<>();
+        List<District> districtsListToBeDeleted = new ArrayList<>();
+        List<Assembly> assembliesListToBeDeleted = new ArrayList<>();
+
+        List<Province> provincesRetrieved = provinceRepository.findByRegionIdAndEntityStatusNot(regionToBeDeleted.getId(),
+                EntityStatus.DELETED);
 
         List<District> districtsRetrieved = districtRepository.findByRegionIdAndEntityStatusNot(regionToBeDeleted.getId(),
                 EntityStatus.DELETED);
@@ -213,18 +210,54 @@ public class RegionServiceImpl implements RegionService {
         List<Assembly> assembliesRetrieved = assemblyRepository.findByRegionIdAndEntityStatusNot(regionToBeDeleted.getId(),
                 EntityStatus.DELETED);
 
+        if (!provincesRetrieved.isEmpty()) {
+
+            for (Province province: provincesRetrieved) {
+
+                province.setEntityStatus(EntityStatus.DELETED);
+                province.setName(province.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+                provincesListToBeDeleted.add(province);
+            }
+        }
+
+        if (!districtsRetrieved.isEmpty()) {
+
+            for (District district: districtsRetrieved) {
+
+                district.setEntityStatus(EntityStatus.DELETED);
+                district.setName(district.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+                districtsListToBeDeleted.add(district);
+            }
+        }
+
+        if (!assembliesRetrieved.isEmpty()) {
+
+            for (Assembly assembly: assembliesRetrieved) {
+
+                assembly.setEntityStatus(EntityStatus.DELETED);
+                assembly.setName(assembly.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+                assembliesListToBeDeleted.add(assembly);
+            }
+        }
+
         Region regionDeleted = regionServiceAuditable.delete(regionToBeDeleted, locale);
 
-        List<District> districtListDeleted = districtServiceAuditable.deleteAll(districtsRetrieved, locale);
-        List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesRetrieved, locale);
+        List<Province> provinceListDeleted = provinceServiceAuditable.deleteAll(provincesListToBeDeleted, locale);
+        List<District> districtListDeleted = districtServiceAuditable.deleteAll(districtsListToBeDeleted, locale);
+        List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesListToBeDeleted, locale);
 
         RegionDto regionDtoReturned = modelMapper.map(regionDeleted, RegionDto.class);
 
+        List<ProvinceDto> provinceDtoList = modelMapper.map(provinceListDeleted, new TypeToken<List<ProvinceDto>>(){}.getType());
         List<DistrictDto> districtDtoList = modelMapper.map(districtListDeleted, new TypeToken<List<DistrictDto>>(){}.getType());
         List<AssemblyDto> assemblyDtoList = modelMapper.map(assembliesListDeleted, new TypeToken<List<AssemblyDto>>(){}.getType());
 
         regionDtoReturned.setDistrictDtoList(districtDtoList);
         regionDtoReturned.setAssemblyDtoList(assemblyDtoList);
+        regionDtoReturned.setProvinceDtoList(provinceDtoList);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);

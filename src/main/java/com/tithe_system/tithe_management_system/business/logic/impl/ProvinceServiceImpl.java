@@ -109,6 +109,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         }
 
         Province provinceToBeSaved = modelMapper.map(createProvinceRequest, Province.class);
+        provinceToBeSaved.setRegion(regionRetrieved.get());
 
         Province provinceSaved = provinceServiceAuditable.create(provinceToBeSaved, locale, username);
 

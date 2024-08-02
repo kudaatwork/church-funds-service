@@ -2,6 +2,8 @@ package com.tithe_system.tithe_management_system.utils.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.Province;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import java.util.List;
 public class RegionDto {
     private Long id;
     private String name;
+    private List<ProvinceDto> provinceDtoList;
     private List<DistrictDto> districtDtoList;
     private List<AssemblyDto> assemblyDtoList;
     private LocalDateTime dateCreated;
@@ -29,6 +32,14 @@ public class RegionDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<ProvinceDto> getProvinceDtoList() {
+        return provinceDtoList;
+    }
+
+    public void setProvinceDtoList(List<ProvinceDto> provinceDtoList) {
+        this.provinceDtoList = provinceDtoList;
     }
 
     public List<DistrictDto> getDistrictDtoList() {
@@ -76,6 +87,7 @@ public class RegionDto {
         return "RegionDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", provinceDtoList=" + provinceDtoList +
                 ", districtDtoList=" + districtDtoList +
                 ", assemblyDtoList=" + assemblyDtoList +
                 ", dateCreated=" + dateCreated +
