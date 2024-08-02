@@ -98,6 +98,7 @@ public class AccountServiceImpl implements AccountService {
         accountToBeSaved.setCreditBalance(BigDecimal.ZERO);
         accountToBeSaved.setDebitBalance(BigDecimal.ZERO);
         accountToBeSaved.setCumulativeBalance(BigDecimal.ZERO);
+        accountToBeSaved.setTransactionAmount(BigDecimal.ZERO);
         accountToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
         accountToBeSaved.setNarration(Narration.ACCOUNT_CREATION.getAccountNarration());
 

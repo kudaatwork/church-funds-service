@@ -141,7 +141,7 @@ public class PaymentServiceImpl implements PaymentService {
         AccountDto accountDto = modelMapper.map(accountRetrieved.get(), AccountDto.class);
 
         AssemblyDto assemblyDto = modelMapper.map(assemblyRetrieved.get(), AssemblyDto.class);
-        assemblyDto.setAccountDto(accountDto);
+        //assemblyDto.setAccountDto(accountDto);
 
         UserAccountDto userAccountDto = modelMapper.map(userAccountRetrieved.get(), UserAccountDto.class);
 
@@ -217,14 +217,14 @@ public class PaymentServiceImpl implements PaymentService {
         AccountDto accountDto = modelMapper.map(accountRetrieved.get(), AccountDto.class);
 
         AssemblyDto assemblyDto = modelMapper.map(accountRetrieved.get().getAssembly(), AssemblyDto.class);
-        assemblyDto.setAccountDto(accountDto);
+        //assemblyDto.setAccountDto(accountDto);
 
-        UserAccountDto userAccountDto = modelMapper.map(accountRetrieved.get().getUserAccount(), UserAccountDto.class);
+        //UserAccountDto userAccountDto = modelMapper.map(accountRetrieved.get().getUserAccount(), UserAccountDto.class);
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         PaymentDto paymentDtoReturned = modelMapper.map(paymentSaved, PaymentDto.class);
         paymentDtoReturned.setAssemblyDto(assemblyDto);
-        paymentDtoReturned.setUserAccountDto(userAccountDto);
+      //  paymentDtoReturned.setUserAccountDto(userAccountDto);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_PAYMENT_REVERSED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);

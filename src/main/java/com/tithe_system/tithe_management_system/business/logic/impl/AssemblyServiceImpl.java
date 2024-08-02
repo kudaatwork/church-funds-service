@@ -44,7 +44,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 public class AssemblyServiceImpl implements AssemblyService {
@@ -153,20 +152,29 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         Assembly assemblySaved = assemblyServiceAuditable.create(assemblyToBeSaved, locale, username);
 
-        CreateAccountRequest createAccountRequest = buildCreateAccountRequest(assemblySaved);
+        CreateAccountRequest createUsdAccountRequest = buildCreateUsdAccountRequest(assemblySaved);
 
-        logger.info("Incoming request to create an account : {}", createAccountRequest);
+        logger.info("Incoming request to create a USD account : {}", createUsdAccountRequest);
 
-        AccountResponse accountResponse = accountService.createAccount(createAccountRequest, username, locale);
+        AccountResponse usdAccountResponse = accountService.createAccount(createUsdAccountRequest, username, locale);
 
-        logger.info("Outgoing response after creating an account : {}", accountResponse);
+        logger.info("Outgoing response after creating a USD account : {}", usdAccountResponse);
+
+        CreateAccountRequest createLocalCurrencyAccountRequest = buildCreateLocalCurrencyAccountRequest(assemblySaved);
+
+        logger.info("Incoming request to create a local currency account : {}", createLocalCurrencyAccountRequest);
+
+        AccountResponse localCurrencyAccountResponse = accountService.createAccount(createLocalCurrencyAccountRequest, username, locale);
+
+        logger.info("Outgoing response after creating a local currency account : {}", localCurrencyAccountResponse);
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblySaved, AssemblyDto.class);
         assemblyDtoReturned.setRegionDto(regionDto);
         assemblyDtoReturned.setProvinceDto(provinceDto);
         assemblyDtoReturned.setDistrictDto(districtDto);
-        assemblyDtoReturned.setAccountDto(accountResponse.getAccountDto());
+        assemblyDtoReturned.setUsdAccountDto(usdAccountResponse.getAccountDto());
+        assemblyDtoReturned.setLocalCurrencyAccountDto(localCurrencyAccountResponse.getAccountDto());
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
@@ -348,7 +356,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         Assembly assemblyDeleted = assemblyServiceAuditable.delete(assemblyToBeDeleted, locale);
 
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblyDeleted, AssemblyDto.class);
-        assemblyDtoReturned.setAccountDto(accountDto);
+        //assemblyDtoReturned.setAccountDto(accountDto);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
@@ -439,11 +447,21 @@ public class AssemblyServiceImpl implements AssemblyService {
                 null, assemblyDtoPage);
     }
 
-    private static CreateAccountRequest buildCreateAccountRequest(Assembly assemblySaved) {
+    private static CreateAccountRequest buildCreateUsdAccountRequest(Assembly assemblySaved) {
 
         CreateAccountRequest createAccountRequest = new CreateAccountRequest();
         createAccountRequest.setAssemblyId(assemblySaved.getId());
         createAccountRequest.setCurrency(Currency.USD.getCurrency());
+        createAccountRequest.setName(assemblySaved.getName());
+
+        return createAccountRequest;
+    }
+
+    private static CreateAccountRequest buildCreateLocalCurrencyAccountRequest(Assembly assemblySaved) {
+
+        CreateAccountRequest createAccountRequest = new CreateAccountRequest();
+        createAccountRequest.setAssemblyId(assemblySaved.getId());
+        createAccountRequest.setCurrency(Currency.ZIG.getCurrency());
         createAccountRequest.setName(assemblySaved.getName());
 
         return createAccountRequest;

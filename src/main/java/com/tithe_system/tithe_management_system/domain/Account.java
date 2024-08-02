@@ -27,13 +27,11 @@ public class Account {
     private BigDecimal debitBalance;
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
+    private BigDecimal transactionAmount;
     private String name;
     private String narration;
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_account_id", referencedColumnName = "id")
-    private UserAccount userAccount;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assembly_id", referencedColumnName = "id")
     private Assembly assembly;
@@ -102,6 +100,14 @@ public class Account {
         this.cumulativeBalance = cumulativeBalance;
     }
 
+    public BigDecimal getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(BigDecimal transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
     public String getName() {
         return name;
     }
@@ -114,8 +120,8 @@ public class Account {
         return narration;
     }
 
-    public void setNarration(String accountNarration) {
-        this.narration = accountNarration;
+    public void setNarration(String narration) {
+        this.narration = narration;
     }
 
     public Currency getCurrency() {
@@ -124,14 +130,6 @@ public class Account {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
-    }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
     }
 
     public Assembly getAssembly() {
@@ -175,10 +173,10 @@ public class Account {
                 ", debitBalance=" + debitBalance +
                 ", creditBalance=" + creditBalance +
                 ", cumulativeBalance=" + cumulativeBalance +
+                ", transactionAmount=" + transactionAmount +
                 ", name='" + name + '\'' +
-                ", accountNarration='" + narration + '\'' +
+                ", narration='" + narration + '\'' +
                 ", currency=" + currency +
-                ", userAccount=" + userAccount +
                 ", assembly=" + assembly +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +

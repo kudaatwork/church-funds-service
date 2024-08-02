@@ -14,7 +14,8 @@ public class AssemblyDto {
     private DistrictDto districtDto;
     private RegionDto regionDto;
     private ProvinceDto provinceDto;
-    private AccountDto accountDto;
+    private AccountDto usdAccountDto;
+    private AccountDto localCurrencyAccountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     private EntityStatus entityStatus;
@@ -83,30 +84,20 @@ public class AssemblyDto {
         this.provinceDto = provinceDto;
     }
 
-    @Override
-    public String toString() {
-        return "AssemblyDto{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", contactPhoneNumber='" + contactPhoneNumber + '\'' +
-                ", contactEmail='" + contactEmail + '\'' +
-                ", address='" + address + '\'' +
-                ", districtDto=" + districtDto +
-                ", regionDto=" + regionDto +
-                ", provinceDto=" + provinceDto +
-                ", accountDto=" + accountDto +
-                ", dateCreated=" + dateCreated +
-                ", dateLastModified=" + dateLastModified +
-                ", entityStatus=" + entityStatus +
-                '}';
+    public AccountDto getUsdAccountDto() {
+        return usdAccountDto;
     }
 
-    public AccountDto getAccountDto() {
-        return accountDto;
+    public void setUsdAccountDto(AccountDto usdAccountDto) {
+        this.usdAccountDto = usdAccountDto;
     }
 
-    public void setAccountDto(AccountDto accountDto) {
-        this.accountDto = accountDto;
+    public AccountDto getLocalCurrencyAccountDto() {
+        return localCurrencyAccountDto;
+    }
+
+    public void setLocalCurrencyAccountDto(AccountDto localCurrencyAccountDto) {
+        this.localCurrencyAccountDto = localCurrencyAccountDto;
     }
 
     public LocalDateTime getDateCreated() {
@@ -133,4 +124,22 @@ public class AssemblyDto {
         this.entityStatus = entityStatus;
     }
 
+    @Override
+    public String toString() {
+        return "AssemblyDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", contactPhoneNumber='" + contactPhoneNumber + '\'' +
+                ", contactEmail='" + contactEmail + '\'' +
+                ", address='" + address + '\'' +
+                ", districtDto=" + districtDto +
+                ", regionDto=" + regionDto +
+                ", provinceDto=" + provinceDto +
+                ", usdAccountDto=" + usdAccountDto +
+                ", localCurrencyAccountDto=" + localCurrencyAccountDto +
+                ", dateCreated=" + dateCreated +
+                ", dateLastModified=" + dateLastModified +
+                ", entityStatus=" + entityStatus +
+                '}';
+    }
 }
