@@ -257,8 +257,8 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         Province provinceDeleted = provinceServiceAuditable.delete(provinceToBeDeleted, locale);
 
-        List<District> districtListDeleted = districtServiceAuditable.deleteAll(districtsRetrieved, locale);
-        List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesRetrieved, locale);
+        List<District> districtListDeleted = districtServiceAuditable.deleteAll(districtsListToBeDeleted, locale);
+        List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesListToBeDeleted, locale);
 
         ProvinceDto provinceDtoReturned = modelMapper.map(provinceDeleted, ProvinceDto.class);
 

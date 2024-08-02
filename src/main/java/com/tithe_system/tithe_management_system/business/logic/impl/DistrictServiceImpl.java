@@ -245,14 +245,27 @@ public class DistrictServiceImpl implements DistrictService {
 
         District districtToBeDeleted = districtRetrieved.get();
         districtToBeDeleted.setEntityStatus(EntityStatus.DELETED);
-        districtToBeDeleted.setName(districtToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
+        districtToBeDeleted.setName(districtToBeDeleted.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+        List<Assembly> assembliesListToBeDeleted = new ArrayList<>();
 
         List<Assembly> assembliesRetrieved = assemblyRepository.findByDistrictIdAndEntityStatusNot(districtToBeDeleted.getId(),
                 EntityStatus.DELETED);
 
+        if (!assembliesRetrieved.isEmpty()) {
+
+            for (Assembly assembly: assembliesRetrieved) {
+
+                assembly.setEntityStatus(EntityStatus.DELETED);
+                assembly.setName(assembly.getName().replace(" ", "_") + "_" + LocalDateTime.now());
+
+                assembliesListToBeDeleted.add(assembly);
+            }
+        }
+
         District districtDeleted = districtServiceAuditable.delete(districtToBeDeleted, locale);
 
-        List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesRetrieved, locale);
+        List<Assembly> assembliesListDeleted = assemblyServiceAuditable.deleteAll(assembliesListToBeDeleted, locale);
 
         DistrictDto districtDtoReturned = modelMapper.map(districtDeleted, DistrictDto.class);
 
