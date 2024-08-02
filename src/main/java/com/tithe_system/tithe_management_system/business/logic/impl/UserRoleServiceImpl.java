@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.auditables.api.UserRole
 import com.tithe_system.tithe_management_system.business.logic.api.UserRoleService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserRoleServiceValidator;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.domain.UserRole;
 import com.tithe_system.tithe_management_system.repository.UserRoleRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
@@ -118,19 +119,22 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (editUserRoleRequest.getName() != null) {
 
-            if (Objects.equals(userRoleToBeEdited.getId(), editUserRoleRequest.getId()) &&
-                    Objects.equals(userRoleToBeEdited.getName().toLowerCase(), editUserRoleRequest.getName().toLowerCase())) {
+            Optional<UserRole> checkForDuplicateUserRole = userRoleRepository.findByNameAndEntityStatusNot(
+                    editUserRoleRequest.getName(), EntityStatus.DELETED);
 
-                message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_ALREADY_EXISTS.getCode(), new String[]{},
-                        locale);
+            if (checkForDuplicateUserRole.isPresent()) {
 
-                return buildUserRoleResponse(400, false, message, null,
-                        null, null);
+                if (!checkForDuplicateUserRole.get().getId().equals(editUserRoleRequest.getId())) {
+
+                    message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_ALREADY_EXISTS.getCode(),
+                            new String[]{}, locale);
+
+                    return buildUserRoleResponse(400, false, message, null,
+                            null, null);
+                }
             }
-            else {
 
-                userRoleToBeEdited.setName(editUserRoleRequest.getName());
-            }
+            userRoleToBeEdited.setName(editUserRoleRequest.getName());
         }
 
         UserRole userRoleEdited = userRoleServiceAuditable.edit(userRoleToBeEdited, locale, username);

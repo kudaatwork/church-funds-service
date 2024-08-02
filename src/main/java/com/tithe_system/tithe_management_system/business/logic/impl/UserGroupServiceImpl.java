@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.auditables.api.UserGrou
 import com.tithe_system.tithe_management_system.business.logic.api.UserGroupService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserGroupServiceValidator;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.UserAccount;
 import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
@@ -116,19 +117,22 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (editUserGroupRequest.getName() != null) {
 
-            if (Objects.equals(userGroupToBeEdited.getId(), editUserGroupRequest.getId()) &&
-                    Objects.equals(userGroupToBeEdited.getName().toLowerCase(), editUserGroupRequest.getName().toLowerCase())) {
+            Optional<UserGroup> checkForDuplicateUserGroup = userGroupRepository.findByNameAndEntityStatusNot(
+                    editUserGroupRequest.getName(), EntityStatus.DELETED);
 
-                message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_ALREADY_EXISTS.getCode(), new String[]{},
-                        locale);
+            if (checkForDuplicateUserGroup.isPresent()) {
 
-                return buildUserGroupResponse(400, false, message, null,
-                        null, null);
+                if (!checkForDuplicateUserGroup.get().getId().equals(editUserGroupRequest.getId())) {
+
+                    message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_ALREADY_EXISTS.getCode(),
+                            new String[]{}, locale);
+
+                    return buildUserGroupResponse(400, false, message, null,
+                            null, null);
+                }
             }
-            else {
 
-                userGroupToBeEdited.setName(editUserGroupRequest.getName());
-            }
+            userGroupToBeEdited.setName(editUserGroupRequest.getName());
         }
 
         UserGroup userGroupEdited = userGroupServiceAuditable.edit(userGroupToBeEdited, locale, username);
