@@ -15,6 +15,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,18 +26,11 @@ public class UserGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Column
     private String description;
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
-    private Set<UserAccount> userAccounts;
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    Set<UserRole> userRole;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<UserRole> userRoles = new HashSet<>();
     @Column(name = "entity_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private EntityStatus entityStatus;
@@ -75,22 +70,6 @@ public class UserGroup {
         this.description = description;
     }
 
-    public Set<UserAccount> getUserAccounts() {
-        return userAccounts;
-    }
-
-    public void setUserAccounts(Set<UserAccount> userAccounts) {
-        this.userAccounts = userAccounts;
-    }
-
-    public Set<UserRole> getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(Set<UserRole> userRole) {
-        this.userRole = userRole;
-    }
-
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
@@ -107,6 +86,14 @@ public class UserGroup {
         this.dateLastModified = dateLastModified;
     }
 
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
+
     public EntityStatus getEntityStatus() {
         return entityStatus;
     }
@@ -121,10 +108,9 @@ public class UserGroup {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userAccounts=" + userAccounts +
-                ", userRole=" + userRole +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
+                ", userRoles=" + userRoles +
                 ", entityStatus=" + entityStatus +
                 '}';
     }

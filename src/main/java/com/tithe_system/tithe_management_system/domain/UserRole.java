@@ -15,6 +15,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,13 +25,8 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    private Set<UserGroup> userGroup;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<UserGroup> userGroups = new HashSet<>();
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     @Column(name = "entity_status", nullable = false)
@@ -64,12 +60,12 @@ public class UserRole {
         this.name = name;
     }
 
-    public Set<UserGroup> getUserGroup() {
-        return userGroup;
+    public Set<UserGroup> getUserGroups() {
+        return userGroups;
     }
 
-    public void setUserGroup(Set<UserGroup> userGroup) {
-        this.userGroup = userGroup;
+    public void setUserGroups(Set<UserGroup> userGroups) {
+        this.userGroups = userGroups;
     }
 
     public LocalDateTime getDateCreated() {
@@ -101,7 +97,7 @@ public class UserRole {
         return "UserRole{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", userGroup=" + userGroup +
+                ", userGroups=" + userGroups +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +

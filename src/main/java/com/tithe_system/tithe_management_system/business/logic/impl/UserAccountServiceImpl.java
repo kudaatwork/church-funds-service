@@ -85,9 +85,9 @@ public class UserAccountServiceImpl implements UserAccountService {
         Optional<UserGroup> userGroupRetrieved = userGroupRepository.findByIdAndEntityStatusNot(
                 createUserAccountRequest.getUserGroupId(), EntityStatus.DELETED);
 
-        if (userGroupRetrieved.isPresent()) {
+        if (userGroupRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -106,13 +106,42 @@ public class UserAccountServiceImpl implements UserAccountService {
                     null);
         }
 
-        PasswordEncryptionAlgorithm.encrypt(createUserAccountRequest.getPassword());
+        Optional<UserAccount> userAccountRetrieved2 = userAccountRepository.findByEmailAddressAndEntityStatusNot(
+                createUserAccountRequest.getEmailAddress(), EntityStatus.DELETED);
+
+        if (userAccountRetrieved2.isPresent()) {
+
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+                    locale);
+
+            return buildUserAccountResponse(400, false, message, null, null,
+                    null);
+        }
+
+        Optional<UserAccount> userAccountRetrieved3 = userAccountRepository.findByUsernameAndEntityStatusNot(
+                createUserAccountRequest.getUsername(), EntityStatus.DELETED);
+
+        if (userAccountRetrieved3.isPresent()) {
+
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+                    locale);
+
+            return buildUserAccountResponse(400, false, message, null, null,
+                    null);
+        }
+
+
+        String encryptedPassword = PasswordEncryptionAlgorithm.encrypt(createUserAccountRequest.getPassword());
 
         UserAccount userAccountToBeSaved = modelMapper.map(createUserAccountRequest, UserAccount.class);
+        userAccountToBeSaved.setPassword(encryptedPassword);
+        userAccountToBeSaved.setAssembly(assemblyRetrieved.get());
+        userAccountToBeSaved.setUserGroup(userGroupRetrieved.get());
 
         UserAccount userAccountSaved = userAccountServiceAuditable.create(userAccountToBeSaved, locale, username);
 
         UserAccountDto userAccountDtoReturned = modelMapper.map(userAccountSaved, UserAccountDto.class);
+        userAccountDtoReturned.setPassword(null);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
@@ -152,7 +181,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         Optional<UserGroup> userGroupRetrieved = userGroupRepository.findByIdAndEntityStatusNot(
                 editUserAccountRequest.getUserGroupId(), EntityStatus.DELETED);
 
-        if (userGroupRetrieved.isPresent()) {
+        if (userGroupRetrieved.isEmpty()) {
 
             message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
@@ -178,24 +207,26 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccountToBeEdited.setLastName(editUserAccountRequest.getLastName());
         userAccountToBeEdited.setGender(Gender.valueOf(editUserAccountRequest.getGender()));
         userAccountToBeEdited.setTitle(Title.valueOf(editUserAccountRequest.getTitle()));
-        userAccountToBeEdited.setEmailAddress(editUserAccountRequest.getEmailAddress());
         userAccountToBeEdited.setUserGroup(userAccountRetrieved.get().getUserGroup());
         userAccountToBeEdited.setAssembly(assemblyRetrieved.get());
 
-        if (Objects.equals(userAccountToBeEdited.getId(), editUserAccountRequest.getId()) &&
-                Objects.equals(userAccountToBeEdited.getPhoneNumber().toLowerCase(),
-                        editUserAccountRequest.getPhoneNumber().toLowerCase())) {
+        Optional<UserAccount> checkForDuplicateUserAccount = userAccountRepository.findByPhoneNumberAndEmailAddressAndEntityStatusNot(
+                    editUserAccountRequest.getPhoneNumber(), editUserAccountRequest.getEmailAddress(), EntityStatus.DELETED);
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
-                    locale);
+        if (checkForDuplicateUserAccount.isPresent()) {
 
-            return buildUserAccountResponse(400, false, message, null,
-                    null, null);
+            if (!checkForDuplicateUserAccount.get().getId().equals(editUserAccountRequest.getId())) {
+
+                message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(),
+                            new String[]{}, locale);
+
+                return buildUserAccountResponse(400, false, message, null,
+                            null, null);
+            }
         }
-        else {
 
-            userAccountToBeEdited.setPhoneNumber(editUserAccountRequest.getPhoneNumber());
-        }
+        userAccountToBeEdited.setPhoneNumber(editUserAccountRequest.getPhoneNumber());
+        userAccountToBeEdited.setEmailAddress(editUserAccountRequest.getEmailAddress());
 
         UserAccount userAccountEdited = userAccountServiceAuditable.edit(userAccountToBeEdited, locale, username);
 

@@ -64,21 +64,41 @@ public class UserAccountServiceValidatorImpl implements UserAccountServiceValida
             return false;
         }
 
-        if (editUserAccountRequest.getFirstName().isEmpty() ||
-                editUserAccountRequest.getLastName().isEmpty() ||
-                editUserAccountRequest.getGender().isEmpty() ||
-                editUserAccountRequest.getEmailAddress().isEmpty() ||
-                editUserAccountRequest.getTitle().isEmpty() ||
-                editUserAccountRequest.getPhoneNumber().isEmpty() ||
-                editUserAccountRequest.getUsername().isEmpty()) {
+        if (editUserAccountRequest.getFirstName() != null && editUserAccountRequest.getFirstName().isEmpty()) {
             return false;
         }
 
-        if (ProvinceServiceValidatorImpl.checkUsingIsDigitMethod(editUserAccountRequest.getFirstName())) {
+        if (editUserAccountRequest.getLastName() != null && editUserAccountRequest.getLastName().isEmpty()) {
             return false;
         }
 
-        if (ProvinceServiceValidatorImpl.checkUsingIsDigitMethod(editUserAccountRequest.getLastName())) {
+        if (editUserAccountRequest.getGender() != null && editUserAccountRequest.getGender().isEmpty()) {
+            return false;
+        }
+
+        if (editUserAccountRequest.getEmailAddress() != null && editUserAccountRequest.getEmailAddress().isEmpty()) {
+            return false;
+        }
+
+        if (editUserAccountRequest.getTitle() != null && editUserAccountRequest.getTitle().isEmpty()) {
+            return false;
+        }
+
+        if (editUserAccountRequest.getPhoneNumber() != null && editUserAccountRequest.getPhoneNumber().isEmpty()) {
+            return false;
+        }
+
+        if (editUserAccountRequest.getUsername() != null && editUserAccountRequest.getUsername().isEmpty()) {
+            return false;
+        }
+
+        if (editUserAccountRequest.getFirstName() != null &&
+                ProvinceServiceValidatorImpl.checkUsingIsDigitMethod(editUserAccountRequest.getFirstName())) {
+            return false;
+        }
+
+        if (editUserAccountRequest.getLastName() != null &&
+                ProvinceServiceValidatorImpl.checkUsingIsDigitMethod(editUserAccountRequest.getLastName())) {
             return false;
         }
 

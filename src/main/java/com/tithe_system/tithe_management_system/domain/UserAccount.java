@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,10 +32,8 @@ public class UserAccount {
     private String emailAddress;
     private String username;
     private String password;
-    private String locked;
+    private boolean locked;
     private int loginAttempts;
-    @Enumerated(EnumType.STRING)
-    private EntityStatus entityStatus;
     private LocalDateTime dateCreated;
     private  LocalDateTime dateLastModified;
     @JsonIgnore
@@ -45,6 +44,10 @@ public class UserAccount {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assembly_id", referencedColumnName = "id")
     private Assembly assembly;
+
+    @Column(name = "entity_status", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private EntityStatus entityStatus;
 
     @PreUpdate
     public void update(){
@@ -129,11 +132,11 @@ public class UserAccount {
         this.password = password;
     }
 
-    public String getLocked() {
+    public boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(String locked) {
+    public void setLocked(boolean locked) {
         this.locked = locked;
     }
 
@@ -143,14 +146,6 @@ public class UserAccount {
 
     public void setLoginAttempts(int loginAttempts) {
         this.loginAttempts = loginAttempts;
-    }
-
-    public EntityStatus getEntityStatus() {
-        return entityStatus;
-    }
-
-    public void setEntityStatus(EntityStatus entityStatus) {
-        this.entityStatus = entityStatus;
     }
 
     public LocalDateTime getDateCreated() {
@@ -169,6 +164,14 @@ public class UserAccount {
         this.dateLastModified = dateLastModified;
     }
 
+    public UserGroup getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
+    }
+
     public Assembly getAssembly() {
         return assembly;
     }
@@ -177,12 +180,12 @@ public class UserAccount {
         this.assembly = assembly;
     }
 
-    public UserGroup getUserGroup() {
-        return userGroup;
+    public EntityStatus getEntityStatus() {
+        return entityStatus;
     }
 
-    public void setUserGroup(UserGroup userGroup) {
-        this.userGroup = userGroup;
+    public void setEntityStatus(EntityStatus entityStatus) {
+        this.entityStatus = entityStatus;
     }
 
     @Override
@@ -197,13 +200,13 @@ public class UserAccount {
                 ", emailAddress='" + emailAddress + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", locked='" + locked + '\'' +
+                ", locked=" + locked +
                 ", loginAttempts=" + loginAttempts +
-                ", entityStatus=" + entityStatus +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", userGroup=" + userGroup +
                 ", assembly=" + assembly +
+                ", entityStatus=" + entityStatus +
                 '}';
     }
 }
