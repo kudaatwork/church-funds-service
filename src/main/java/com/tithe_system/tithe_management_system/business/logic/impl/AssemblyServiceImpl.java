@@ -328,29 +328,23 @@ public class AssemblyServiceImpl implements AssemblyService {
                     null);
         }
 
-        Optional<Account> accountRetrieved = accountRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
-
-        if (accountRetrieved.isEmpty()) {
-
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
-                    locale);
-
-            return buildAssemblyResponse(404, false, message, null, null,
-                    null);
-        }
-
         Assembly assemblyToBeDeleted = assemblyRetrieved.get();
         assemblyToBeDeleted.setEntityStatus(EntityStatus.DELETED);
         assemblyToBeDeleted.setName(assemblyToBeDeleted.getName().replace(" ", "_") + LocalDateTime.now());
 
+        Optional<Account> accountRetrieved = accountRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
+
+        AccountDto accountDto = new AccountDto();
+
+        if (!accountRetrieved.isEmpty()) {
+
+            Account accountDeleted = accountServiceAuditable.delete(accountRetrieved.get(), locale);
+            accountDto = modelMapper.map(accountDeleted, AccountDto.class);
+        }
+
         Assembly assemblyDeleted = assemblyServiceAuditable.delete(assemblyToBeDeleted, locale);
 
-        Account accountDeleted = accountServiceAuditable.delete(accountRetrieved.get(), locale);
-
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblyDeleted, AssemblyDto.class);
-
-        AccountDto accountDto = modelMapper.map(accountDeleted, AccountDto.class);
-
         assemblyDtoReturned.setAccountDto(accountDto);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY.getCode(), new String[]{},
