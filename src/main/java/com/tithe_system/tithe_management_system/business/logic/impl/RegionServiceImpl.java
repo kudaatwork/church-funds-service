@@ -39,21 +39,21 @@ public class RegionServiceImpl implements RegionService {
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final AssemblyRepository assemblyRepository;
-    private final ProvinceRepository provinceRepository;
     private final ModelMapper modelMapper;
     private final RegionServiceAuditable regionServiceAuditable;
     private final DistrictServiceAuditable districtServiceAuditable;
     private final AssemblyServiceAuditable assemblyServiceAuditable;
     private final ApplicationMessagesService applicationMessagesService;
 
-    public RegionServiceImpl(RegionServiceValidator regionServiceValidator, RegionRepository regionRepository, DistrictRepository districtRepository, AssemblyRepository assemblyRepository,
-                             ProvinceRepository provinceRepository, ModelMapper modelMapper, RegionServiceAuditable
-                                     regionServiceAuditable, DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable, ApplicationMessagesService applicationMessagesService) {
+    public RegionServiceImpl(RegionServiceValidator regionServiceValidator, RegionRepository regionRepository,
+                             DistrictRepository districtRepository, AssemblyRepository assemblyRepository,
+                            ModelMapper modelMapper, RegionServiceAuditable regionServiceAuditable,
+                             DistrictServiceAuditable districtServiceAuditable, AssemblyServiceAuditable assemblyServiceAuditable,
+                             ApplicationMessagesService applicationMessagesService) {
         this.regionServiceValidator = regionServiceValidator;
         this.regionRepository = regionRepository;
         this.districtRepository = districtRepository;
         this.assemblyRepository = assemblyRepository;
-        this.provinceRepository = provinceRepository;
         this.modelMapper = modelMapper;
         this.regionServiceAuditable = regionServiceAuditable;
         this.districtServiceAuditable = districtServiceAuditable;
