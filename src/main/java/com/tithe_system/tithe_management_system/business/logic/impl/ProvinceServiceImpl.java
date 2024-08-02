@@ -139,6 +139,18 @@ public class ProvinceServiceImpl implements ProvinceService {
                     null);
         }
 
+        Optional<Region> regionRetrieved = regionRepository.findByIdAndEntityStatusNot(
+                editProvinceRequest.getRegionId(), EntityStatus.DELETED);
+
+        if (regionRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildProvinceResponse(400, false, message, null, null,
+                    null);
+        }
+
         Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(
                 editProvinceRequest.getId(), EntityStatus.DELETED);
 
@@ -153,23 +165,28 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         Province provinceToBeEdited = provinceRetrieved.get();
 
-        if (Objects.equals(provinceToBeEdited.getId(), editProvinceRequest.getId()) &&
-                Objects.equals(provinceToBeEdited.getName().toLowerCase(), editProvinceRequest.getName().toLowerCase())) {
+        Optional<Province> checkForDuplicateProvince = provinceRepository.findByNameAndEntityStatusNot(
+                editProvinceRequest.getName(), EntityStatus.DELETED);
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
-                    locale);
+        if (checkForDuplicateProvince.isPresent()) {
 
-            return buildProvinceResponse(400, false, message, null,
-                    null, null);
+            if (!checkForDuplicateProvince.get().getId().equals(editProvinceRequest.getId())) {
+
+                message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
+                        new String[]{}, locale);
+
+                return buildProvinceResponse(400, false, message, null,
+                        null, null);
+            }
         }
-        else {
 
-            provinceToBeEdited.setName(editProvinceRequest.getName());
-        }
+        provinceToBeEdited.setName(editProvinceRequest.getName());
 
         Province provinceEdited = provinceServiceAuditable.edit(provinceToBeEdited, locale, username);
 
         ProvinceDto provinceDtoReturned = modelMapper.map(provinceEdited, ProvinceDto.class);
+        RegionDto regionDto = modelMapper.map(regionRetrieved.get(), RegionDto.class);
+        provinceDtoReturned.setRegionDto(regionDto);
 
         message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
