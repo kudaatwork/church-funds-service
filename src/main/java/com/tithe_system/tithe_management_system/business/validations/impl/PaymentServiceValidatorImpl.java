@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.validations.api.Payment
 import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.PaymentChannel;
+import com.tithe_system.tithe_management_system.domain.PaymentMethod;
 import com.tithe_system.tithe_management_system.domain.PaymentStatus;
 import com.tithe_system.tithe_management_system.domain.PaymentType;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
@@ -64,6 +65,10 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         }
 
         if (!isNarrationValid(createPaymentRequest.getNarration())) {
+            return false;
+        }
+
+        if (!isPaymentMethodValid(createPaymentRequest.getPaymentMethod())) {
             return false;
         }
 
@@ -186,6 +191,27 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         } catch (Exception ex) {
 
             logger.info("Error encountered while converting narration value from request : {}", narrationSupplied);
+
+            return false;
+        }
+    }
+
+    private boolean isPaymentMethodValid(String paymentMethodSupplied) {
+
+        try {
+
+            PaymentMethod[] paymentMethods = PaymentMethod.values();
+
+            for (PaymentMethod paymentMethod : paymentMethods)
+
+                if (paymentMethod.getPaymentMethod().equals(paymentMethodSupplied)){
+                    return true;
+                }
+
+            return false;
+        } catch (Exception ex) {
+
+            logger.info("Error encountered while converting payment method value from request : {}", paymentMethodSupplied);
 
             return false;
         }

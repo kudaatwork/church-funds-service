@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class PaymentDto {
     private Long id;
     private String amount;
-    private String popUrl;
     private String transactionReference;
     private Currency currency;
     private PaymentMethod paymentMethod;
@@ -37,14 +36,6 @@ public class PaymentDto {
 
     public void setAmount(String amount) {
         this.amount = amount;
-    }
-
-    public String getPopUrl() {
-        return popUrl;
-    }
-
-    public void setPopUrl(String popUrl) {
-        this.popUrl = popUrl;
     }
 
     public String getTransactionReference() {
@@ -124,7 +115,6 @@ public class PaymentDto {
         return "PaymentDto{" +
                 "id=" + id +
                 ", amount='" + amount + '\'' +
-                ", popUrl='" + popUrl + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
                 ", currency=" + currency +
                 ", paymentMethod=" + paymentMethod +

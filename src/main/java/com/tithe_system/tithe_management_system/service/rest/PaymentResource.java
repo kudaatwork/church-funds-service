@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +33,7 @@ public class PaymentResource {
 
     @Operation(summary = "Create a payment")
     @PostMapping(value = "/create")
-    public PaymentResponse create(@Valid @RequestBody final CreatePaymentRequest createPaymentRequest,
+    public PaymentResponse create(@Valid @ModelAttribute final CreatePaymentRequest createPaymentRequest,
                                   @Parameter(name = "Authorization", in = ParameterIn.HEADER,
                                            description = "Bearer token", required = true)
                                    String authenticationToken,

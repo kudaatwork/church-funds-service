@@ -20,3 +20,5 @@ spring:
 
 constants:
   max-image-size: 2000KB
+  max-file-size: 128000KB
+

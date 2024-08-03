@@ -10,6 +10,7 @@ public class CreatePaymentRequest {
     private String paymentChannel;
     private String  paymentType;
     private String narration;
+    private String paymentMethod;
     private Long assemblyId;
     private Long userAccountId;
     private Long accountId;
@@ -62,6 +63,14 @@ public class CreatePaymentRequest {
         this.narration = narration;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     public Long getAssemblyId() {
         return assemblyId;
     }
@@ -90,10 +99,12 @@ public class CreatePaymentRequest {
     public String toString() {
         return "CreatePaymentRequest{" +
                 "amount=" + amount +
+                ", proofOfPayment=" + proofOfPayment +
                 ", currency='" + currency + '\'' +
                 ", paymentChannel='" + paymentChannel + '\'' +
                 ", paymentType='" + paymentType + '\'' +
                 ", narration='" + narration + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
                 ", assemblyId=" + assemblyId +
                 ", userAccountId=" + userAccountId +
                 ", accountId=" + accountId +

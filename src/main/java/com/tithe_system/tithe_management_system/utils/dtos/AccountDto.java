@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.utils.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.Narration;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,12 +18,13 @@ public class AccountDto {
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
     private String transactionReference;
+    private BigDecimal transactionAmount;
+    private String name;
+    private Narration narration;
     private String currency;
     private UserAccountDto userAccountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
-    @Column(name = "entity_status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
     private EntityStatus entityStatus;
 
     public Long getId() {
@@ -81,6 +83,30 @@ public class AccountDto {
         this.transactionReference = transactionReference;
     }
 
+    public BigDecimal getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(BigDecimal transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Narration getNarration() {
+        return narration;
+    }
+
+    public void setNarration(Narration narration) {
+        this.narration = narration;
+    }
+
     public String getCurrency() {
         return currency;
     }
@@ -131,6 +157,9 @@ public class AccountDto {
                 ", creditBalance=" + creditBalance +
                 ", cumulativeBalance=" + cumulativeBalance +
                 ", transactionReference='" + transactionReference + '\'' +
+                ", transactionAmount=" + transactionAmount +
+                ", name='" + name + '\'' +
+                ", narration=" + narration +
                 ", currency='" + currency + '\'' +
                 ", userAccountDto=" + userAccountDto +
                 ", dateCreated=" + dateCreated +

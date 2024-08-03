@@ -26,19 +26,22 @@ public class Payment {
     private Long id;
     private BigDecimal amount;
     @Lob
-    @Column(name = "pop_Url")
+    @Column(name = "pop_Url", columnDefinition = "longblob")
     private byte[] popUrl;
     @Column(name = "pop_Name")
     private String popName;
     private String transactionReference;
     private String accountNumber;
     private String narration;
+    @Enumerated(value = EnumType.STRING)
     private PaymentChannel paymentChannel;
     @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
+    @Enumerated(value = EnumType.STRING)
     private PaymentMethod paymentMethod;
+    @Enumerated(value = EnumType.STRING)
     private PaymentStatus paymentStatus;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assembly_id", referencedColumnName = "id")

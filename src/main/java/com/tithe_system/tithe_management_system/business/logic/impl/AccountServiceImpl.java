@@ -118,6 +118,20 @@ public class AccountServiceImpl implements AccountService {
 
         String message = "";
 
+        Optional<Account> account = accountRepository.findByAccountNumberAndEntityStatusNot(updateAccountRequest.getAccountNumber(),
+                EntityStatus.DELETED);
+
+        if (account.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
+                    locale);
+
+            return buildAccountResponse(400, false, message, null, null,
+                    null);
+        }
+
+        updateAccountRequest.setId(account.get().getId());
+
        boolean isRequestValid = accountServiceValidator.isUpdateRequestValid(updateAccountRequest);
 
         if (!isRequestValid) {
@@ -141,24 +155,25 @@ public class AccountServiceImpl implements AccountService {
                     null);
         }
 
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        Account accountRecordToBeSaved = modelMapper.map(updateAccountRequest, Account.class);
+        Account accountRecordToBeUpdated = accountRetrieved.get();
+        accountRecordToBeUpdated.setTransactionAmount(updateAccountRequest.getAmount());
+        accountRecordToBeUpdated.setNarration(Narration.ACCOUNT_IN_USE.getAccountNarration());
 
         if (updateAccountRequest.getNarration().equals(Narration.PAYMENT.toString())) {
 
-            accountRecordToBeSaved.setDebitBalance(updateAccountRequest.getAmount());
-            accountRecordToBeSaved.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
+            accountRecordToBeUpdated.setDebitBalance(accountRecordToBeUpdated.getDebitBalance().add(updateAccountRequest.getAmount()));
+            accountRecordToBeUpdated.setCumulativeBalance(accountRecordToBeUpdated.getCumulativeBalance()
                     .add(updateAccountRequest.getAmount()));
         }
 
         if (updateAccountRequest.getNarration().equals(Narration.REVERSAL.toString())) {
 
-            accountRecordToBeSaved.setCreditBalance(updateAccountRequest.getAmount());
-            accountRecordToBeSaved.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
+            accountRecordToBeUpdated.setCreditBalance(accountRecordToBeUpdated.getCreditBalance().add(updateAccountRequest.getAmount()));
+            accountRecordToBeUpdated.setCumulativeBalance(accountRecordToBeUpdated.getCumulativeBalance()
                     .subtract(updateAccountRequest.getAmount()));
         }
 
-        Account accountSaved = accountServiceAuditable.update(accountRecordToBeSaved, locale, username);
+        Account accountSaved = accountServiceAuditable.update(accountRecordToBeUpdated, locale, username);
 
         AccountDto accountDtoReturned = modelMapper.map(accountSaved, AccountDto.class);
 

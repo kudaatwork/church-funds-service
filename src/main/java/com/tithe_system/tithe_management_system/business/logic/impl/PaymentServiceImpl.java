@@ -130,6 +130,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentToBeSaved.setUserAccount(userAccountRetrieved.get());
         paymentToBeSaved.setPaymentStatus(PaymentStatus.INITIATED);
         paymentToBeSaved.setNarration(Narration.PAYMENT.getAccountNarration());
+        paymentToBeSaved.setAccountNumber(accountRetrieved.get().getAccountNumber());
 
         try {
 
@@ -223,6 +224,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentToBeSaved.setUserAccount(paymentRetrieved.get().getUserAccount());
         paymentToBeSaved.setPaymentStatus(PaymentStatus.REVERSED);
         paymentToBeSaved.setNarration(Narration.REVERSAL.getAccountNarration());
+        paymentToBeSaved.setAccountNumber(accountRetrieved.get().getAccountNumber());
 
         Payment paymentSaved = paymentServiceAuditable.create(paymentToBeSaved, locale, username);
 
@@ -327,6 +329,7 @@ public class PaymentServiceImpl implements PaymentService {
         updateAccountRequest.setAmount(payment.getAmount());
         updateAccountRequest.setCurrency(payment.getCurrency().toString());
         updateAccountRequest.setNarration(payment.getNarration());
+        updateAccountRequest.setTransactionReference(payment.getTransactionReference());
 
         return updateAccountRequest;
     }
