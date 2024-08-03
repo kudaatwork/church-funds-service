@@ -4,7 +4,6 @@ import com.tithe_system.tithe_management_system.business.auditables.api.UserRole
 import com.tithe_system.tithe_management_system.business.logic.api.UserRoleService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserRoleServiceValidator;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
-import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.domain.UserRole;
 import com.tithe_system.tithe_management_system.repository.UserRoleRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
@@ -25,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 public class UserRoleServiceImpl implements UserRoleService {
@@ -54,7 +52,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (!isRequestValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_USER_ROLE_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_USER_ROLE_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(400, false, message, null, null,
@@ -66,7 +64,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (userRoleRetrieved.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(400, false, message, null, null,
@@ -80,7 +78,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserRoleDto userRoleDtoReturned = modelMapper.map(userRoleSaved, UserRoleDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserRoleResponse(201, true, message, userRoleDtoReturned, null,
@@ -96,7 +94,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if(!isRequestValid){
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_USER_ROLE_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_EDIT_USER_ROLE_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(400, false, message, null, null,
@@ -108,7 +106,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (userRoleRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(400, false, message, null, null,
@@ -126,7 +124,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
                 if (!checkForDuplicateUserRole.get().getId().equals(editUserRoleRequest.getId())) {
 
-                    message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_ALREADY_EXISTS.getCode(),
+                    message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_ALREADY_EXISTS.getCode(),
                             new String[]{}, locale);
 
                     return buildUserRoleResponse(400, false, message, null,
@@ -141,7 +139,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserRoleDto userRoleDto = modelMapper.map(userRoleEdited, UserRoleDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserRoleResponse(201, true, message, userRoleDto, null,
@@ -157,7 +155,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_USER_ROLE_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_USER_ROLE_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(400, false, message, null, null,
@@ -168,7 +166,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (userRoleRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(404, false, message, null, null,
@@ -183,7 +181,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserRoleDto userRoleDtoReturned = modelMapper.map(userRoleDeleted, UserRoleDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserRoleResponse(200, true, message, userRoleDtoReturned, null,
@@ -199,7 +197,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if(!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_USER_GROUP_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_USER_GROUP_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildUserRoleResponse(400, false, message, null, null,
@@ -210,7 +208,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if (userRoleRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserRoleResponse(404, false, message, null, null,
@@ -221,7 +219,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserRoleDto userRoleDto = modelMapper.map(userRoleReturned, UserRoleDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserRoleResponse(200, true, message, userRoleDto, null,
@@ -237,7 +235,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if(userRoleList.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(), new String[]
                     {}, locale);
 
             return buildUserRoleResponse(404, false, message, null,
@@ -246,7 +244,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         List<UserRoleDto> userRoleDtoList = modelMapper.map(userRoleList, new TypeToken<List<UserGroupDto>>(){}.getType());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildUserRoleResponse(200, true, message, null,
@@ -266,14 +264,14 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         if(userRoleDtoPage.getContent().isEmpty()){
 
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildUserRoleResponse(404, false, message, null, null,
                     userRoleDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildUserRoleResponse(200, true, message, null,

@@ -59,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
         boolean isRequestValid = accountServiceValidator.isCreateRequestValid(createAccountRequest);
 
         if (!isRequestValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -71,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (assemblyRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -85,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountRetrieved.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -106,7 +106,7 @@ public class AccountServiceImpl implements AccountService {
 
         AccountDto accountDtoReturned = modelMapper.map(accountSaved, AccountDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAccountResponse(201, true, message, accountDtoReturned, null,
@@ -114,52 +114,58 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateAccount(UpdateAccountRequest updateAccountRequest, String username, Locale locale) {
+    public AccountResponse updateAccountRecords(UpdateAccountRequest updateAccountRequest, String username, Locale locale) {
 
         String message = "";
 
        boolean isRequestValid = accountServiceValidator.isUpdateRequestValid(updateAccountRequest);
 
         if (!isRequestValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_UPDATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_UPDATE_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(400, false, message, null, null,
                     null);
         }
 
-        Optional<Account> accountRetrieved = accountRepository.findByIdAndEntityStatusNot(updateAccountRequest.getId(), EntityStatus.DELETED);
+        Optional<Account> accountRetrieved = accountRepository.findByIdAndEntityStatusNot(updateAccountRequest.getId(),
+                EntityStatus.DELETED);
 
         if (accountRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
-            return buildAccountResponse(404, false, message, null, null,
+
+            return buildAccountResponse(400, false, message, null, null,
                     null);
         }
 
-        Account accountToBeUpdated = accountRetrieved.get();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Account accountRecordToBeSaved = modelMapper.map(updateAccountRequest, Account.class);
 
         if (updateAccountRequest.getNarration().equals(Narration.PAYMENT.toString())) {
 
-            accountToBeUpdated.setDebitBalance(updateAccountRequest.getAmount());
-            accountToBeUpdated.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
+            accountRecordToBeSaved.setDebitBalance(updateAccountRequest.getAmount());
+            accountRecordToBeSaved.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
                     .add(updateAccountRequest.getAmount()));
         }
 
         if (updateAccountRequest.getNarration().equals(Narration.REVERSAL.toString())) {
 
-            accountToBeUpdated.setCreditBalance(updateAccountRequest.getAmount());
-            accountToBeUpdated.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
+            accountRecordToBeSaved.setCreditBalance(updateAccountRequest.getAmount());
+            accountRecordToBeSaved.setCumulativeBalance(accountRetrieved.get().getCumulativeBalance()
                     .subtract(updateAccountRequest.getAmount()));
         }
 
-        Account accountSaved = accountServiceAuditable.update(accountToBeUpdated, locale, username);
+        Account accountSaved = accountServiceAuditable.update(accountRecordToBeSaved, locale, username);
 
         AccountDto accountDtoReturned = modelMapper.map(accountSaved, AccountDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_UPDATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_UPDATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
-        return buildAccountResponse(201, false, message, null, null,
+
+        return buildAccountResponse(201, false, message, accountDtoReturned, null,
                 null);
     }
 
@@ -172,7 +178,7 @@ public class AccountServiceImpl implements AccountService {
 
         if(!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_ACCOUNT_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ACCOUNT_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildAccountResponse(400, false, message, null, null,
@@ -183,7 +189,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildAccountResponse(404, false, message, null, null,
@@ -194,7 +200,7 @@ public class AccountServiceImpl implements AccountService {
 
         AccountDto accountDto = modelMapper.map(accountReturned, AccountDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAccountResponse(200, true, message, accountDto, null,
@@ -215,14 +221,14 @@ public class AccountServiceImpl implements AccountService {
 
         if(accountDtoPage.getContent().isEmpty()){
 
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildAccountResponse(404, false, message, null, null,
                     accountDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildAccountResponse(200, true, message, null,

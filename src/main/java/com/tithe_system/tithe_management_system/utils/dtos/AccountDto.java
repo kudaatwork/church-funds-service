@@ -17,6 +17,7 @@ public class AccountDto {
     private BigDecimal creditBalance;
     private BigDecimal cumulativeBalance;
     private String transactionReference;
+    private String currency;
     private UserAccountDto userAccountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
@@ -80,6 +81,14 @@ public class AccountDto {
         this.transactionReference = transactionReference;
     }
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
     public UserAccountDto getUserAccountDto() {
         return userAccountDto;
     }
@@ -122,6 +131,7 @@ public class AccountDto {
                 ", creditBalance=" + creditBalance +
                 ", cumulativeBalance=" + cumulativeBalance +
                 ", transactionReference='" + transactionReference + '\'' +
+                ", currency='" + currency + '\'' +
                 ", userAccountDto=" + userAccountDto +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +

@@ -29,7 +29,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 public class UserAccountServiceImpl implements UserAccountService {
@@ -63,7 +62,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (!isRequestValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_USER_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_USER_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -75,7 +74,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (assemblyRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -87,7 +86,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userGroupRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -99,7 +98,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userAccountRetrieved.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -111,7 +110,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userAccountRetrieved2.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -123,7 +122,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userAccountRetrieved3.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -143,7 +142,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccountDto userAccountDtoReturned = modelMapper.map(userAccountSaved, UserAccountDto.class);
         userAccountDtoReturned.setPassword(null);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserAccountResponse(201, true, message, userAccountDtoReturned, null,
@@ -159,7 +158,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if(!isRequestValid){
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_USER_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_EDIT_USER_ACCOUNT_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -171,7 +170,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (assemblyRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -183,7 +182,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userGroupRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -195,7 +194,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userAccountRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -217,7 +216,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
             if (!checkForDuplicateUserAccount.get().getId().equals(editUserAccountRequest.getId())) {
 
-                message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(),
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_ALREADY_EXISTS.getCode(),
                             new String[]{}, locale);
 
                 return buildUserAccountResponse(400, false, message, null,
@@ -232,7 +231,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         UserAccountDto userAccountDtoReturned = modelMapper.map(userAccountEdited, UserAccountDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserAccountResponse(201, true, message, userAccountDtoReturned, null,
@@ -248,7 +247,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_USER_ACCOUNT_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_USER_ACCOUNT_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -259,7 +258,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userAccountRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(404, false, message, null, null,
@@ -275,7 +274,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         UserAccountDto userAccountDtoReturned = modelMapper.map(userAccountDeleted, UserAccountDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserAccountResponse(200, true, message, userAccountDtoReturned, null,
@@ -291,7 +290,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if(!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_USER_ACCOUNT_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_USER_ACCOUNT_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildUserAccountResponse(400, false, message, null, null,
@@ -302,7 +301,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if (userAccountRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserAccountResponse(404, false, message, null, null,
@@ -313,7 +312,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         UserAccountDto userAccountDto = modelMapper.map(userAccountReturned, UserAccountDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserAccountResponse(200, true, message, userAccountDto, null,
@@ -329,7 +328,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if(userAccountList.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]
                     {}, locale);
 
             return buildUserAccountResponse(404, false, message, null,
@@ -338,7 +337,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         List<UserAccountDto> userAccountDtoList = modelMapper.map(userAccountList, new TypeToken<List<UserAccountDto>>(){}.getType());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildUserAccountResponse(200, true, message, null,
@@ -358,14 +357,14 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         if(userAccountPage.getContent().isEmpty()){
 
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildUserAccountResponse(404, false, message, null, null,
                     userAccountDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildUserAccountResponse(200, true, message, null,

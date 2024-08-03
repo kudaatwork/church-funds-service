@@ -4,7 +4,6 @@ import com.tithe_system.tithe_management_system.business.auditables.api.UserGrou
 import com.tithe_system.tithe_management_system.business.logic.api.UserGroupService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserGroupServiceValidator;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
-import com.tithe_system.tithe_management_system.domain.UserAccount;
 import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
@@ -23,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 public class UserGroupServiceImpl implements UserGroupService {
@@ -52,7 +50,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (!isRequestValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_USER_GROUP_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_USER_GROUP_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(400, false, message, null, null,
@@ -64,7 +62,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (userGroupRetrieved.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(400, false, message, null, null,
@@ -77,7 +75,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         UserGroupDto userAccountDtoReturned = modelMapper.map(userGroupSaved, UserGroupDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserGroupResponse(201, true, message, userAccountDtoReturned, null,
@@ -93,7 +91,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if(!isRequestValid){
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_USER_GROUP_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_EDIT_USER_GROUP_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(400, false, message, null, null,
@@ -105,7 +103,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (userGroupRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(400, false, message, null, null,
@@ -124,7 +122,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
                 if (!checkForDuplicateUserGroup.get().getId().equals(editUserGroupRequest.getId())) {
 
-                    message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_ALREADY_EXISTS.getCode(),
+                    message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_ALREADY_EXISTS.getCode(),
                             new String[]{}, locale);
 
                     return buildUserGroupResponse(400, false, message, null,
@@ -139,7 +137,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         UserGroupDto userGroupDto = modelMapper.map(userGroupEdited, UserGroupDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserGroupResponse(201, true, message, userGroupDto, null,
@@ -155,7 +153,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_USER_GROUP_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_USER_GROUP_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(400, false, message, null, null,
@@ -166,7 +164,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (userGroupRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(404, false, message, null, null,
@@ -181,7 +179,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         UserGroupDto userGroupDtoReturned = modelMapper.map(userGroupDeleted, UserGroupDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserGroupResponse(200, true, message, userGroupDtoReturned, null,
@@ -197,7 +195,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if(!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_USER_GROUP_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_USER_GROUP_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildUserGroupResponse(400, false, message, null, null,
@@ -208,7 +206,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (userGroupRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildUserGroupResponse(404, false, message, null, null,
@@ -219,7 +217,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         UserGroupDto userGroupDto = modelMapper.map(userGroupReturned, UserGroupDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildUserGroupResponse(200, true, message, userGroupDto, null,
@@ -235,7 +233,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if(userGroupList.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]
                     {}, locale);
 
             return buildUserGroupResponse(404, false, message, null,
@@ -244,7 +242,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         List<UserGroupDto> userGroupDtoList = modelMapper.map(userGroupList, new TypeToken<List<UserGroupDto>>(){}.getType());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildUserGroupResponse(200, true, message, null,
@@ -264,14 +262,14 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if(userGroupDtoPage.getContent().isEmpty()){
 
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildUserGroupResponse(404, false, message, null, null,
                     userGroupDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildUserGroupResponse(200, true, message, null,

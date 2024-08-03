@@ -87,7 +87,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         boolean isRequestValid = assemblyServiceValidator.isRequestValidForCreation(createAssemblyRequest);
 
         if (!isRequestValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_ASSEMBLY_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_ASSEMBLY_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildAssemblyResponse(400, false, message, null, null,
@@ -98,7 +98,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 createAssemblyRequest.getProvinceId(), EntityStatus.DELETED);
 
         if (provinceRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -108,7 +108,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 createAssemblyRequest.getRegionId(), EntityStatus.DELETED);
 
         if (regionRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -118,7 +118,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 createAssemblyRequest.getDistrictId(), EntityStatus.DELETED);
 
         if (districtRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -128,7 +128,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 createAssemblyRequest.getName(), EntityStatus.DELETED);
 
         if (assemblyRetrieved.isPresent()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -176,7 +176,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         assemblyDtoReturned.setUsdAccountDto(usdAccountResponse.getAccountDto());
         assemblyDtoReturned.setLocalCurrencyAccountDto(localCurrencyAccountResponse.getAccountDto());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAssemblyResponse(201, true, message, assemblyDtoReturned, null,
@@ -191,7 +191,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         boolean isRequestValid = assemblyServiceValidator.isRequestValidForEditing(editAssemblyRequest);
 
         if(!isRequestValid){
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_ASSEMBLY_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_EDIT_ASSEMBLY_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -201,7 +201,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 editAssemblyRequest.getProvinceId(), EntityStatus.DELETED);
 
         if (provinceRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -211,7 +211,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 editAssemblyRequest.getRegionId(), EntityStatus.DELETED);
 
         if (regionRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -221,7 +221,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 editAssemblyRequest.getDistrictId(), EntityStatus.DELETED);
 
         if (districtRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -231,7 +231,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 editAssemblyRequest.getUserAccountId(), EntityStatus.DELETED);
 
         if (userAccountRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -241,7 +241,7 @@ public class AssemblyServiceImpl implements AssemblyService {
                 editAssemblyRequest.getId(), EntityStatus.DELETED);
 
         if (assemblyRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -258,7 +258,7 @@ public class AssemblyServiceImpl implements AssemblyService {
 
                 if (!checkForDuplicateAssembly.get().getId().equals(editAssemblyRequest.getId())) {
 
-                    message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
+                    message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
                             new String[]{}, locale);
 
                     return buildAssemblyResponse(400, false, message, null,
@@ -306,7 +306,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         assemblyDtoReturned.setRegionDto(regionDto);
         assemblyDtoReturned.setDistrictDto(districtDto);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAssemblyResponse(201, true, message, assemblyDtoReturned, null,
@@ -321,7 +321,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         boolean isIdValid = assemblyServiceValidator.isIdValid(id);
 
         if (!isIdValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_ASSEMBLY_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ASSEMBLY_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildAssemblyResponse(400, false, message, null, null,
@@ -332,7 +332,7 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         if (assemblyRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildAssemblyResponse(404, false, message, null, null,
@@ -358,7 +358,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         AssemblyDto assemblyDtoReturned = modelMapper.map(assemblyDeleted, AssemblyDto.class);
         //assemblyDtoReturned.setAccountDto(accountDto);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAssemblyResponse(200, true, message, assemblyDtoReturned, null,
@@ -372,7 +372,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         boolean isIdValid = assemblyServiceValidator.isIdValid(id);
 
         if(!isIdValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_ASSEMBLY_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ASSEMBLY_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
             return buildAssemblyResponse(400, false, message, null, null,
                     null);
@@ -381,7 +381,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         Optional<Assembly> assemblyRetrieved = assemblyRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (assemblyRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildAssemblyResponse(404, false, message, null, null,
                     null);
@@ -391,7 +391,7 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         AssemblyDto assemblyDto = modelMapper.map(assemblyReturned, AssemblyDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildAssemblyResponse(200, true, message, assemblyDto, null,
@@ -406,7 +406,7 @@ public class AssemblyServiceImpl implements AssemblyService {
         List<Assembly> assemblyList = assemblyRepository.findByEntityStatusNot(EntityStatus.DELETED);
 
         if(assemblyList.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]
                     {}, locale);
             return buildAssemblyResponse(404, false, message, null,
                     null, null);
@@ -414,7 +414,7 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         List<AssemblyDto> assemblyDtoList = modelMapper.map(assemblyList, new TypeToken<List<AssemblyDto>>(){}.getType());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildAssemblyResponse(200, true, message, null,
@@ -433,14 +433,14 @@ public class AssemblyServiceImpl implements AssemblyService {
         Page<AssemblyDto> assemblyDtoPage = convertAssemblyEntityToAssemblyDto(assemblyPage);
 
         if(assemblyPage.getContent().isEmpty()){
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildAssemblyResponse(404, false, message, null, null,
                     assemblyDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildAssemblyResponse(200, true, message, null,

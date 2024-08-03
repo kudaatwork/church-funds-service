@@ -77,7 +77,7 @@ public class RegionServiceImpl implements RegionService {
 
         if (!isRequestValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_REGION_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_REGION_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildRegionResponse(400, false, message, null, null,
@@ -89,7 +89,7 @@ public class RegionServiceImpl implements RegionService {
 
         if (regionRetrieved.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildRegionResponse(400, false, message, null, null,
@@ -104,7 +104,7 @@ public class RegionServiceImpl implements RegionService {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         RegionDto regionDtoReturned = modelMapper.map(regionSaved, RegionDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildRegionResponse(201, true, message, regionDtoReturned, null,
@@ -120,7 +120,7 @@ public class RegionServiceImpl implements RegionService {
 
         if(!isRequestValid){
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_REGION_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_EDIT_REGION_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildRegionResponse(400, false, message, null, null,
@@ -132,7 +132,7 @@ public class RegionServiceImpl implements RegionService {
 
         if (regionRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildRegionResponse(400, false, message, null, null,
@@ -148,7 +148,7 @@ public class RegionServiceImpl implements RegionService {
 
             if (!checkForDuplicateRegion.get().getId().equals(editRegionRequest.getId())) {
 
-                message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_ALREADY_EXISTS.getCode(),
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_ALREADY_EXISTS.getCode(),
                             new String[]{}, locale);
 
                     return buildRegionResponse(400, false, message, null,
@@ -162,7 +162,7 @@ public class RegionServiceImpl implements RegionService {
 
         RegionDto regionDtoReturned = modelMapper.map(regionEdited, RegionDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildRegionResponse(201, true, message, regionDtoReturned, null,
@@ -177,7 +177,7 @@ public class RegionServiceImpl implements RegionService {
         boolean isIdValid = regionServiceValidator.isIdValid(id);
 
         if (!isIdValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_REGION_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_REGION_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildRegionResponse(400, false,    message, null, null,
@@ -187,7 +187,7 @@ public class RegionServiceImpl implements RegionService {
         Optional<Region> regionRetrieved = regionRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (regionRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
             return buildRegionResponse(404, false, message, null, null,
                     null);
@@ -259,7 +259,7 @@ public class RegionServiceImpl implements RegionService {
         regionDtoReturned.setAssemblyDtoList(assemblyDtoList);
         regionDtoReturned.setProvinceDtoList(provinceDtoList);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildRegionResponse(200, true, message, regionDtoReturned, null,
@@ -275,7 +275,7 @@ public class RegionServiceImpl implements RegionService {
 
         if(!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_REGION_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_REGION_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildRegionResponse(400, false, message, null, null,
@@ -286,7 +286,7 @@ public class RegionServiceImpl implements RegionService {
 
         if (regionRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildRegionResponse(404, false, message, null, null,
@@ -297,7 +297,7 @@ public class RegionServiceImpl implements RegionService {
 
         RegionDto regionDto = modelMapper.map(regionReturned, RegionDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildRegionResponse(200, true, message, regionDto, null,
@@ -313,7 +313,7 @@ public class RegionServiceImpl implements RegionService {
 
         if(regionList.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]
                     {}, locale);
 
             return buildRegionResponse(404, false, message, null,
@@ -322,7 +322,7 @@ public class RegionServiceImpl implements RegionService {
 
         List<RegionDto> regionDtoList = modelMapper.map(regionList, new TypeToken<List<RegionDto>>(){}.getType());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildRegionResponse(200, true, message, null,
@@ -342,14 +342,14 @@ public class RegionServiceImpl implements RegionService {
 
         if(regionDtoPage.getContent().isEmpty()){
 
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildRegionResponse(404, false, message, null, null,
                     regionDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildRegionResponse(200, true, message, null,

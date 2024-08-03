@@ -34,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 public class ProvinceServiceImpl implements ProvinceService {
@@ -77,7 +76,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (!isRequestValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_CREATE_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CREATE_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -89,7 +88,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (regionRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -101,7 +100,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (provinceRetrieved.isPresent()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -117,7 +116,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         RegionDto regionDto = modelMapper.map(regionRetrieved.get(), RegionDto.class);
         provinceDtoReturned.setRegionDto(regionDto);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_CREATED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(201, true, message, provinceDtoReturned, null,
@@ -133,7 +132,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(!isRequestValid){
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_EDIT_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_EDIT_PROVINCE_INVALID_REQUEST.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -145,7 +144,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (regionRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -157,7 +156,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (provinceRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -173,7 +172,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
             if (!checkForDuplicateProvince.get().getId().equals(editProvinceRequest.getId())) {
 
-                message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_ALREADY_EXISTS.getCode(),
                         new String[]{}, locale);
 
                 return buildProvinceResponse(400, false, message, null,
@@ -189,7 +188,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         RegionDto regionDto = modelMapper.map(regionRetrieved.get(), RegionDto.class);
         provinceDtoReturned.setRegionDto(regionDto);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_EDITED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(201, true, message, provinceDtoReturned, null,
@@ -204,7 +203,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         boolean isIdValid = provinceServiceValidator.isIdValid(id);
 
         if (!isIdValid) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -214,7 +213,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         Optional<Province> provinceRetrieved = provinceRepository.findByIdAndEntityStatusNot(id, EntityStatus.DELETED);
 
         if (provinceRetrieved.isEmpty()) {
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_DOES_NOT_EXIST.getCode(), new String[]{},
                     locale);
             return buildProvinceResponse(404, false, message, null, null,
                     null);
@@ -268,7 +267,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         provinceDtoReturned.setDistrictDtoList(districtDtoList);
         provinceDtoReturned.setAssemblyDtoList(assemblyDtoList);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_DELETED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_DELETED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(200, true, message, provinceDtoReturned, null,
@@ -284,7 +283,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(!isIdValid) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_PROVINCE_ID_SUPPLIED.getCode(), new String[]
                     {}, locale);
 
             return buildProvinceResponse(400, false, message, null, null,
@@ -295,7 +294,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if (provinceRetrieved.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildProvinceResponse(404, false, message, null, null,
@@ -306,7 +305,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         ProvinceDto provinceDto = modelMapper.map(provinceReturned, ProvinceDto.class);
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(), new String[]{},
                 locale);
 
         return buildProvinceResponse(200, true, message, provinceDto, null,
@@ -322,7 +321,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(provinceList.isEmpty()) {
 
-            message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]
                     {}, locale);
 
             return buildProvinceResponse(404, false, message, null,
@@ -331,7 +330,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         List<ProvinceDto> provinceDtoList = modelMapper.map(provinceList, new TypeToken<List<ProvinceDto>>(){}.getType());
 
-        message = applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildProvinceResponse(200, true, message, null,
@@ -351,14 +350,14 @@ public class ProvinceServiceImpl implements ProvinceService {
 
         if(provincePage.getContent().isEmpty()){
 
-            message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildProvinceResponse(404, false, message, null, null,
                     provinceDtoPage);
         }
 
-        message =  applicationMessagesService.getMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildProvinceResponse(200, true, message, null,

@@ -19,7 +19,6 @@ public class PaymentDto {
     private PaymentChannel paymentChannel;
     private PaymentType paymentType;
     private AssemblyDto assemblyDto;
-    private UserAccountDto userAccountDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     private EntityStatus entityStatus;
@@ -96,14 +95,6 @@ public class PaymentDto {
         this.assemblyDto = assemblyDto;
     }
 
-    public UserAccountDto getUserAccountDto() {
-        return userAccountDto;
-    }
-
-    public void setUserAccountDto(UserAccountDto userAccountDto) {
-        this.userAccountDto = userAccountDto;
-    }
-
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
@@ -140,7 +131,6 @@ public class PaymentDto {
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
                 ", assemblyDto=" + assemblyDto +
-                ", userAccountDto=" + userAccountDto +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 ", entityStatus=" + entityStatus +

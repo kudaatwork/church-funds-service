@@ -90,7 +90,6 @@ public class CreatePaymentRequest {
     public String toString() {
         return "CreatePaymentRequest{" +
                 "amount=" + amount +
-                ", proofOfPayment=" + proofOfPayment +
                 ", currency='" + currency + '\'' +
                 ", paymentChannel='" + paymentChannel + '\'' +
                 ", paymentType='" + paymentType + '\'' +

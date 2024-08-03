@@ -12,12 +12,12 @@ public class ApplicationMessagesServiceImpl implements ApplicationMessagesServic
     }
 
     @Override
-    public String getMessage(String propertyName, String[] placeholders, Locale locale) {
+    public String getApplicationMessage(String propertyName, String[] placeholders, Locale locale) {
         return messageSource.getMessage(propertyName, placeholders, locale);
     }
 
     @Override
-    public String getMessage(String propertyName, Locale locale) {
+    public String getApplicationMessage(String propertyName, Locale locale) {
         return messageSource.getMessage(propertyName, new String[] {}, locale);
     }
 }

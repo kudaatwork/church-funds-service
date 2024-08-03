@@ -9,12 +9,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "payment")
@@ -23,7 +25,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BigDecimal amount;
-    private String popUrl;
+    @Lob
+    @Column(name = "pop_Url")
+    private byte[] popUrl;
+    @Column(name = "pop_Name")
+    private String popName;
     private String transactionReference;
     private String accountNumber;
     private String narration;
@@ -73,12 +79,20 @@ public class Payment {
         this.amount = amount;
     }
 
-    public String getPopUrl() {
+    public byte[] getPopUrl() {
         return popUrl;
     }
 
-    public void setPopUrl(String popUrl) {
+    public void setPopUrl(byte[] popUrl) {
         this.popUrl = popUrl;
+    }
+
+    public String getPopName() {
+        return popName;
+    }
+
+    public void setPopName(String popName) {
+        this.popName = popName;
     }
 
     public String getTransactionReference() {
@@ -190,7 +204,7 @@ public class Payment {
         return "Payment{" +
                 "id=" + id +
                 ", amount=" + amount +
-                ", popUrl='" + popUrl + '\'' +
+                ", popName='" + popName + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", narration='" + narration + '\'' +
