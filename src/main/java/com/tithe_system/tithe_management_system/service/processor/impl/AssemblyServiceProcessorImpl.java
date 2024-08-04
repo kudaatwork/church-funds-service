@@ -60,6 +60,16 @@ public class AssemblyServiceProcessorImpl implements AssemblyServiceProcessor {
     }
 
     @Override
+    public AssemblyResponse findByDistrictId(Long id, Locale locale) {
+
+        logger.info("Incoming id to find assemblies by district id: {}", id);
+        AssemblyResponse assemblyResponse = assemblyService.findById(id, locale);
+        logger.info("Outgoing response after finding assemblies by district id : {}", assemblyResponse);
+
+        return assemblyResponse;
+    }
+
+    @Override
     public AssemblyResponse findAllAsAList(String username, Locale locale) {
 
         logger.info("Incoming request to find all assemblies as a list ");

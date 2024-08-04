@@ -10,6 +10,7 @@ public interface DistrictService {
     DistrictResponse edit(EditDistrictRequest editDistrictRequest, String username, Locale locale);
     DistrictResponse delete(Long id, Locale locale);
     DistrictResponse findById(Long id, Locale locale);
+    DistrictResponse findByProvinceId(Long id, Locale locale);
     DistrictResponse findAllAsAList(String username, Locale locale);
     DistrictResponse findAllAsPages(int page, int size, Locale locale, String username);
 }

@@ -79,6 +79,17 @@ public class AssemblyResource {
         return assemblyServiceProcessor.findById(id, locale);
     }
 
+    @Operation(summary = "Find assemblies by district id")
+    @GetMapping(value = "/district-id/{id}")
+    public AssemblyResponse findByDistrictId(@PathVariable("id") final Long id,
+                                     @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                     @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                             defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return assemblyServiceProcessor.findByDistrictId(id, locale);
+    }
+
+
     @Operation(summary = "Find all assemblies as a list")
     @GetMapping(value = "/list")
     public AssemblyResponse findAllAsAList(@Parameter(name = "Authorization", in = ParameterIn.HEADER,

@@ -399,6 +399,40 @@ public class AssemblyServiceImpl implements AssemblyService {
     }
 
     @Override
+    public AssemblyResponse findByDistrictId(Long id, Locale locale) {
+
+        String message = "";
+
+        boolean isIdValid = assemblyServiceValidator.isIdValid(id);
+
+        if(!isIdValid) {
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ASSEMBLY_ID_SUPPLIED.getCode(), new String[]
+                    {}, locale);
+            return buildAssemblyResponse(400, false, message, null, null,
+                    null);
+        }
+
+        List<Assembly> assemblyList = assemblyRepository.findByDistrictIdAndEntityStatusNot(id, EntityStatus.DELETED);
+
+        if (assemblyList.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildAssemblyResponse(404, false, message, null, null,
+                    null);
+        }
+
+        List<AssemblyDto> assemblyDtoList = modelMapper.map(assemblyList, new TypeToken<List<AssemblyDto>>(){}.getType());
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
+                new String[]{}, locale);
+
+        return buildAssemblyResponse(200, true, message, null,
+                assemblyDtoList, null);
+    }
+
+    @Override
     public AssemblyResponse findAllAsAList(String username, Locale locale) {
 
         String message = "";

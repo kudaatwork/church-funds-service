@@ -319,6 +319,40 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
+    public DistrictResponse findByProvinceId(Long id, Locale locale) {
+
+        String message = "";
+
+        boolean isIdValid = districtServiceValidator.isIdValid(id);
+
+        if(!isIdValid) {
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_DISTRICT_ID_SUPPLIED.getCode(), new String[]
+                    {}, locale);
+            return buildDistrictResponse(400, false, message, null, null,
+                    null);
+        }
+
+        List<District> districtList = districtRepository.findByProvinceIdAndEntityStatusNot(id, EntityStatus.DELETED);
+
+        if (districtList.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildDistrictResponse(404, false, message, null, null,
+                    null);
+        }
+
+        List<DistrictDto> districtDtoList = modelMapper.map(districtList, new TypeToken<List<DistrictDto>>(){}.getType());
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
+                new String[]{}, locale);
+
+        return buildDistrictResponse(200, true, message, null,
+                districtDtoList, null);
+    }
+
+    @Override
     public DistrictResponse findAllAsAList(String username, Locale locale) {
 
         String message = "";

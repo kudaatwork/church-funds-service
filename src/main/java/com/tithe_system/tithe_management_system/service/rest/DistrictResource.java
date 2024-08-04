@@ -79,6 +79,16 @@ public class DistrictResource {
         return districtServiceProcessor.findById(id, locale);
     }
 
+    @Operation(summary = "Find districts by province id")
+    @GetMapping(value = "/province-id/{id}")
+    public DistrictResponse findByProvinceId(@PathVariable("id") final Long id,
+                                     @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                     @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                             defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return districtServiceProcessor.findByProvinceId(id, locale);
+    }
+
     @Operation(summary = "Find all districts as a list")
     @GetMapping(value = "/list")
     public DistrictResponse findAllAsAList(@Parameter(name = "Authorization", in = ParameterIn.HEADER,

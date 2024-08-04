@@ -313,6 +313,42 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
+    public ProvinceResponse findByRegionId(Long id, Locale locale) {
+
+        String message = "";
+
+        boolean isIdValid = provinceServiceValidator.isIdValid(id);
+
+        if(!isIdValid) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_REGION_ID_SUPPLIED.getCode(), new String[]
+                    {}, locale);
+
+            return buildProvinceResponse(400, false, message, null, null,
+                    null);
+        }
+
+        List<Province> provincesRetrieved = provinceRepository.findByRegionIdAndEntityStatusNot(id, EntityStatus.DELETED);
+
+        if (provincesRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildProvinceResponse(404, false, message, null, null,
+                    null);
+        }
+
+        List<ProvinceDto> provinceDtoList = modelMapper.map(provincesRetrieved, new TypeToken<List<ProvinceDto>>(){}.getType());
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+                new String[]{}, locale);
+
+        return buildProvinceResponse(200, true, message, null,
+                provinceDtoList, null);
+    }
+
+    @Override
     public ProvinceResponse findAllAsAList(String username, Locale locale) {
 
         String message = "";

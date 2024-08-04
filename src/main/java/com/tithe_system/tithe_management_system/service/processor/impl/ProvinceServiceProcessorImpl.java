@@ -60,6 +60,16 @@ public class ProvinceServiceProcessorImpl implements ProvinceServiceProcessor {
     }
 
     @Override
+    public ProvinceResponse findByRegionId(Long id, Locale locale) {
+
+        logger.info("Incoming request to find provinces by region id : {}", id);
+        ProvinceResponse provinceResponse = provinceService.findByRegionId(id, locale);
+        logger.info("Outgoing response after finding provinces by region id : {}", provinceResponse);
+
+        return provinceResponse;
+    }
+
+    @Override
     public ProvinceResponse findAllAsAList(String username, Locale locale) {
 
         logger.info("Incoming request to find all provinces as a list");
