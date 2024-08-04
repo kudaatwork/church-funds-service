@@ -58,7 +58,7 @@ public class PaymentResource {
         return paymentServiceProcessor.reverse(reversePaymentRequest, authenticationToken, locale);
     }
 
-    @Operation(summary = "Change payment status")
+    @Operation(summary = "Change payment status (approve/reject payment)")
     @PostMapping(value = "/change-payment-status")
     public PaymentResponse changePaymentStatus(@Valid @RequestBody final ChangePaymentStatusRequest changePaymentStatusRequest,
                                    @Parameter(name = "Authorization", in = ParameterIn.HEADER,

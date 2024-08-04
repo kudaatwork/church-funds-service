@@ -79,7 +79,7 @@ public class AssemblyResource {
         return assemblyServiceProcessor.findById(id, locale);
     }
 
-    @Operation(summary = "Find assemblies by district id")
+    @Operation(summary = "Find assemblies as pages by district id")
     @GetMapping(value = "/district-id/{id}")
     public AssemblyResponse findByDistrictId(@PathVariable("id") final Long id,
                                              @RequestParam(value = "page", defaultValue = "0") int page,
