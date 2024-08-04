@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.utils.dtos;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -10,8 +11,7 @@ public class UserGroupDto {
     private Long id;
     private String name;
     private String description;
-    private Set<UserAccountDto> userAccountDtoSet;
-    Set<UserRoleDto> userRoleDtoSet;
+    private List<UserRoleDto> userRoleDtoSet;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     private EntityStatus entityStatus;
@@ -40,19 +40,11 @@ public class UserGroupDto {
         this.description = description;
     }
 
-    public Set<UserAccountDto> getUserAccountDtoSet() {
-        return userAccountDtoSet;
-    }
-
-    public void setUserAccountDtoSet(Set<UserAccountDto> userAccountDtoSet) {
-        this.userAccountDtoSet = userAccountDtoSet;
-    }
-
-    public Set<UserRoleDto> getUserRoleDtoSet() {
+    public List<UserRoleDto> getUserRoleDtoSet() {
         return userRoleDtoSet;
     }
 
-    public void setUserRoleDtoSet(Set<UserRoleDto> userRoleDtoSet) {
+    public void setUserRoleDtoSet(List<UserRoleDto> userRoleDtoSet) {
         this.userRoleDtoSet = userRoleDtoSet;
     }
 
@@ -86,7 +78,6 @@ public class UserGroupDto {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userAccountDtoSet=" + userAccountDtoSet +
                 ", userRoleDtoSet=" + userRoleDtoSet +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +

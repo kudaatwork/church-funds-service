@@ -97,7 +97,10 @@ public enum I18Code {
     MESSAGE_INVALID_USER_ROLE_ID_SUPPLIED("message.invalid.user.role.id.supplied"),
     MESSAGE_USER_ROLE_DOES_NOT_EXIST("message.user.role.does.not.exist"),
     MESSAGE_USER_ROLE_DELETED_SUCCESSFULLY("message.user.role.deleted.successfully"),
-    MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY("message.user.role.retrieved.successfully");
+    MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY("message.user.role.retrieved.successfully"),
+    MESSAGE_INVALID_ASSIGN_USER_ROLE_TO_USER_GROUP_REQUEST("message.invalid.assign.user.role.to.user.group.request"),
+    MESSAGE_USER_ROLES_ALREADY_ASSIGNED("message.user.roles.already.assigned"),
+    MESSAGE_USER_ROLE_ASSIGNED_SUCCESSFULLY("message.user.role.assigned.successfully");
     private final String code;
 
     I18Code(String code) {

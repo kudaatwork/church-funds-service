@@ -233,9 +233,9 @@ public class BusinessConfig {
 
     @Bean
     public UserGroupService userGroupService(UserGroupServiceValidator userGroupServiceValidator, UserGroupRepository userGroupRepository,
-                                             ModelMapper modelMapper, UserGroupServiceAuditable userGroupServiceAuditable,
+                                             UserRoleRepository userRoleRepository, ModelMapper modelMapper, UserGroupServiceAuditable userGroupServiceAuditable,
                                              ApplicationMessagesService applicationMessagesService){
-        return new UserGroupServiceImpl(userGroupServiceValidator, userGroupRepository, modelMapper,
+        return new UserGroupServiceImpl(userGroupServiceValidator, userGroupRepository, userRoleRepository, modelMapper,
                 userGroupServiceAuditable, applicationMessagesService);
     }
 

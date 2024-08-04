@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.processor.impl;
 
 import com.tithe_system.tithe_management_system.business.logic.api.UserGroupService;
 import com.tithe_system.tithe_management_system.service.processor.api.UserGroupServiceProcessor;
+import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
@@ -73,6 +74,18 @@ public class UserGroupServiceProcessorImpl implements UserGroupServiceProcessor 
         logger.info("Incoming request to find user groups as pages");
         UserGroupResponse userGroupResponse = userGroupService.findAllAsPages(page, size, locale, username);
         logger.info("Outgoing response after finding user groups as pages: {}", userGroupResponse);
+
+        return userGroupResponse;
+    }
+
+    @Override
+    public UserGroupResponse assignUserRoleToUserGroup(AssignUserRoleToUserGroupRequest assignUserRoleToUserGroupRequest,
+                                                       Locale locale, String username) {
+
+        logger.info("Incoming request to assign user roles to a user group: {} ", assignUserRoleToUserGroupRequest);
+        UserGroupResponse userGroupResponse = userGroupService.assignUserRoleToUserGroup(assignUserRoleToUserGroupRequest,
+                locale, username);
+        logger.info("Outgoing response after assigning user roles to a user group : {}", userGroupResponse);
 
         return userGroupResponse;
     }

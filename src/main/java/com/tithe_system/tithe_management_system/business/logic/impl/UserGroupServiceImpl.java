@@ -5,10 +5,14 @@ import com.tithe_system.tithe_management_system.business.logic.api.UserGroupServ
 import com.tithe_system.tithe_management_system.business.validations.api.UserGroupServiceValidator;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.UserGroup;
+import com.tithe_system.tithe_management_system.domain.UserRole;
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
+import com.tithe_system.tithe_management_system.repository.UserRoleRepository;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
+import com.tithe_system.tithe_management_system.utils.dtos.UserRoleDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
+import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
@@ -23,19 +27,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupServiceValidator userGroupServiceValidator;
     private final UserGroupRepository userGroupRepository;
+    private final UserRoleRepository userRoleRepository;
     private final ModelMapper modelMapper;
     private final UserGroupServiceAuditable userGroupServiceAuditable;
     private final ApplicationMessagesService applicationMessagesService;
 
-    public UserGroupServiceImpl(UserGroupServiceValidator userGroupServiceValidator, UserGroupRepository userGroupRepository,
+    public UserGroupServiceImpl(UserGroupServiceValidator userGroupServiceValidator, UserGroupRepository userGroupRepository, UserRoleRepository userRoleRepository,
                                 ModelMapper modelMapper, UserGroupServiceAuditable userGroupServiceAuditable,
                                 ApplicationMessagesService applicationMessagesService) {
         this.userGroupServiceValidator = userGroupServiceValidator;
         this.userGroupRepository = userGroupRepository;
+        this.userRoleRepository = userRoleRepository;
         this.modelMapper = modelMapper;
         this.userGroupServiceAuditable = userGroupServiceAuditable;
         this.applicationMessagesService = applicationMessagesService;
@@ -274,6 +281,78 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         return buildUserGroupResponse(200, true, message, null,
                 null, userGroupDtoPage);
+    }
+
+    @Override
+    public UserGroupResponse assignUserRoleToUserGroup(AssignUserRoleToUserGroupRequest assignUserRoleToUserGroupRequest, Locale locale, String username) {
+
+            String message = "";
+
+            boolean isValid = userGroupServiceValidator.isRequestValidToAssignUserRolesToUserGroup(assignUserRoleToUserGroupRequest);
+
+            if (!isValid) {
+
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ASSIGN_USER_ROLE_TO_USER_GROUP_REQUEST.getCode(),
+                        new String[]{}, locale);
+
+                return buildUserGroupResponse(400, false, message, null, null,
+                        null);
+            }
+
+            Optional<UserGroup> userGroup =
+                    userGroupRepository.findByIdAndEntityStatusNot(assignUserRoleToUserGroupRequest.getUserGroupId(),
+                            EntityStatus.DELETED);
+
+            if (userGroup.isEmpty()) {
+
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
+                        locale);
+
+                return buildUserGroupResponse(400, false, message, null, null,
+                        null);
+            }
+
+            UserGroup userGroupToBeUpdated = userGroup.get();
+
+            Set<UserRole> userRoleSet = userRoleRepository.findByIdInAndEntityStatusNot(
+                    assignUserRoleToUserGroupRequest.getUserRoleIds(), EntityStatus.DELETED);
+
+            if (userRoleSet.isEmpty()) {
+
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(),
+                        new String[]{}, locale);
+
+                return buildUserGroupResponse(400, false, message, null, null,
+                        null);
+            }
+
+            if (userGroupToBeUpdated.getUserRoles().containsAll(userRoleSet)) {
+
+                message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLES_ALREADY_ASSIGNED.getCode(),
+                        new String[]{}, locale);
+
+                return buildUserGroupResponse(400, false, message, null, null,
+                        null);
+            }
+
+            userRoleSet.addAll(userGroupToBeUpdated.getUserRoles());
+            userGroupToBeUpdated.setUserRoles(userRoleSet);
+
+            UserGroup userGroupUpdated = userGroupServiceAuditable.edit(userGroupToBeUpdated, locale, username);
+
+            UserGroupDto userGroupDto = modelMapper.map(userGroupUpdated, UserGroupDto.class);
+
+            List<UserRoleDto> userRoleDtoList = modelMapper.map(userGroupUpdated.getUserRoles(),
+                    new TypeToken<List<UserRoleDto>>() {}.getType());
+
+            userGroupDto.setUserRoleDtoSet(userRoleDtoList);
+
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_USER_ROLE_ASSIGNED_SUCCESSFULLY.getCode(), new String[]{},
+                    locale);
+
+            return buildUserGroupResponse(201, true, message, userGroupDto, null,
+                    null);
     }
 
     private Page<UserGroupDto> convertUserGroupEntityToUserGroupDto(Page<UserGroup> userGroupPage){

@@ -1,5 +1,6 @@
 package com.tithe_system.tithe_management_system.business.logic.api;
 
+import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
@@ -12,4 +13,6 @@ public interface UserGroupService {
     UserGroupResponse findById(Long id, Locale locale);
     UserGroupResponse findAllAsAList(String username, Locale locale);
     UserGroupResponse findAllAsPages(int page, int size, Locale locale, String username);
+    UserGroupResponse assignUserRoleToUserGroup(AssignUserRoleToUserGroupRequest assignUserRoleToUserGroupRequest,
+                                                       Locale locale, String username);
 }

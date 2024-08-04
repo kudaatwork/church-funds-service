@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.rest;
 
 import com.tithe_system.tithe_management_system.service.processor.api.UserGroupServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
+import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
@@ -56,6 +57,21 @@ public class UserGroupResource {
                                             defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
         return userGroupServiceProcessor.edit(editUserGroupRequest, authenticationToken, locale);
+    }
+
+    @Operation(summary = "Assign user roles to a user group")
+    @PostMapping(value = "/assign-user-roles-to-user-group")
+    public UserGroupResponse assignUserRolesToUserGroup(@Valid @RequestBody final AssignUserRoleToUserGroupRequest
+                                                                    assignUserRoleToUserGroupRequest,
+                                    @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                            description = "Bearer token", required = true)
+                                    String authenticationToken,
+                                    @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                    @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                            defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userGroupServiceProcessor.assignUserRoleToUserGroup(assignUserRoleToUserGroupRequest, locale,
+                authenticationToken);
     }
 
     @Operation(summary = "Delete a user group")

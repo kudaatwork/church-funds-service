@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserRoleRepository extends JpaRepository<UserRole, Long>, JpaSpecificationExecutor<UserRole> {
     Optional<UserRole> findByNameAndEntityStatusNot(String name, EntityStatus entityStatus);
     Optional<UserRole> findByIdAndEntityStatusNot(Long id, EntityStatus entityStatus);
     List<UserRole> findByEntityStatusNot(EntityStatus entityStatus);
     Page<UserRole> findByEntityStatusNot(EntityStatus entityStatus, Pageable pageable);
+    Set<UserRole> findByIdInAndEntityStatusNot(List<Long> userIds, EntityStatus entityStatus);
 }
