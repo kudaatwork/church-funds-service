@@ -319,9 +319,11 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public DistrictResponse findByProvinceId(Long id, Locale locale) {
+    public DistrictResponse findByProvinceId(Long id, Locale locale, int page, int size) {
 
         String message = "";
+
+        final Pageable pageable = PageRequest.of(page, size);
 
         boolean isIdValid = districtServiceValidator.isIdValid(id);
 
@@ -332,24 +334,25 @@ public class DistrictServiceImpl implements DistrictService {
                     null);
         }
 
-        List<District> districtList = districtRepository.findByProvinceIdAndEntityStatusNot(id, EntityStatus.DELETED);
+        Page<District> districtPage = districtRepository.findByProvinceIdAndEntityStatusNot(id, EntityStatus.DELETED,
+                pageable);
 
-        if (districtList.isEmpty()) {
+        Page<DistrictDto> districtDtoPage = convertDistrictEntityToDistrictDto(districtPage);
 
-            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(), new String[]{},
-                    locale);
+        if(districtPage.getContent().isEmpty()){
+
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
 
             return buildDistrictResponse(404, false, message, null, null,
-                    null);
+                    districtDtoPage);
         }
 
-        List<DistrictDto> districtDtoList = modelMapper.map(districtList, new TypeToken<List<DistrictDto>>(){}.getType());
-
-        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildDistrictResponse(200, true, message, null,
-                districtDtoList, null);
+                null, districtDtoPage);
     }
 
     @Override

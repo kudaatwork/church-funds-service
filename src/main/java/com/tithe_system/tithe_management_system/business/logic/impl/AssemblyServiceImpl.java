@@ -399,9 +399,11 @@ public class AssemblyServiceImpl implements AssemblyService {
     }
 
     @Override
-    public AssemblyResponse findByDistrictId(Long id, Locale locale) {
+    public AssemblyResponse findByDistrictId(Long id, Locale locale, int page, int size) {
 
         String message = "";
+
+        final Pageable pageable = PageRequest.of(page, size);
 
         boolean isIdValid = assemblyServiceValidator.isIdValid(id);
 
@@ -412,24 +414,24 @@ public class AssemblyServiceImpl implements AssemblyService {
                     null);
         }
 
-        List<Assembly> assemblyList = assemblyRepository.findByDistrictIdAndEntityStatusNot(id, EntityStatus.DELETED);
+        Page<Assembly> assemblyPage = assemblyRepository.findByDistrictIdAndEntityStatusNot(id, EntityStatus.DELETED,
+                pageable);
 
-        if (assemblyList.isEmpty()) {
+        Page<AssemblyDto> assemblyDtoPage = convertAssemblyEntityToAssemblyDto(assemblyPage);
 
-            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(), new String[]{},
-                    locale);
+        if(assemblyPage.getContent().isEmpty()){
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
 
             return buildAssemblyResponse(404, false, message, null, null,
-                    null);
+                    assemblyDtoPage);
         }
 
-        List<AssemblyDto> assemblyDtoList = modelMapper.map(assemblyList, new TypeToken<List<AssemblyDto>>(){}.getType());
-
-        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildAssemblyResponse(200, true, message, null,
-                assemblyDtoList, null);
+                null, assemblyDtoPage);
     }
 
     @Override

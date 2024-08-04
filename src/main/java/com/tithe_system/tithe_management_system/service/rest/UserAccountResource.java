@@ -78,6 +78,30 @@ public class UserAccountResource {
         return userAccountServiceProcessor.findById(id, locale);
     }
 
+    @Operation(summary = "Find a user accounts as pages by user group id")
+    @GetMapping(value = "/user-group-id/{id}")
+    public UserAccountResponse findByUserGroupId(@PathVariable("id") final Long id,
+                                                 @RequestParam(value = "page", defaultValue = "0") int page,
+                                                 @RequestParam(value = "size", defaultValue = "10") int size,
+                                        @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                        @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                                defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.findByByUserGroupId(id, locale, page, size);
+    }
+
+    @Operation(summary = "Find a user accounts as pages by assembly id")
+    @GetMapping(value = "/assembly-id/{id}")
+    public UserAccountResponse findByAssemblyId(@PathVariable("id") final Long id,
+                                                 @RequestParam(value = "page", defaultValue = "0") int page,
+                                                 @RequestParam(value = "size", defaultValue = "10") int size,
+                                                 @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                                 @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                                         defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return userAccountServiceProcessor.findByByAssemblyId(id, locale, page, size);
+    }
+
     @Operation(summary = "Find all user accounts as a list")
     @GetMapping(value = "/list")
     public UserAccountResponse findAllAsAList(@Parameter(name = "Authorization", in = ParameterIn.HEADER,

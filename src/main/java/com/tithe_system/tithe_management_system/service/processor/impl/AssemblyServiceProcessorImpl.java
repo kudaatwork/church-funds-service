@@ -60,10 +60,10 @@ public class AssemblyServiceProcessorImpl implements AssemblyServiceProcessor {
     }
 
     @Override
-    public AssemblyResponse findByDistrictId(Long id, Locale locale) {
+    public AssemblyResponse findByDistrictId(Long id, Locale locale, int page, int size) {
 
         logger.info("Incoming id to find assemblies by district id: {}", id);
-        AssemblyResponse assemblyResponse = assemblyService.findById(id, locale);
+        AssemblyResponse assemblyResponse = assemblyService.findByDistrictId(id, locale, page, size);
         logger.info("Outgoing response after finding assemblies by district id : {}", assemblyResponse);
 
         return assemblyResponse;

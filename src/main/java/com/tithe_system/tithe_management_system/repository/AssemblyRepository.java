@@ -19,4 +19,5 @@ public interface AssemblyRepository extends JpaRepository<Assembly, Long>, JpaSp
     List<Assembly> findByProvinceIdAndEntityStatusNot(Long provinceId, EntityStatus entityStatus);
     List<Assembly> findByRegionIdAndEntityStatusNot(Long regionId, EntityStatus entityStatus);
     List<Assembly> findByDistrictIdAndEntityStatusNot(Long id, EntityStatus entityStatus);
+    Page<Assembly> findByDistrictIdAndEntityStatusNot(Long id, EntityStatus entityStatus, Pageable pageable);
 }

@@ -17,7 +17,6 @@ public class UserAccountDto {
     private String secondaryPhoneNumber;
     private String emailAddress;
     private String username;
-    private String password;
     private String locked;
     private int loginAttempts;
     private EntityStatus entityStatus;
@@ -106,14 +105,6 @@ public class UserAccountDto {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getLocked() {
         return locked;
     }
@@ -183,7 +174,6 @@ public class UserAccountDto {
                 ", secondaryPhoneNumber='" + secondaryPhoneNumber + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", locked='" + locked + '\'' +
                 ", loginAttempts=" + loginAttempts +
                 ", entityStatus=" + entityStatus +

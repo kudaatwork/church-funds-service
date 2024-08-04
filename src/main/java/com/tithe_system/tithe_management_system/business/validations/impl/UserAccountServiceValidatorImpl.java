@@ -135,7 +135,7 @@ public class UserAccountServiceValidatorImpl implements UserAccountServiceValida
 
     @Override
     public boolean isIdValid(Long id) {
-        return id != null && id > 1;
+        return id != null && id > 0;
     }
 
     private boolean isGenderValid(String genderSupplied) {

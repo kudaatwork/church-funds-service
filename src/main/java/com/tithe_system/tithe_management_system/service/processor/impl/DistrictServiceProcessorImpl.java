@@ -60,10 +60,10 @@ public class DistrictServiceProcessorImpl implements DistrictServiceProcessor {
     }
 
     @Override
-    public DistrictResponse findByProvinceId(Long id, Locale locale) {
+    public DistrictResponse findByProvinceId(Long id, Locale locale, int page, int size) {
 
         logger.info("Incoming id to find districts by province id: {}", id);
-        DistrictResponse districtResponse = districtService.findByProvinceId(id, locale);
+        DistrictResponse districtResponse = districtService.findByProvinceId(id, locale, page, size);
         logger.info("Outgoing response after finding districts by province id : {}", districtResponse);
 
         return districtResponse;

@@ -58,6 +58,26 @@ public class UserAccountServiceProcessorImpl implements UserAccountServiceProces
     }
 
     @Override
+    public UserAccountResponse findByByUserGroupId(Long id, Locale locale, int page, int size) {
+
+        logger.info("Incoming request to find a user accounts as pages by user group id : {}", id);
+        UserAccountResponse userAccountResponse = userAccountService.findByByUserGroupId(id, locale, page, size);
+        logger.info("Outgoing response after finding a user accounts as pages by user group id : {}", userAccountResponse);
+
+        return userAccountResponse;
+    }
+
+    @Override
+    public UserAccountResponse findByByAssemblyId(Long id, Locale locale, int page, int size) {
+
+        logger.info("Incoming request to find a user accounts as pages by user group id : {}", id);
+        UserAccountResponse userAccountResponse = userAccountService.findByByAssemblyId(id, locale, page, size);
+        logger.info("Outgoing response after finding a user accounts as pages by user group id : {}", userAccountResponse);
+
+        return userAccountResponse;
+    }
+
+    @Override
     public UserAccountResponse findAllAsAList(String username, Locale locale) {
 
         logger.info("Incoming request to find user accounts as a list");

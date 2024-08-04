@@ -10,7 +10,7 @@ public interface ProvinceServiceProcessor {
     ProvinceResponse edit(EditProvinceRequest editProvinceRequest, String username, Locale locale);
     ProvinceResponse delete(Long id, Locale locale);
     ProvinceResponse findById(Long id, Locale locale);
-    ProvinceResponse findByRegionId(Long id, Locale locale);
+    ProvinceResponse findByRegionId(Long id, Locale locale, int page, int size);
     ProvinceResponse findAllAsAList(String username, Locale locale);
     ProvinceResponse findAllAsPages(int page, int size, Locale locale, String username);
 }

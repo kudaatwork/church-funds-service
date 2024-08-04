@@ -10,6 +10,8 @@ public interface UserAccountServiceProcessor {
     UserAccountResponse edit(EditUserAccountRequest editUserAccountRequest, String username, Locale locale);
     UserAccountResponse delete(Long id, Locale locale);
     UserAccountResponse findById(Long id, Locale locale);
+    UserAccountResponse findByByUserGroupId(Long id, Locale locale, int page, int size);
+    UserAccountResponse findByByAssemblyId(Long id, Locale locale, int page, int size);
     UserAccountResponse findAllAsAList(String username, Locale locale);
     UserAccountResponse findAllAsPages(int page, int size, Locale locale, String username);
 }

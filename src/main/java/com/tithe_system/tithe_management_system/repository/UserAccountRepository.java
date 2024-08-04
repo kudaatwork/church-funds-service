@@ -19,4 +19,6 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long>,
     Optional<UserAccount> findByEmailAddressAndEntityStatusNot(String emailAddress, EntityStatus entityStatus);
     Optional<UserAccount> findByUsernameAndEntityStatusNot(String username, EntityStatus entityStatus);
     Optional<UserAccount> findByPhoneNumberAndEmailAddressAndEntityStatusNot(String phoneNumber, String emailAddress, EntityStatus entityStatus);
+    Page<UserAccount> findByUserGroupIdAndEntityStatusNot(Long id, EntityStatus entityStatus, Pageable pageable);
+    Page<UserAccount> findByAssemblyIdAndEntityStatusNot(Long id, EntityStatus entityStatus, Pageable pageable);
 }

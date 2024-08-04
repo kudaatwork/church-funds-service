@@ -15,5 +15,6 @@ public interface DistrictRepository extends JpaRepository<District, Long>, JpaSp
     List<District> findByEntityStatusNot(EntityStatus entityStatus);
     Page<District> findByEntityStatusNot(EntityStatus entityStatus, Pageable pageable);
     List<District> findByProvinceIdAndEntityStatusNot(Long provinceId, EntityStatus entityStatus);
+    Page<District> findByProvinceIdAndEntityStatusNot(Long provinceId, EntityStatus entityStatus, Pageable pageable);
     List<District> findByRegionIdAndEntityStatusNot(Long regionId, EntityStatus entityStatus);
 }

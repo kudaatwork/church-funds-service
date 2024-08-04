@@ -313,9 +313,11 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public ProvinceResponse findByRegionId(Long id, Locale locale) {
+    public ProvinceResponse findByRegionId(Long id, Locale locale, int page, int size) {
 
         String message = "";
+
+        final Pageable pageable = PageRequest.of(page, size);
 
         boolean isIdValid = provinceServiceValidator.isIdValid(id);
 
@@ -328,24 +330,25 @@ public class ProvinceServiceImpl implements ProvinceService {
                     null);
         }
 
-        List<Province> provincesRetrieved = provinceRepository.findByRegionIdAndEntityStatusNot(id, EntityStatus.DELETED);
+        Page<Province> provincePage = provinceRepository.findByRegionIdAndEntityStatusNot(id, EntityStatus.DELETED,
+                pageable);
 
-        if (provincesRetrieved.isEmpty()) {
+        Page<ProvinceDto> provinceDtoPage = convertProvinceEntityToProvinceDto(provincePage);
 
-            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(), new String[]{},
-                    locale);
+        if(provincePage.getContent().isEmpty()){
+
+            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
 
             return buildProvinceResponse(404, false, message, null, null,
-                    null);
+                    provinceDtoPage);
         }
 
-        List<ProvinceDto> provinceDtoList = modelMapper.map(provincesRetrieved, new TypeToken<List<ProvinceDto>>(){}.getType());
-
-        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
         return buildProvinceResponse(200, true, message, null,
-                provinceDtoList, null);
+                null, provinceDtoPage);
     }
 
     @Override

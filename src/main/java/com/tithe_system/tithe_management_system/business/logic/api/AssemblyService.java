@@ -10,7 +10,7 @@ public interface AssemblyService {
     AssemblyResponse edit(EditAssemblyRequest editAssemblyRequest, String username, Locale locale);
     AssemblyResponse delete(Long id, Locale locale);
     AssemblyResponse findById(Long id, Locale locale);
-    AssemblyResponse findByDistrictId(Long id, Locale locale);
+    AssemblyResponse findByDistrictId(Long id, Locale locale, int page, int size);
     AssemblyResponse findAllAsAList(String username, Locale locale);
     AssemblyResponse findAllAsPages(int page, int size, Locale locale, String username);
 }

@@ -79,14 +79,16 @@ public class ProvinceResource {
         return provinceServiceProcessor.findById(id, locale);
     }
 
-    @Operation(summary = "Find provinces by region id")
+    @Operation(summary = "Find provinces as pages by region id")
     @GetMapping(value = "/region-id/{id}")
     public ProvinceResponse findByRegionId(@PathVariable("id") final Long id,
+                                           @RequestParam(value = "page", defaultValue = "0") int page,
+                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                      @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                      @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                              defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return provinceServiceProcessor.findByRegionId(id, locale);
+        return provinceServiceProcessor.findByRegionId(id, locale, page , size);
     }
 
     @Operation(summary = "Find all provinces as a list")

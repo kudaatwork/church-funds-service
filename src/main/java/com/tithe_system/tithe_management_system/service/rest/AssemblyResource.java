@@ -82,11 +82,13 @@ public class AssemblyResource {
     @Operation(summary = "Find assemblies by district id")
     @GetMapping(value = "/district-id/{id}")
     public AssemblyResponse findByDistrictId(@PathVariable("id") final Long id,
+                                             @RequestParam(value = "page", defaultValue = "0") int page,
+                                             @RequestParam(value = "size", defaultValue = "10") int size,
                                      @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                      @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                              defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return assemblyServiceProcessor.findByDistrictId(id, locale);
+        return assemblyServiceProcessor.findByDistrictId(id, locale, page, size);
     }
 
 
