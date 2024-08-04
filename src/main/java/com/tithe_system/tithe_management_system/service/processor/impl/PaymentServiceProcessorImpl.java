@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.logic.api.PaymentServic
 import com.tithe_system.tithe_management_system.service.processor.api.PaymentServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.requests.PaymentMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.responses.PaymentResponse;
 import org.slf4j.Logger;
@@ -64,6 +65,17 @@ public class PaymentServiceProcessorImpl implements PaymentServiceProcessor {
         logger.info("Incoming request to change payment status: {}", changePaymentStatusRequest);
         PaymentResponse paymentResponse = paymentService.changePaymentStatus(changePaymentStatusRequest, username, locale);
         logger.info("Outgoing response after changing payment status: {}", paymentResponse.getMessage());
+
+        return paymentResponse;
+    }
+
+    @Override
+    public PaymentResponse findByMultipleFilters(PaymentMultipleFilterRequest paymentMultipleFilterRequest, String username,
+                                                 Locale locale) {
+
+        logger.info("Incoming request to retrieve payments by multiple filters: {}", paymentMultipleFilterRequest);
+        PaymentResponse paymentResponse = paymentService.findByMultipleFilters(paymentMultipleFilterRequest, locale, username);
+        logger.info("Outgoing response after retrieving payments by multiple filters: {}", paymentResponse.getMessage());
 
         return paymentResponse;
     }

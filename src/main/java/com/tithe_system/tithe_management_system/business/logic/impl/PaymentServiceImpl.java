@@ -10,12 +10,16 @@ import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Payment;
+import com.tithe_system.tithe_management_system.domain.PaymentChannel;
+import com.tithe_system.tithe_management_system.domain.PaymentMethod;
 import com.tithe_system.tithe_management_system.domain.PaymentStatus;
+import com.tithe_system.tithe_management_system.domain.PaymentType;
 import com.tithe_system.tithe_management_system.domain.UserAccount;
 import com.tithe_system.tithe_management_system.repository.AccountRepository;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.PaymentRepository;
 import com.tithe_system.tithe_management_system.repository.UserAccountRepository;
+import com.tithe_system.tithe_management_system.repository.specification.PaymentSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AccountDto;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.PaymentDto;
@@ -24,6 +28,7 @@ import com.tithe_system.tithe_management_system.utils.generators.AccountAndRefer
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.requests.PaymentMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AccountResponse;
@@ -36,12 +41,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -130,7 +138,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentToBeSaved.setAssembly(assemblyRetrieved.get());
         paymentToBeSaved.setUserAccount(userAccountRetrieved.get());
         paymentToBeSaved.setPaymentStatus(PaymentStatus.INITIATED);
-        paymentToBeSaved.setNarration(Narration.PAYMENT.getAccountNarration());
+        paymentToBeSaved.setNarration(Narration.PAYMENT);
         paymentToBeSaved.setAccountNumber(accountRetrieved.get().getAccountNumber());
 
         try {
@@ -212,7 +220,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentToBeSaved.setAssembly(paymentRetrieved.get().getAssembly());
         paymentToBeSaved.setUserAccount(paymentRetrieved.get().getUserAccount());
         paymentToBeSaved.setPaymentStatus(PaymentStatus.REVERSAL);
-        paymentToBeSaved.setNarration(Narration.REVERSAL.getAccountNarration());
+        paymentToBeSaved.setNarration(Narration.REVERSAL);
         paymentToBeSaved.setAccountNumber(paymentRetrieved.get().getAccountNumber());
         paymentToBeSaved.setCurrency(paymentRetrieved.get().getCurrency());
         paymentToBeSaved.setAmount(paymentRetrieved.get().getAmount());
@@ -389,13 +397,260 @@ public class PaymentServiceImpl implements PaymentService {
                 null);
     }
 
+    @Override
+    public PaymentResponse findByMultipleFilters(PaymentMultipleFilterRequest paymentMultipleFilterRequest, Locale locale, String username) {
+
+        String message = "";
+
+        Specification<Payment> spec = null;
+        spec = addToSpec(spec, PaymentSpecification::deleted);
+
+        boolean isRequestValid = paymentServiceValidator.isRequestValidToRetrievePaymentsByMultipleFilters(
+                paymentMultipleFilterRequest);
+
+        if (!isRequestValid) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_PAYMENTS_MULTIPLE_FILTERS_REQUEST.getCode(),
+                    new String[]{}, locale);
+
+            return buildPaymentResponse(400, false, message,null, null,
+                    null);
+        }
+
+        Pageable pageable = PageRequest.of(paymentMultipleFilterRequest.getPage(),
+                paymentMultipleFilterRequest.getSize());
+
+        boolean isTransactionReferenceValid = paymentServiceValidator.isStringValid(
+                paymentMultipleFilterRequest.getTransactionReference());
+
+        if (isTransactionReferenceValid) {
+
+            spec = addToSpec(paymentMultipleFilterRequest.getTransactionReference(), spec,
+                    PaymentSpecification::transactionReferenceLike);
+        }
+
+        boolean isAccountNumberValid = paymentServiceValidator.isStringValid(
+                paymentMultipleFilterRequest.getAccountNumber());
+
+        if (isAccountNumberValid) {
+
+            spec = addToSpec(paymentMultipleFilterRequest.getAccountNumber(), spec,
+                    PaymentSpecification::accountNumberLike);
+        }
+
+        boolean isNarrationValid =
+                paymentServiceValidator.isListValid(paymentMultipleFilterRequest.getNarration());
+
+        if (isNarrationValid) {
+
+            List<Narration> narrationList = new ArrayList<>();
+
+            for (String tariffType: paymentMultipleFilterRequest.getNarration()
+            ) {
+                try{
+                    narrationList.add(Narration.valueOf(tariffType));
+                }catch (Exception e){}
+            }
+
+            spec = addToNarrationSpec(narrationList, spec, PaymentSpecification::narrationIn);
+        }
+
+        boolean isPaymentChannelValid =
+                paymentServiceValidator.isListValid(paymentMultipleFilterRequest.getPaymentChannel());
+
+        if (isPaymentChannelValid) {
+
+            List<PaymentChannel> paymentChannelList = new ArrayList<>();
+
+            for (String paymentChannel: paymentMultipleFilterRequest.getPaymentChannel()
+            ) {
+                try{
+                    paymentChannelList.add(PaymentChannel.valueOf(paymentChannel));
+                }catch (Exception e){}
+            }
+
+            spec = addToPaymentChannelSpec(paymentChannelList, spec, PaymentSpecification::paymentChannelIn);
+        }
+
+        boolean isPaymentTypeValid =
+                paymentServiceValidator.isListValid(paymentMultipleFilterRequest.getPaymentType());
+
+        if (isPaymentTypeValid) {
+
+            List<PaymentType> paymentTypeList = new ArrayList<>();
+
+            for (String paymentType: paymentMultipleFilterRequest.getPaymentType()
+            ) {
+                try{
+                    paymentTypeList.add(PaymentType.valueOf(paymentType));
+                }catch (Exception e){}
+            }
+
+            spec = addToPaymentTypeSpec(paymentTypeList, spec, PaymentSpecification::paymentTypeIn);
+        }
+
+        boolean isCurrencyValid =
+                paymentServiceValidator.isListValid(paymentMultipleFilterRequest.getCurrency());
+
+        if (isCurrencyValid) {
+
+            List<Currency> currencyList = new ArrayList<>();
+
+            for (String currency: paymentMultipleFilterRequest.getCurrency()
+            ) {
+                try{
+                    currencyList.add(Currency.valueOf(currency));
+                }catch (Exception e){}
+            }
+
+            spec = addToCurrencyTypeSpec(currencyList, spec, PaymentSpecification::currencyIn);
+        }
+
+        boolean isPaymentMethodValid =
+                paymentServiceValidator.isListValid(paymentMultipleFilterRequest.getPaymentMethod());
+
+        if (isPaymentMethodValid) {
+
+            List<PaymentMethod> paymentMethodList = new ArrayList<>();
+
+            for (String paymentMethod: paymentMultipleFilterRequest.getPaymentMethod()
+            ) {
+                try{
+                    paymentMethodList.add(PaymentMethod.valueOf(paymentMethod));
+                }catch (Exception e){}
+            }
+
+            spec = addToPaymentMethodSpec(paymentMethodList, spec, PaymentSpecification::paymentMethodIn);
+        }
+
+        boolean isPaymentStatusValid =
+                paymentServiceValidator.isListValid(paymentMultipleFilterRequest.getPaymentStatus());
+
+        if (isPaymentStatusValid) {
+
+            List<PaymentStatus> paymentStatusList = new ArrayList<>();
+
+            for (String paymentStatus: paymentMultipleFilterRequest.getPaymentStatus()
+            ) {
+                try{
+                    paymentStatusList.add(PaymentStatus.valueOf(paymentStatus));
+                }catch (Exception e){}
+            }
+
+            spec = addToPaymentStatusSpec(paymentStatusList, spec, PaymentSpecification::paymentStatusIn);
+        }
+
+        boolean isSearchValueValid = paymentServiceValidator.isStringValid(paymentMultipleFilterRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(paymentMultipleFilterRequest.getSearchValue(), spec, PaymentSpecification::any);
+        }
+
+        Page<Payment> result = paymentRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildPaymentResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<PaymentDto> paymentDtoPage = convertPaymentEntityToPaymentDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY.getCode(),
+                new String[]{}, locale);
+
+        return buildPaymentResponse(200, true, message,null,
+                null, paymentDtoPage);
+    }
+
+    private Specification<Payment> addToSpec(Specification<Payment> spec,
+                                                       Function<EntityStatus, Specification<Payment>> predicateMethod) {
+        Specification<Payment> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<Payment> addToSpec(final String aString, Specification<Payment> spec, Function<String,
+            Specification<Payment>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Payment> addToNarrationSpec(final List<Narration> narrationList, Specification<Payment> spec,
+                                                                 Function<List<Narration>, Specification<Payment>> predicateMethod) {
+        if (narrationList != null && !narrationList.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(narrationList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Payment> addToPaymentChannelSpec(final List<PaymentChannel> paymentChannelList, Specification<Payment> spec,
+                                             Function<List<PaymentChannel>, Specification<Payment>> predicateMethod) {
+        if (paymentChannelList != null && !paymentChannelList.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(paymentChannelList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Payment> addToPaymentTypeSpec(final List<PaymentType> paymentTypeList, Specification<Payment> spec,
+                                                        Function<List<PaymentType>, Specification<Payment>> predicateMethod) {
+        if (paymentTypeList != null && !paymentTypeList.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(paymentTypeList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Payment> addToCurrencyTypeSpec(final List<Currency> currencyList, Specification<Payment> spec,
+                                                        Function<List<Currency>, Specification<Payment>> predicateMethod) {
+        if (currencyList != null && !currencyList.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(currencyList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Payment> addToPaymentMethodSpec(final List<PaymentMethod> paymentMethodList, Specification<Payment> spec,
+                                                          Function<List<PaymentMethod>, Specification<Payment>> predicateMethod) {
+        if (paymentMethodList != null && !paymentMethodList.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(paymentMethodList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Payment> addToPaymentStatusSpec(final List<PaymentStatus> paymentStatusList, Specification<Payment> spec,
+                                                          Function<List<PaymentStatus>, Specification<Payment>> predicateMethod) {
+        if (paymentStatusList != null && !paymentStatusList.isEmpty()) {
+            Specification<Payment> localSpec = Specification.where(predicateMethod.apply(paymentStatusList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
     private static UpdateAccountRequest buildUpdateAccountRequest(Payment payment, Account accountRetrieved) {
 
         UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest();
         updateAccountRequest.setAccountNumber(accountRetrieved.getAccountNumber());
         updateAccountRequest.setAmount(payment.getAmount());
         updateAccountRequest.setCurrency(payment.getCurrency().toString());
-        updateAccountRequest.setNarration(payment.getNarration());
+        updateAccountRequest.setNarration(payment.getNarration().getAccountNarration());
         updateAccountRequest.setTransactionReference(payment.getTransactionReference());
 
         return updateAccountRequest;

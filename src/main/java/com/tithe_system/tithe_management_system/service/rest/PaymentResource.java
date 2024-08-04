@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.PaymentSer
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
 import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.requests.PaymentMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.responses.PaymentResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,6 +70,19 @@ public class PaymentResource {
                                            defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
         return paymentServiceProcessor.changePaymentStatus(changePaymentStatusRequest, authenticationToken, locale);
+    }
+
+    @Operation(summary = "Find payments by multiple filters")
+    @PostMapping(value = "/multiple-filters")
+    public PaymentResponse findByMultipleFilters(@Valid @RequestBody final PaymentMultipleFilterRequest paymentMultipleFilterRequest,
+                                               @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                                       description = "Bearer token", required = true)
+                                               String authenticationToken,
+                                               @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                               @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                                       defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return paymentServiceProcessor.findByMultipleFilters(paymentMultipleFilterRequest, authenticationToken, locale);
     }
 
     @Operation(summary = "Find a payment by id")

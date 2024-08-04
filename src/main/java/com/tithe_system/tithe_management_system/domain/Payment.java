@@ -16,6 +16,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "payment")
@@ -31,7 +32,8 @@ public class Payment {
     private String popName;
     private String transactionReference;
     private String accountNumber;
-    private String narration;
+    @Enumerated(value = EnumType.STRING)
+    private Narration narration;
     @Enumerated(value = EnumType.STRING)
     private PaymentChannel paymentChannel;
     @Enumerated(value = EnumType.STRING)
@@ -113,11 +115,11 @@ public class Payment {
         this.accountNumber = accountNumber;
     }
 
-    public String getNarration() {
+    public Narration getNarration() {
         return narration;
     }
 
-    public void setNarration(String narration) {
+    public void setNarration(Narration narration) {
         this.narration = narration;
     }
 
@@ -206,10 +208,11 @@ public class Payment {
         return "Payment{" +
                 "id=" + id +
                 ", amount=" + amount +
+                ", popUrl=" + Arrays.toString(popUrl) +
                 ", popName='" + popName + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
                 ", accountNumber='" + accountNumber + '\'' +
-                ", narration='" + narration + '\'' +
+                ", narration=" + narration +
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
                 ", currency=" + currency +

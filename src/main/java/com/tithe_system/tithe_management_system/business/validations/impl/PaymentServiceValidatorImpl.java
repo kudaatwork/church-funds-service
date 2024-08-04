@@ -9,6 +9,7 @@ import com.tithe_system.tithe_management_system.domain.PaymentStatus;
 import com.tithe_system.tithe_management_system.domain.PaymentType;
 import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
+import com.tithe_system.tithe_management_system.utils.requests.PaymentMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
@@ -124,6 +125,35 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
         }
 
         if (!isPaymentStatusValid(changePaymentStatusRequest.getPaymentStatus())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrievePaymentsByMultipleFilters(PaymentMultipleFilterRequest paymentMultipleFilterRequest) {
+
+        if (paymentMultipleFilterRequest == null){
+            return false;
+        }
+
+        if (paymentMultipleFilterRequest.getPage() < 0) {
+            return false;
+        }
+
+        return paymentMultipleFilterRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
+    }
+
+    @Override
+    public boolean isListValid(List<String> listValue) {
+
+        if (listValue == null) {
             return false;
         }
 
