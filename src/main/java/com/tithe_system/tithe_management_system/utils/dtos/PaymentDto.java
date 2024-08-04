@@ -3,8 +3,10 @@ package com.tithe_system.tithe_management_system.utils.dtos;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.PaymentChannel;
 import com.tithe_system.tithe_management_system.domain.PaymentMethod;
+import com.tithe_system.tithe_management_system.domain.PaymentStatus;
 import com.tithe_system.tithe_management_system.domain.PaymentType;
 import java.time.LocalDateTime;
 
@@ -12,11 +14,14 @@ import java.time.LocalDateTime;
 public class PaymentDto {
     private Long id;
     private String amount;
+    private String accountNumber;
     private String transactionReference;
     private Currency currency;
+    private Narration narration;
     private PaymentMethod paymentMethod;
     private PaymentChannel paymentChannel;
     private PaymentType paymentType;
+    private PaymentStatus paymentStatus;
     private AssemblyDto assemblyDto;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
@@ -38,6 +43,14 @@ public class PaymentDto {
         this.amount = amount;
     }
 
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
     public String getTransactionReference() {
         return transactionReference;
     }
@@ -52,6 +65,14 @@ public class PaymentDto {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public Narration getNarration() {
+        return narration;
+    }
+
+    public void setNarration(Narration narration) {
+        this.narration = narration;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -76,6 +97,14 @@ public class PaymentDto {
 
     public void setPaymentType(PaymentType paymentType) {
         this.paymentType = paymentType;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public AssemblyDto getAssemblyDto() {
@@ -115,11 +144,14 @@ public class PaymentDto {
         return "PaymentDto{" +
                 "id=" + id +
                 ", amount='" + amount + '\'' +
+                ", accountNumber='" + accountNumber + '\'' +
                 ", transactionReference='" + transactionReference + '\'' +
                 ", currency=" + currency +
+                ", narration=" + narration +
                 ", paymentMethod=" + paymentMethod +
                 ", paymentChannel=" + paymentChannel +
                 ", paymentType=" + paymentType +
+                ", paymentStatus=" + paymentStatus +
                 ", assemblyDto=" + assemblyDto +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +

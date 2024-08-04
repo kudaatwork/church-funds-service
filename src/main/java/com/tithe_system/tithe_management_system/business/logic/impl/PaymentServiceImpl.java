@@ -35,7 +35,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -193,24 +192,12 @@ public class PaymentServiceImpl implements PaymentService {
                     null);
         }
 
-        Optional<Payment> paymentRetrieved = paymentRepository.findByTransactionReferenceAndEntityStatusNot(
-                reversePaymentRequest.getTransactionReference(), EntityStatus.DELETED);
+        Optional<Payment> paymentRetrieved = paymentRepository.findByTransactionReferenceAndPaymentStatusNotAndEntityStatusNot(
+                reversePaymentRequest.getTransactionReference(), PaymentStatus.REVERSED, EntityStatus.DELETED);
 
         if (paymentRetrieved.isEmpty()) {
 
             message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(), new String[]{},
-                    locale);
-
-            return buildPaymentResponse(400, false, message, null, null,
-                    null);
-        }
-
-        Optional<Account> accountRetrieved = accountRepository.findByTransactionReferenceAndEntityStatusNot(
-                reversePaymentRequest.getTransactionReference(), EntityStatus.DELETED);
-
-        if (accountRetrieved.isEmpty()) {
-
-            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
                     locale);
 
             return buildPaymentResponse(400, false, message, null, null,
@@ -222,19 +209,43 @@ public class PaymentServiceImpl implements PaymentService {
         paymentToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
         paymentToBeSaved.setAssembly(paymentRetrieved.get().getAssembly());
         paymentToBeSaved.setUserAccount(paymentRetrieved.get().getUserAccount());
-        paymentToBeSaved.setPaymentStatus(PaymentStatus.REVERSED);
+        paymentToBeSaved.setPaymentStatus(PaymentStatus.REVERSAL);
         paymentToBeSaved.setNarration(Narration.REVERSAL.getAccountNarration());
-        paymentToBeSaved.setAccountNumber(accountRetrieved.get().getAccountNumber());
+        paymentToBeSaved.setAccountNumber(paymentRetrieved.get().getAccountNumber());
+        paymentToBeSaved.setCurrency(paymentRetrieved.get().getCurrency());
+        paymentToBeSaved.setAmount(paymentRetrieved.get().getAmount());
+        paymentToBeSaved.setPaymentChannel(paymentRetrieved.get().getPaymentChannel());
+        paymentToBeSaved.setPopUrl(paymentRetrieved.get().getPopUrl());
+        paymentToBeSaved.setPopName(paymentRetrieved.get().getPopName());
+        paymentToBeSaved.setPaymentMethod(paymentRetrieved.get().getPaymentMethod());
+        paymentToBeSaved.setPaymentType(paymentRetrieved.get().getPaymentType());
 
         Payment paymentSaved = paymentServiceAuditable.create(paymentToBeSaved, locale, username);
 
-        UpdateAccountRequest updateAccountRequest = buildUpdateAccountRequest(reversePaymentRequest, accountRetrieved.get());
+        Payment paymentRecordToBeUpdated = paymentRetrieved.get();
+        paymentRecordToBeUpdated.setPaymentStatus(PaymentStatus.REVERSED);
+
+        Payment paymentUpdated = paymentServiceAuditable.update(paymentRecordToBeUpdated, locale, username);
+
+        UpdateAccountRequest updateAccountRequest = buildUpdateAccountRequest(reversePaymentRequest, paymentSaved);
 
         logger.info("Incoming request to persist reversal to an account : {}", updateAccountRequest);
 
         AccountResponse response = accountService.updateAccountRecords(updateAccountRequest, username, locale);
 
         logger.info("Outgoing response after persisting a reversal to an account : {}", response);
+
+        Optional<Account> accountRetrieved = accountRepository.findByAccountNumberAndEntityStatusNot(
+                paymentSaved.getAccountNumber(), EntityStatus.DELETED);
+
+        if (accountRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildPaymentResponse(400, false, message, null, null,
+                    null);
+        }
 
         AccountDto accountDto = modelMapper.map(accountRetrieved.get(), AccountDto.class);
 
@@ -246,7 +257,6 @@ public class PaymentServiceImpl implements PaymentService {
             assemblyDto.setLocalCurrencyAccountDto(accountDto);
         }
 
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         PaymentDto paymentDtoReturned = modelMapper.map(paymentSaved, PaymentDto.class);
         paymentDtoReturned.setAssemblyDto(assemblyDto);
 
@@ -334,14 +344,15 @@ public class PaymentServiceImpl implements PaymentService {
         return updateAccountRequest;
     }
 
-    private static UpdateAccountRequest buildUpdateAccountRequest(ReversePaymentRequest reversePaymentRequest, Account accountRetrieved) {
+    private static UpdateAccountRequest buildUpdateAccountRequest(ReversePaymentRequest reversePaymentRequest,
+                                                                  Payment payment) {
 
         UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest();
-        updateAccountRequest.setAccountNumber(accountRetrieved.getAccountNumber());
-        updateAccountRequest.setAmount(accountRetrieved.getDebitBalance());
-        updateAccountRequest.setCurrency(updateAccountRequest.getCurrency());
+        updateAccountRequest.setAccountNumber(payment.getAccountNumber());
+        updateAccountRequest.setAmount(payment.getAmount());
+        updateAccountRequest.setCurrency(payment.getCurrency().toString());
         updateAccountRequest.setNarration(reversePaymentRequest.getNarration());
-        updateAccountRequest.setTransactionReference(reversePaymentRequest.getTransactionReference());
+        updateAccountRequest.setTransactionReference(payment.getTransactionReference());
 
         return updateAccountRequest;
     }

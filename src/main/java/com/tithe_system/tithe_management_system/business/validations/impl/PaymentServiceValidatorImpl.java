@@ -103,16 +103,12 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
             return false;
         }
 
-        if (reversePaymentRequest.getAmount().compareTo(BigDecimal.ZERO) < 1){
-            return false;
-        }
-
         return true;
     }
 
     @Override
     public boolean isIdValid(Long id) {
-        return id != null && id > 1;
+        return id != null && id > 0;
     }
 
     private boolean isImageValid(MultipartFile multipartFile) throws IOException {

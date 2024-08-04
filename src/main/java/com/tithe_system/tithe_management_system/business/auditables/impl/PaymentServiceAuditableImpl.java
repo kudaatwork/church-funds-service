@@ -24,6 +24,12 @@ public class PaymentServiceAuditableImpl implements PaymentServiceAuditable {
 
     @AuditEditEvent
     @Override
+    public Payment update(Payment payment, Locale locale, String username) {
+        return paymentRepository.save(payment);
+    }
+
+    @AuditCreateEvent
+    @Override
     public Payment reverse(Payment payment, Locale locale, String username) {
         return paymentRepository.save(payment);
     }
