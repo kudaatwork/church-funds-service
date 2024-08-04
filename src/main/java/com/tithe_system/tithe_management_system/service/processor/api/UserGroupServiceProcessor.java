@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.service.processor.api;
 import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import java.util.Locale;
 
@@ -15,4 +16,6 @@ public interface UserGroupServiceProcessor {
     UserGroupResponse findAllAsPages(int page, int size, Locale locale, String username);
     UserGroupResponse assignUserRoleToUserGroup(AssignUserRoleToUserGroupRequest assignUserRoleToUserGroupRequest,
                                                 Locale locale, String username);
+    UserGroupResponse removeUserRolesFromUserGroup(RemoveUserRolesFromUserGroupRequest removeUserRolesFromUserGroupRequest,
+                                                   Locale locale, String username);
 }

@@ -5,6 +5,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.UserGroupS
 import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,17 @@ public class UserGroupServiceProcessorImpl implements UserGroupServiceProcessor 
         UserGroupResponse userGroupResponse = userGroupService.assignUserRoleToUserGroup(assignUserRoleToUserGroupRequest,
                 locale, username);
         logger.info("Outgoing response after assigning user roles to a user group : {}", userGroupResponse);
+
+        return userGroupResponse;
+    }
+
+    @Override
+    public UserGroupResponse removeUserRolesFromUserGroup(RemoveUserRolesFromUserGroupRequest removeUserRolesFromUserGroupRequest, Locale locale, String username) {
+
+        logger.info("Incoming request to remove user roles from a user group: {} ", removeUserRolesFromUserGroupRequest);
+        UserGroupResponse userGroupResponse = userGroupService.removeUserRolesFromUserGroup(removeUserRolesFromUserGroupRequest,
+                locale, username);
+        logger.info("Outgoing response after removing user roles from a user group : {}", userGroupResponse);
 
         return userGroupResponse;
     }

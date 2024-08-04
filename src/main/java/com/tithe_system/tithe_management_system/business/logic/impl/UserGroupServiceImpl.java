@@ -15,6 +15,7 @@ import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessage
 import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -353,6 +354,80 @@ public class UserGroupServiceImpl implements UserGroupService {
 
             return buildUserGroupResponse(201, true, message, userGroupDto, null,
                     null);
+    }
+
+    @Override
+    public UserGroupResponse removeUserRolesFromUserGroup(RemoveUserRolesFromUserGroupRequest removeUserRolesFromUserGroupRequest, Locale locale, String username) {
+
+        String message;
+
+        boolean isValid = userGroupServiceValidator.isRequestValidToRemoveUserRolesFromUserGroup(removeUserRolesFromUserGroupRequest);
+
+        if (!isValid) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_REMOVE_USER_ROLES_FROM_USER_GROUP_REQUEST.getCode(),
+                    new String[]{}, locale);
+
+            return buildUserGroupResponse(400, false, message, null, null,
+                    null);
+        }
+
+        Optional<UserGroup> userGroup =
+                userGroupRepository.findByIdAndEntityStatusNot(removeUserRolesFromUserGroupRequest.getUserGroupId(),
+                        EntityStatus.DELETED);
+
+        if (userGroup.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildUserGroupResponse(400, false, message, null, null,
+                    null);
+        }
+
+        UserGroup userGroupToBeUpdated = userGroup.get();
+
+        Set<UserRole> userRoleSet = userRoleRepository.findByIdInAndEntityStatusNot(
+                removeUserRolesFromUserGroupRequest.getUserRoleIds(), EntityStatus.DELETED);
+
+        if (userRoleSet.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildUserGroupResponse(400, false, message, null, null,
+                    null);
+        }
+
+        Set<UserRole> remainingUserRoles = userGroupToBeUpdated.getUserRoles();
+
+        boolean removed = remainingUserRoles.removeAll(userRoleSet);
+
+        if(!removed) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_ASSIGNED.getCode(),
+                    new String[]{}, locale);
+
+            return buildUserGroupResponse(400, false, message, null, null,
+                    null);
+        }
+
+        userGroupToBeUpdated.setUserRoles(remainingUserRoles);
+
+        UserGroup userGroupReturned = userGroupServiceAuditable.edit(userGroupToBeUpdated, locale, username);
+
+        UserGroupDto userGroupDto = modelMapper.map(userGroupReturned, UserGroupDto.class);
+
+        List<UserRoleDto> userRoleDtoList = modelMapper.map(userGroupReturned.getUserRoles(),
+                new TypeToken<List<UserRoleDto>>() {}.getType());
+
+        userGroupDto.setUserRoleDtoSet(userRoleDtoList);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLES_REMOVED_SUCCESSFULLY.getCode(), new String[]{},
+                locale);
+
+        return buildUserGroupResponse(201, true, message, userGroupDto,
+                null, null);
     }
 
     private Page<UserGroupDto> convertUserGroupEntityToUserGroupDto(Page<UserGroup> userGroupPage){

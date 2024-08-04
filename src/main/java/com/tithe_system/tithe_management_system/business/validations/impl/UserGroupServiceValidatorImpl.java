@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.validations.api.UserGro
 import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
 
 public class UserGroupServiceValidatorImpl implements UserGroupServiceValidator {
     @Override
@@ -67,6 +68,33 @@ public class UserGroupServiceValidatorImpl implements UserGroupServiceValidator 
         }
 
         for (Long userRoleId: assignUserRoleToUserGroupRequest.getUserRoleIds()) {
+
+            if (userRoleId < 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isRequestValidToRemoveUserRolesFromUserGroup(RemoveUserRolesFromUserGroupRequest removeUserRolesFromUserGroupRequest) {
+
+        if(removeUserRolesFromUserGroupRequest == null){
+            return false;
+        }
+
+        if(removeUserRolesFromUserGroupRequest.getUserGroupId() == null ||
+                removeUserRolesFromUserGroupRequest.getUserGroupId() < 1){
+            return false;
+        }
+
+        if(removeUserRolesFromUserGroupRequest.getUserRoleIds() == null ||
+                removeUserRolesFromUserGroupRequest.getUserRoleIds().isEmpty()){
+            return false;
+        }
+
+        for (Long userRoleId: removeUserRolesFromUserGroupRequest.getUserRoleIds()) {
 
             if (userRoleId < 1) {
                 return false;
