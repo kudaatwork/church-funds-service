@@ -1,5 +1,6 @@
 package com.tithe_system.tithe_management_system.service.config;
 
+import com.tithe_system.tithe_management_system.business.logic.api.AccountService;
 import com.tithe_system.tithe_management_system.business.logic.api.AssemblyService;
 import com.tithe_system.tithe_management_system.business.logic.api.DistrictService;
 import com.tithe_system.tithe_management_system.business.logic.api.PaymentService;
@@ -8,6 +9,7 @@ import com.tithe_system.tithe_management_system.business.logic.api.RegionService
 import com.tithe_system.tithe_management_system.business.logic.api.UserAccountService;
 import com.tithe_system.tithe_management_system.business.logic.api.UserGroupService;
 import com.tithe_system.tithe_management_system.business.logic.api.UserRoleService;
+import com.tithe_system.tithe_management_system.service.processor.api.AccountServiceProcessor;
 import com.tithe_system.tithe_management_system.service.processor.api.AssemblyServiceProcessor;
 import com.tithe_system.tithe_management_system.service.processor.api.DistrictServiceProcessor;
 import com.tithe_system.tithe_management_system.service.processor.api.PaymentServiceProcessor;
@@ -16,6 +18,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.RegionServ
 import com.tithe_system.tithe_management_system.service.processor.api.UserAccountServiceProcessor;
 import com.tithe_system.tithe_management_system.service.processor.api.UserGroupServiceProcessor;
 import com.tithe_system.tithe_management_system.service.processor.api.UserRoleServiceProcessor;
+import com.tithe_system.tithe_management_system.service.processor.impl.AccountServiceProcessorImpl;
 import com.tithe_system.tithe_management_system.service.processor.impl.AssemblyServiceProcessorImpl;
 import com.tithe_system.tithe_management_system.service.processor.impl.DistrictServiceProcessorImpl;
 import com.tithe_system.tithe_management_system.service.processor.impl.PaymentServiceProcessorImpl;
@@ -48,6 +51,11 @@ public class ServiceConfig {
     @Bean
     public AssemblyServiceProcessor assemblyServiceProcessor(AssemblyService assemblyService) {
         return new AssemblyServiceProcessorImpl(assemblyService);
+    }
+
+    @Bean
+    public AccountServiceProcessor accountServiceProcessor(AccountService accountService) {
+        return new AccountServiceProcessorImpl(accountService);
     }
 
     @Bean
