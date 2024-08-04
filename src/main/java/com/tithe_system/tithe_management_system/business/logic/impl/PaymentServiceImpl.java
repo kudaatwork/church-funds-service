@@ -22,6 +22,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.PaymentDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.AccountAndReferencesGenerator;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
+import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PaymentServiceImpl implements PaymentService {
@@ -330,6 +332,61 @@ public class PaymentServiceImpl implements PaymentService {
 
         return buildPaymentResponse(200, true, message, null,
                 null, paymentDtoPage);
+    }
+
+    @Override
+    public PaymentResponse changePaymentStatus(ChangePaymentStatusRequest changePaymentStatusRequest, String username, Locale locale) {
+
+        String message = "";
+
+        boolean isRequestValid = paymentServiceValidator.isRequestValidForChangingPaymentStatus(changePaymentStatusRequest);
+
+        if (!isRequestValid) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CHANGE_PAYMENT_STATUS_INVALID_REQUEST.getCode(), new String[]{},
+                    locale);
+
+            return buildPaymentResponse(400, false, message, null, null,
+                    null);
+        }
+
+        Optional<Payment> paymentRetrieved = paymentRepository.findByIdAndEntityStatusNot(changePaymentStatusRequest.getPaymentId(),
+                EntityStatus.DELETED);
+
+        if (paymentRetrieved.isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PAYMENT_NOT_FOUND.getCode(), new String[]{},
+                    locale);
+
+            return buildPaymentResponse(400, false, message, null, null,
+                    null);
+        }
+
+        Payment paymentToBeUpdated = paymentRetrieved.get();
+
+        if (changePaymentStatusRequest.getPaymentStatus().equals(PaymentStatus.REVERSED.getPaymentStatus()) ||
+               changePaymentStatusRequest.getPaymentStatus().equals(PaymentStatus.REVERSAL.getPaymentStatus()) ||
+        paymentToBeUpdated.getPaymentStatus().equals(PaymentStatus.REVERSED) ||
+        paymentToBeUpdated.getPaymentStatus().equals(PaymentStatus.REVERSAL)) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_CANNOT_CHANGE_PAYMENT_STATUS.getCode(), new String[]{},
+                    locale);
+
+            return buildPaymentResponse(400, false, message, null, null,
+                    null);
+        }
+
+        paymentToBeUpdated.setPaymentStatus(PaymentStatus.valueOf(changePaymentStatusRequest.getPaymentStatus()));
+
+        Payment paymentSaved = paymentServiceAuditable.update(paymentToBeUpdated, locale, username);
+
+        PaymentDto paymentDto = modelMapper.map(paymentSaved, PaymentDto.class);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PAYMENT_STATUS_CHANGED_SUCCESSFULLY.getCode(), new String[]{},
+                locale);
+
+        return buildPaymentResponse(200, true, message, paymentDto, null,
+                null);
     }
 
     private static UpdateAccountRequest buildUpdateAccountRequest(Payment payment, Account accountRetrieved) {

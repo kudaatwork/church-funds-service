@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.rest;
 
 import com.tithe_system.tithe_management_system.service.processor.api.PaymentServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
+import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.responses.PaymentResponse;
@@ -55,6 +56,19 @@ public class PaymentResource {
                                           defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
         return paymentServiceProcessor.reverse(reversePaymentRequest, authenticationToken, locale);
+    }
+
+    @Operation(summary = "Change payment status")
+    @PostMapping(value = "/change-payment-status")
+    public PaymentResponse changePaymentStatus(@Valid @RequestBody final ChangePaymentStatusRequest changePaymentStatusRequest,
+                                   @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                           description = "Bearer token", required = true)
+                                   String authenticationToken,
+                                   @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
+                                   @RequestHeader(value = Constants.LOCALE_LANGUAGE,
+                                           defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
+    {
+        return paymentServiceProcessor.changePaymentStatus(changePaymentStatusRequest, authenticationToken, locale);
     }
 
     @Operation(summary = "Find a payment by id")

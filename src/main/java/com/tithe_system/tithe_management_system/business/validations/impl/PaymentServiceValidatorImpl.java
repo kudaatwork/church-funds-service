@@ -7,6 +7,7 @@ import com.tithe_system.tithe_management_system.domain.PaymentChannel;
 import com.tithe_system.tithe_management_system.domain.PaymentMethod;
 import com.tithe_system.tithe_management_system.domain.PaymentStatus;
 import com.tithe_system.tithe_management_system.domain.PaymentType;
+import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import net.sf.jmimemagic.Magic;
@@ -109,6 +110,24 @@ public class PaymentServiceValidatorImpl implements PaymentServiceValidator {
     @Override
     public boolean isIdValid(Long id) {
         return id != null && id > 0;
+    }
+
+    @Override
+    public boolean isRequestValidForChangingPaymentStatus(ChangePaymentStatusRequest changePaymentStatusRequest) {
+
+        if (changePaymentStatusRequest == null) {
+            return false;
+        }
+
+        if (changePaymentStatusRequest.getPaymentId() == null || changePaymentStatusRequest.getPaymentId() < 1) {
+            return false;
+        }
+
+        if (!isPaymentStatusValid(changePaymentStatusRequest.getPaymentStatus())) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isImageValid(MultipartFile multipartFile) throws IOException {

@@ -52,6 +52,9 @@ public enum I18Code {
     MESSAGE_PAYMENT_REVERSED_SUCCESSFULLY("message.payment.reversed.successfully"),
     MESSAGE_INVALID_PAYMENT_ID_SUPPLIED("message.invalid.payment.id.supplied"),
     MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY("message.payment.retrieved.successfully"),
+    MESSAGE_CHANGE_PAYMENT_STATUS_INVALID_REQUEST("message.change.payment.status.invalid.request"),
+    MESSAGE_CANNOT_CHANGE_PAYMENT_STATUS("message.cannot.change.payment.status"),
+    MESSAGE_PAYMENT_STATUS_CHANGED_SUCCESSFULLY("message.payment.status.changed.successfully"),
 
     MESSAGE_CREATE_ACCOUNT_INVALID_REQUEST("message.create.account.invalid.request"),
     MESSAGE_ACCOUNT_DOES_NOT_EXIST("message.account.does.not.exist"),

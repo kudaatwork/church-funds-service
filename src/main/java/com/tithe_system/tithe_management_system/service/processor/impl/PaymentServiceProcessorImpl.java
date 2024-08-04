@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.processor.impl;
 
 import com.tithe_system.tithe_management_system.business.logic.api.PaymentService;
 import com.tithe_system.tithe_management_system.service.processor.api.PaymentServiceProcessor;
+import com.tithe_system.tithe_management_system.utils.requests.ChangePaymentStatusRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreatePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.requests.ReversePaymentRequest;
 import com.tithe_system.tithe_management_system.utils.responses.PaymentResponse;
@@ -53,6 +54,16 @@ public class PaymentServiceProcessorImpl implements PaymentServiceProcessor {
         logger.info("Incoming request to find payments as pages");
         PaymentResponse paymentResponse = paymentService.findPaymentsAsPages(page, size, locale, username);
         logger.info("Outgoing response after finding payments as pages: {}", paymentResponse.getMessage());
+
+        return paymentResponse;
+    }
+
+    @Override
+    public PaymentResponse changePaymentStatus(ChangePaymentStatusRequest changePaymentStatusRequest, String username, Locale locale) {
+
+        logger.info("Incoming request to change payment status: {}", changePaymentStatusRequest);
+        PaymentResponse paymentResponse = paymentService.changePaymentStatus(changePaymentStatusRequest, username, locale);
+        logger.info("Outgoing response after changing payment status: {}", paymentResponse.getMessage());
 
         return paymentResponse;
     }
