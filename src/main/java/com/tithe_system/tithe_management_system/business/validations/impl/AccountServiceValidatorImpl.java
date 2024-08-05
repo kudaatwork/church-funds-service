@@ -1,8 +1,11 @@
 package com.tithe_system.tithe_management_system.business.validations.impl;
 
 import com.tithe_system.tithe_management_system.business.validations.api.AccountServiceValidator;
+import com.tithe_system.tithe_management_system.utils.requests.AccountMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
+
+import java.util.List;
 
 public class AccountServiceValidatorImpl implements AccountServiceValidator {
     @Override
@@ -49,5 +52,34 @@ public class AccountServiceValidatorImpl implements AccountServiceValidator {
     public boolean isIdValid(Long id) {
 
         return id != null && id >= 1;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrievePaymentsByMultipleFilters(AccountMultipleFilterRequest accountMultipleFilterRequest) {
+
+        if (accountMultipleFilterRequest == null){
+            return false;
+        }
+
+        if (accountMultipleFilterRequest.getPage() < 0) {
+            return false;
+        }
+
+        return accountMultipleFilterRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
+    }
+
+    @Override
+    public boolean isListValid(List<String> listValue) {
+
+        if (listValue == null) {
+            return false;
+        }
+
+        return true;
     }
 }

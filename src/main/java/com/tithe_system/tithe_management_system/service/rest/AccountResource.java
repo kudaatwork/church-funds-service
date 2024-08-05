@@ -2,14 +2,18 @@ package com.tithe_system.tithe_management_system.service.rest;
 
 import com.tithe_system.tithe_management_system.service.processor.api.AccountServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
+import com.tithe_system.tithe_management_system.utils.requests.AccountMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AccountResponse;
 import com.tithe_system.tithe_management_system.utils.responses.AssemblyResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,17 +40,16 @@ public class AccountResource {
         return accountServiceProcessor.findById(id, locale);
     }
 
-    @Operation(summary = "Find all accounts as pages")
-    @GetMapping(value = "/pages")
-    public AccountResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    @Operation(summary = "Retrieve accounts by multiple filters as pages")
+    @PostMapping(value = "/multiple-filters")
+    public AccountResponse findByMultipleFilters(@Valid @RequestBody AccountMultipleFilterRequest accountMultipleFilterRequest,
+                                            @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                            description = "Bearer token", required = true)
                                            String authenticationToken,
-                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                            @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                            @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                    defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return accountServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return accountServiceProcessor.findByMultipleFilters(accountMultipleFilterRequest, locale, authenticationToken);
     }
 }

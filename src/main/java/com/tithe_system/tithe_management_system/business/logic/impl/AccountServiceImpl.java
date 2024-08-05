@@ -4,16 +4,22 @@ import com.tithe_system.tithe_management_system.business.auditables.api.AccountS
 import com.tithe_system.tithe_management_system.business.logic.api.AccountService;
 import com.tithe_system.tithe_management_system.business.validations.api.AccountServiceValidator;
 import com.tithe_system.tithe_management_system.domain.Account;
+import com.tithe_system.tithe_management_system.domain.Currency;
 import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.Payment;
 import com.tithe_system.tithe_management_system.repository.AccountRepository;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.UserAccountRepository;
+import com.tithe_system.tithe_management_system.repository.specification.AccountSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.PaymentSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AccountDto;
+import com.tithe_system.tithe_management_system.utils.dtos.PaymentDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.AccountAndReferencesGenerator;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
+import com.tithe_system.tithe_management_system.utils.requests.AccountMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AccountResponse;
@@ -23,12 +29,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class AccountServiceImpl implements AccountService {
     private final AccountServiceValidator accountServiceValidator;
@@ -222,32 +230,143 @@ public class AccountServiceImpl implements AccountService {
                 null);
     }
 
-
     @Override
-    public AccountResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public AccountResponse findByMultipleFilters(AccountMultipleFilterRequest accountMultipleFilterRequest, Locale locale, String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<Account> spec = null;
+        spec = addToSpec(spec, AccountSpecification::deleted);
 
-        Page<Account> accountPage = accountRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = accountServiceValidator.isRequestValidToRetrievePaymentsByMultipleFilters(
+                accountMultipleFilterRequest);
 
-        Page<AccountDto> accountDtoPage = convertAccountEntityToAccountDto(accountPage);
+        if (!isRequestValid) {
 
-        if(accountDtoPage.getContent().isEmpty()){
-
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ACCOUNTS_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildAccountResponse(404, false, message, null, null,
-                    accountDtoPage);
+            return buildAccountResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
+        Pageable pageable = PageRequest.of(accountMultipleFilterRequest.getPage(),
+                accountMultipleFilterRequest.getSize());
+
+        boolean isAccountNumberValid = accountServiceValidator.isStringValid(
+                accountMultipleFilterRequest.getAccountNumber());
+
+        if (isAccountNumberValid) {
+
+            spec = addToSpec(accountMultipleFilterRequest.getAccountNumber(), spec,
+                    AccountSpecification::accountNumberLike);
+        }
+
+        boolean isTransactionReferenceValid = accountServiceValidator.isStringValid(
+                accountMultipleFilterRequest.getTransactionReference());
+
+        if (isTransactionReferenceValid) {
+
+            spec = addToSpec(accountMultipleFilterRequest.getTransactionReference(), spec,
+                    AccountSpecification::transactionReferenceLike);
+        }
+
+        boolean isNarrationValid =
+                accountServiceValidator.isListValid(accountMultipleFilterRequest.getNarration());
+
+        if (isNarrationValid) {
+
+            List<Narration> narrationList = new ArrayList<>();
+
+            for (String narration: accountMultipleFilterRequest.getNarration()
+            ) {
+                try{
+                    narrationList.add(Narration.valueOf(narration));
+                }catch (Exception e){}
+            }
+
+            spec = addToNarrationSpec(narrationList, spec, AccountSpecification::narrationIn);
+        }
+
+        boolean isCurrencyValid =
+                accountServiceValidator.isListValid(accountMultipleFilterRequest.getCurrency());
+
+        if (isCurrencyValid) {
+
+            List<Currency> currencyList = new ArrayList<>();
+
+            for (String currency: accountMultipleFilterRequest.getCurrency()
+            ) {
+                try{
+                    currencyList.add(Currency.valueOf(currency));
+                }catch (Exception e){}
+            }
+
+            spec = addToCurrencySpec(currencyList, spec, AccountSpecification::currencyIn);
+        }
+
+        boolean isSearchValueValid = accountServiceValidator.isStringValid(accountMultipleFilterRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(accountMultipleFilterRequest.getSearchValue(), spec, AccountSpecification::any);
+        }
+
+        Page<Account> result = accountRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ACCOUNT_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildAccountResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<AccountDto> accountDtoPage = convertAccountEntityToAccountDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PAYMENT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
-        return buildAccountResponse(200, true, message, null,
+        return buildAccountResponse(200, true, message,null,
                 null, accountDtoPage);
+    }
+
+    private Specification<Account> addToSpec(Specification<Account> spec,
+                                             Function<EntityStatus, Specification<Account>> predicateMethod) {
+        Specification<Account> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<Account> addToSpec(final String aString, Specification<Account> spec, Function<String,
+            Specification<Account>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<Account> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Account> addToNarrationSpec(final List<Narration> narrationList, Specification<Account> spec,
+                                                      Function<List<Narration>, Specification<Account>> predicateMethod) {
+        if (narrationList != null && !narrationList.isEmpty()) {
+            Specification<Account> localSpec = Specification.where(predicateMethod.apply(narrationList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<Account> addToCurrencySpec(final List<Currency> currencyList, Specification<Account> spec,
+                                                     Function<List<Currency>, Specification<Account>> predicateMethod) {
+        if (currencyList != null && !currencyList.isEmpty()) {
+            Specification<Account> localSpec = Specification.where(predicateMethod.apply(currencyList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private Page<AccountDto> convertAccountEntityToAccountDto(Page<Account> accountPage){

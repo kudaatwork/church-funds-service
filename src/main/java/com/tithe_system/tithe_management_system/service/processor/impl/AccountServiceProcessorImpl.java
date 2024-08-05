@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.service.processor.impl;
 import com.tithe_system.tithe_management_system.business.logic.api.AccountService;
 import com.tithe_system.tithe_management_system.business.logic.api.AssemblyService;
 import com.tithe_system.tithe_management_system.service.processor.api.AccountServiceProcessor;
+import com.tithe_system.tithe_management_system.utils.requests.AccountMultipleFilterRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.UpdateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AccountResponse;
@@ -40,11 +41,12 @@ public class AccountServiceProcessorImpl implements AccountServiceProcessor {
     }
 
     @Override
-    public AccountResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public  AccountResponse findByMultipleFilters(
+            AccountMultipleFilterRequest accountMultipleFilterRequest, Locale locale, String username) {
 
-        logger.info("Incoming id to find accounts as pages");
-        AccountResponse accountResponse = accountService.findAllAsPages(page, size, locale, username);
-        logger.info("Outgoing response after finding accounts as pages : {}", accountResponse);
+        logger.info("Incoming request to retrieve accounts by multiple filters: {}", accountMultipleFilterRequest);
+        AccountResponse accountResponse = accountService.findByMultipleFilters(accountMultipleFilterRequest, locale, username);
+        logger.info("Outgoing response after retrieving accounts by multiple filters : {}", accountResponse.getMessage());
 
         return accountResponse;
     }

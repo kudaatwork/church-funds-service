@@ -66,6 +66,7 @@ public enum I18Code {
     MESSAGE_ACCOUNT_CREATED_SUCCESSFULLY("message.account.created.successfully"),
     MESSAGE_INVALID_ACCOUNT_ID_SUPPLIED("message.invalid.account.id.supplied"),
     MESSAGE_ACCOUNT_RETRIEVED_SUCCESSFULLY("message.account.retrieved.successfully"),
+    MESSAGE_INVALID_ACCOUNTS_MULTIPLE_FILTERS_REQUEST("message.invalid.accounts.multiple.filters.request"),
 
     MESSAGE_USER_ACCOUNT_NOT_FOUND("message.user.account.not.found"),
     MESSAGE_CREATE_USER_ACCOUNT_INVALID_REQUEST("message.create.user.account.invalid.request"),

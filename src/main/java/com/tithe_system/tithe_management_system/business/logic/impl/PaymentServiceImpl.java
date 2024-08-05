@@ -445,10 +445,10 @@ public class PaymentServiceImpl implements PaymentService {
 
             List<Narration> narrationList = new ArrayList<>();
 
-            for (String tariffType: paymentMultipleFilterRequest.getNarration()
+            for (String narration: paymentMultipleFilterRequest.getNarration()
             ) {
                 try{
-                    narrationList.add(Narration.valueOf(tariffType));
+                    narrationList.add(Narration.valueOf(narration));
                 }catch (Exception e){}
             }
 

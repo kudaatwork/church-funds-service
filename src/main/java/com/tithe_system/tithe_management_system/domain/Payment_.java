@@ -7,7 +7,6 @@ import javax.annotation.processing.Generated;
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(Payment.class)
 public class Payment_ {
-    public static volatile SingularAttribute<Payment, Long> id;
     public static volatile SingularAttribute<Payment, String> transactionReference;
     public static volatile SingularAttribute<Payment, String> accountNumber;
     public static volatile SingularAttribute<Payment, String> narration;
