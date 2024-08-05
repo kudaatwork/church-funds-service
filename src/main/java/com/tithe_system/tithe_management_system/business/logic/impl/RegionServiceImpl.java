@@ -15,6 +15,8 @@ import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
+import com.tithe_system.tithe_management_system.repository.specification.AssemblySpecification;
+import com.tithe_system.tithe_management_system.repository.specification.RegionSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
@@ -23,6 +25,8 @@ import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateRegionRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditRegionRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RegionMultipleFiltersRequest;
+import com.tithe_system.tithe_management_system.utils.responses.AssemblyResponse;
 import com.tithe_system.tithe_management_system.utils.responses.RegionResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -31,11 +35,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class RegionServiceImpl implements RegionService {
     private final RegionServiceValidator regionServiceValidator;
@@ -330,30 +337,53 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public RegionResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public RegionResponse findByMultipleFilters(RegionMultipleFiltersRequest regionMultipleFiltersRequest, Locale locale,
+                                                  String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<Region> spec = null;
+        spec = addToSpec(spec, RegionSpecification::deleted);
 
-        Page<Region> regionPage = regionRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = regionServiceValidator.isRequestValidToRetrieveAssembliesByMultipleFilters(
+                regionMultipleFiltersRequest);
 
-        Page<RegionDto> regionDtoPage = convertRegionEntityToRegionDto(regionPage);
+        if (!isRequestValid) {
 
-        if(regionDtoPage.getContent().isEmpty()){
-
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_INVALID_REGIONS_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildRegionResponse(404, false, message, null, null,
-                    regionDtoPage);
+            return buildRegionResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
-                new String[]{}, locale);
+        Pageable pageable = PageRequest.of(regionMultipleFiltersRequest.getPage(),
+                regionMultipleFiltersRequest.getSize());
 
-        return buildRegionResponse(200, true, message, null,
-                null, regionDtoPage);
+        boolean isNameValid = regionServiceValidator.isStringValid(regionMultipleFiltersRequest.getName());
+
+        if (isNameValid) {
+
+            spec = addToSpec(regionMultipleFiltersRequest.getName(), spec, RegionSpecification::nameLike);
+        }
+    }
+
+    private Specification<Region> addToSpec(Specification<Region> spec,
+                                              Function<EntityStatus, Specification<Region>> predicateMethod) {
+        Specification<Region> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<Region> addToSpec(final String aString, Specification<Region> spec, Function<String,
+            Specification<Region>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<Region> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private Page<RegionDto> convertRegionEntityToRegionDto(Page<Region> regionPage){

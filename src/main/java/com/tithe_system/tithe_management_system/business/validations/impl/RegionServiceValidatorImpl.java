@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.business.validations.impl;
 import com.tithe_system.tithe_management_system.business.validations.api.RegionServiceValidator;
 import com.tithe_system.tithe_management_system.utils.requests.CreateRegionRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditRegionRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RegionMultipleFiltersRequest;
 
 public class RegionServiceValidatorImpl implements RegionServiceValidator {
 
@@ -49,5 +50,24 @@ public class RegionServiceValidatorImpl implements RegionServiceValidator {
     @Override
     public boolean isIdValid(Long id) {
         return id != null && id >= 1;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrieveAssembliesByMultipleFilters(RegionMultipleFiltersRequest regionMultipleFiltersRequest) {
+
+        if (regionMultipleFiltersRequest == null){
+            return false;
+        }
+
+        if (regionMultipleFiltersRequest.getPage() < 0) {
+            return false;
+        }
+
+        return regionMultipleFiltersRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
     }
 }

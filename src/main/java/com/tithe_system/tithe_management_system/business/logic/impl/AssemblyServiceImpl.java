@@ -476,7 +476,7 @@ public class AssemblyServiceImpl implements AssemblyService {
 
         if (!isRequestValid) {
 
-            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ACCOUNTS_MULTIPLE_FILTERS_REQUEST.getCode(),
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ASSEMBLIES_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
             return buildAssemblyResponse(400, false, message,null, null,

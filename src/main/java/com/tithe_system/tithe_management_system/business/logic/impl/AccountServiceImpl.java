@@ -271,6 +271,13 @@ public class AccountServiceImpl implements AccountService {
                     AccountSpecification::transactionReferenceLike);
         }
 
+        boolean isNameValid = accountServiceValidator.isStringValid(accountMultipleFilterRequest.getName());
+
+        if (isNameValid) {
+
+            spec = addToSpec(accountMultipleFilterRequest.getName(), spec, AccountSpecification::nameLike);
+        }
+
         boolean isNarrationValid =
                 accountServiceValidator.isListValid(accountMultipleFilterRequest.getNarration());
 

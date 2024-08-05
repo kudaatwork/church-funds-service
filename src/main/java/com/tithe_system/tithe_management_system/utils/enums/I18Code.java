@@ -33,6 +33,7 @@ public enum I18Code {
     MESSAGE_REGION_DELETED_SUCCESSFULLY("message.region.deleted.successfully"),
     MESSAGE_REGION_RETRIEVED_SUCCESSFULLY("message.region.retrieved.successfully"),
     MESSAGE_REGION_EDITED_SUCCESSFULLY("message.region.edited.successfully"),
+    MESSAGE_INVALID_REGIONS_MULTIPLE_FILTERS_REQUEST("message.invalid.regions.multiple.filters.request"),
 
     MESSAGE_CREATE_ASSEMBLY_INVALID_REQUEST("message.create.assembly.invalid.request"),
     MESSAGE_ASSEMBLY_ALREADY_EXISTS("message.assembly.already.exists"),
@@ -44,6 +45,7 @@ public enum I18Code {
     MESSAGE_ASSEMBLY_NOT_FOUND("message.assembly.not.found"),
     MESSAGE_ASSEMBLY_DELETED_SUCCESSFULLY("message.assembly.deleted.successfully"),
     MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY("message.assembly.retrieved.successfully"),
+    MESSAGE_INVALID_ASSEMBLIES_MULTIPLE_FILTERS_REQUEST("message.invalid.assemblies.multiple.filters.request"),
 
     MESSAGE_CREATE_PAYMENT_INVALID_REQUEST("message.create.payment.invalid.request"),
     MESSAGE_PAYMENT_INITIATED_SUCCESSFULLY("message.payment.initiated.successfully"),
