@@ -108,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
         accountToBeSaved.setCumulativeBalance(BigDecimal.ZERO);
         accountToBeSaved.setTransactionAmount(BigDecimal.ZERO);
         accountToBeSaved.setTransactionReference(AccountAndReferencesGenerator.getTransactionReference().toString());
-        accountToBeSaved.setNarration(Narration.ACCOUNT_CREATION.getAccountNarration());
+        accountToBeSaved.setNarration(Narration.ACCOUNT_CREATION);
 
         Account accountSaved = accountServiceAuditable.create(accountToBeSaved, locale, username);
 
@@ -165,7 +165,7 @@ public class AccountServiceImpl implements AccountService {
 
         Account accountRecordToBeUpdated = accountRetrieved.get();
         accountRecordToBeUpdated.setTransactionAmount(updateAccountRequest.getAmount());
-        accountRecordToBeUpdated.setNarration(Narration.ACCOUNT_IN_USE.getAccountNarration());
+        accountRecordToBeUpdated.setNarration(Narration.ACCOUNT_IN_USE);
 
         if (updateAccountRequest.getNarration().equals(Narration.PAYMENT.toString())) {
 

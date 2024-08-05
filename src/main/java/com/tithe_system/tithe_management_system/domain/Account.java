@@ -29,7 +29,8 @@ public class Account {
     private BigDecimal cumulativeBalance;
     private BigDecimal transactionAmount;
     private String name;
-    private String narration;
+    @Enumerated(value = EnumType.STRING)
+    private Narration narration;
     @Enumerated(value = EnumType.STRING)
     private Currency currency;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -116,11 +117,11 @@ public class Account {
         this.name = name;
     }
 
-    public String getNarration() {
+    public Narration getNarration() {
         return narration;
     }
 
-    public void setNarration(String narration) {
+    public void setNarration(Narration narration) {
         this.narration = narration;
     }
 
