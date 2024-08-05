@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.processor.impl;
 
 import com.tithe_system.tithe_management_system.business.logic.api.AssemblyService;
 import com.tithe_system.tithe_management_system.service.processor.api.AssemblyServiceProcessor;
+import com.tithe_system.tithe_management_system.utils.requests.AssemblyMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AssemblyResponse;
@@ -80,11 +81,14 @@ public class AssemblyServiceProcessorImpl implements AssemblyServiceProcessor {
     }
 
     @Override
-    public AssemblyResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public AssemblyResponse findByMultipleFilters(AssemblyMultipleFiltersRequest assemblyMultipleFiltersRequest,
+                                                  Locale locale, String username) {
 
-        logger.info("Incoming request to find all assemblies as a list with pages");
-        AssemblyResponse assemblyResponse = assemblyService.findAllAsPages(page, size, locale, username);
-        logger.info("Outgoing response after finding all assemblies as a list with pages: {}", assemblyResponse.getMessage());
+        logger.info("Incoming request to find all assemblies with multiple filters as pages");
+        AssemblyResponse assemblyResponse = assemblyService.findByMultipleFilters(assemblyMultipleFiltersRequest, locale,
+                username);
+        logger.info("Outgoing response after finding all assemblies with multiple filters as pages: {}",
+                assemblyResponse.getMessage());
 
         return assemblyResponse;
     }

@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.rest;
 
 import com.tithe_system.tithe_management_system.service.processor.api.AssemblyServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
+import com.tithe_system.tithe_management_system.utils.requests.AssemblyMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.responses.AssemblyResponse;
@@ -104,17 +105,17 @@ public class AssemblyResource {
         return assemblyServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all assemblies as pages")
-    @GetMapping(value = "/pages")
-    public AssemblyResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    @Operation(summary = "Find all assemblies with multiple filters as pages")
+    @PostMapping(value = "/multiple-filters")
+    public AssemblyResponse findByMultipleFilters(@Valid @RequestBody AssemblyMultipleFiltersRequest
+                                                              assemblyMultipleFiltersRequest,
+                                                @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                        description = "Bearer token", required = true)
                                            String authenticationToken,
-                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                            @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                            @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                    defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return assemblyServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return assemblyServiceProcessor.findByMultipleFilters(assemblyMultipleFiltersRequest, locale, authenticationToken);
     }
 }

@@ -19,6 +19,8 @@ import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
 import com.tithe_system.tithe_management_system.repository.UserAccountRepository;
+import com.tithe_system.tithe_management_system.repository.specification.AccountSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.AssemblySpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AccountDto;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
@@ -26,6 +28,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
 import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
+import com.tithe_system.tithe_management_system.utils.requests.AssemblyMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditAssemblyRequest;
@@ -40,11 +43,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class AssemblyServiceImpl implements AssemblyService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -458,29 +464,93 @@ public class AssemblyServiceImpl implements AssemblyService {
     }
 
     @Override
-    public AssemblyResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public AssemblyResponse findByMultipleFilters(AssemblyMultipleFiltersRequest assemblyMultipleFiltersRequest, Locale locale, String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<Assembly> spec = null;
+        spec = addToSpec(spec, AssemblySpecification::deleted);
 
-        Page<Assembly> assemblyPage = assemblyRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = assemblyServiceValidator.isRequestValidToRetrieveAssembliesByMultipleFilters(
+                assemblyMultipleFiltersRequest);
 
-        Page<AssemblyDto> assemblyDtoPage = convertAssemblyEntityToAssemblyDto(assemblyPage);
+        if (!isRequestValid) {
 
-        if(assemblyPage.getContent().isEmpty()){
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_INVALID_ACCOUNTS_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildAssemblyResponse(404, false, message, null, null,
-                    assemblyDtoPage);
+            return buildAssemblyResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
+        Pageable pageable = PageRequest.of(assemblyMultipleFiltersRequest.getPage(),
+                assemblyMultipleFiltersRequest.getSize());
+
+        boolean isNameValid = assemblyServiceValidator.isStringValid(assemblyMultipleFiltersRequest.getName());
+
+        if (isNameValid) {
+
+            spec = addToSpec(assemblyMultipleFiltersRequest.getName(), spec, AssemblySpecification::nameLike);
+        }
+
+        boolean isContactPhoneNumberValid =
+                assemblyServiceValidator.isStringValid(assemblyMultipleFiltersRequest.getContactPhoneNumber());
+
+        if (isContactPhoneNumberValid) {
+
+            spec = addToSpec(assemblyMultipleFiltersRequest.getName(), spec, AssemblySpecification::contactPhoneNumberLike);
+        }
+
+        boolean isContactEmailValid =
+                assemblyServiceValidator.isStringValid(assemblyMultipleFiltersRequest.getContactEmail());
+
+        if (isContactEmailValid) {
+
+            spec = addToSpec(assemblyMultipleFiltersRequest.getName(), spec, AssemblySpecification::contactEmailLike);
+        }
+
+        boolean isSearchValueValid = assemblyServiceValidator.isStringValid(assemblyMultipleFiltersRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(assemblyMultipleFiltersRequest.getSearchValue(), spec, AssemblySpecification::any);
+        }
+
+        Page<Assembly> result = assemblyRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildAssemblyResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<AssemblyDto> assemblyDtoPage = convertAssemblyEntityToAssemblyDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
-        return buildAssemblyResponse(200, true, message, null,
+        return buildAssemblyResponse(200, true, message,null,
                 null, assemblyDtoPage);
+    }
+
+    private Specification<Assembly> addToSpec(Specification<Assembly> spec,
+                                             Function<EntityStatus, Specification<Assembly>> predicateMethod) {
+        Specification<Assembly> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<Assembly> addToSpec(final String aString, Specification<Assembly> spec, Function<String,
+            Specification<Assembly>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<Assembly> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private static CreateAccountRequest buildCreateUsdAccountRequest(Assembly assemblySaved) {

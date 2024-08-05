@@ -16,7 +16,7 @@ public class PaymentServiceAuditableImpl implements PaymentServiceAuditable {
         this.paymentRepository = paymentRepository;
     }
 
-    @AuditCreateEvent
+   // @AuditCreateEvent
     @Override
     public Payment create(Payment payment, Locale locale, String username) {
         return paymentRepository.save(payment);

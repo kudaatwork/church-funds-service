@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.business.validations.impl;
 
 import com.tithe_system.tithe_management_system.business.validations.api.AssemblyServiceValidator;
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
+import com.tithe_system.tithe_management_system.utils.requests.AssemblyMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.CreateAssemblyRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditAssemblyRequest;
 import java.util.regex.Matcher;
@@ -93,6 +94,26 @@ public class AssemblyServiceValidatorImpl implements AssemblyServiceValidator {
     @Override
     public boolean isIdValid(Long id) {
         return id != null && id >= 1;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrieveAssembliesByMultipleFilters(AssemblyMultipleFiltersRequest assemblyMultipleFiltersRequest) {
+
+        if (assemblyMultipleFiltersRequest == null){
+            return false;
+        }
+
+        if (assemblyMultipleFiltersRequest.getPage() < 0) {
+            return false;
+        }
+
+        return assemblyMultipleFiltersRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+
+        return stringValue != null && !stringValue.isEmpty();
     }
 
     public static boolean isValidEmail(String name)
