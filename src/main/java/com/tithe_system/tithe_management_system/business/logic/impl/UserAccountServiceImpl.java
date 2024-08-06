@@ -486,6 +486,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 
             spec = addToGenderSpec(genderList, spec, UserAccountSpecification::genderIn);
         }
+
+        return null;
     }
 
     private Specification<UserAccount> addToSpec(Specification<UserAccount> spec,
