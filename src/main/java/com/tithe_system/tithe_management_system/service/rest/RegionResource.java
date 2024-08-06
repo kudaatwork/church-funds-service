@@ -92,7 +92,7 @@ public class RegionResource {
     }
 
     @Operation(summary = "Find all regions by multiple filters as pages")
-    @GetMapping(value = "/pages")
+    @PostMapping(value = "/multiple-filters")
     public RegionResponse findByMultipleFilters(@Valid @RequestBody RegionMultipleFiltersRequest regionMultipleFiltersRequest,
                                                 @Parameter(name = "Authorization", in = ParameterIn.HEADER,
                                                     description = "Bearer token", required = true)
