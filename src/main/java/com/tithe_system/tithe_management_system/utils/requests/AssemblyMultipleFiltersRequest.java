@@ -1,6 +1,6 @@
 package com.tithe_system.tithe_management_system.utils.requests;
 
-public class AssemblyMultipleFiltersRequest extends DataTableRequest{
+public class AssemblyMultipleFiltersRequest extends MultipleFiltersRequest {
     private String name;
     private String contactPhoneNumber;
     private String contactEmail;

@@ -2,7 +2,7 @@ package com.tithe_system.tithe_management_system.utils.requests;
 
 import java.util.List;
 
-public class PaymentMultipleFilterRequest extends DataTableRequest{
+public class PaymentMultipleFilterRequest extends MultipleFiltersRequest {
     private String transactionReference;
     private String accountNumber;
     private List<String> narration;

@@ -2,23 +2,14 @@ package com.tithe_system.tithe_management_system.utils.requests;
 
 import java.io.Serializable;
 
-public class DataTableRequest implements Serializable {
+public class MultipleFiltersRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int page;
     private int size;
-    private String echo;
     private String searchValue;
 
-    public DataTableRequest() {
-    }
-
-    public String getEcho() {
-        return echo;
-    }
-
-    public void setEcho(String echo) {
-        this.echo = echo;
+    public MultipleFiltersRequest() {
     }
 
     public String getSearchValue() {
@@ -47,7 +38,10 @@ public class DataTableRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "DataTableRequest{" + "page=" + page + ", size=" + size + ", echo='" + echo + '\'' + ", searchValue='"
-                + searchValue + '\'' + '}';
+        return "DataTableRequest{" +
+                "page=" + page +
+                ", size=" + size +
+                ", searchValue='" + searchValue + '\'' +
+                '}';
     }
 }
