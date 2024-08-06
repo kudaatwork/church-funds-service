@@ -367,6 +367,32 @@ public class RegionServiceImpl implements RegionService {
 
             spec = addToSpec(regionMultipleFiltersRequest.getName(), spec, RegionSpecification::nameLike);
         }
+
+        boolean isSearchValueValid = regionServiceValidator.isStringValid(regionMultipleFiltersRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(regionMultipleFiltersRequest.getSearchValue(), spec, RegionSpecification::any);
+        }
+
+        Page<Region> result = regionRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildRegionResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<RegionDto> regionDtoPage = convertRegionEntityToRegionDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_RETRIEVED_SUCCESSFULLY.getCode(),
+                new String[]{}, locale);
+
+        return buildRegionResponse(200, true, message,null,
+                null, regionDtoPage);
     }
 
     private Specification<Region> addToSpec(Specification<Region> spec,

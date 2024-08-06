@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.logic.api.RegionService
 import com.tithe_system.tithe_management_system.service.processor.api.RegionServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.requests.CreateRegionRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditRegionRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RegionMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.RegionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +71,12 @@ public class RegionServiceProcessorImpl implements RegionServiceProcessor {
     }
 
     @Override
-    public RegionResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public RegionResponse findByMultipleFilters(RegionMultipleFiltersRequest regionMultipleFiltersRequest, Locale locale,
+                                                String username) {
 
-        logger.info("Incoming request to find all regions as a list with pages");
-        RegionResponse regionResponse = regionService.findAllAsPages(page, size, locale, username);
-        logger.info("Outgoing response after finding all regions as a list with pages: {}", regionResponse.getMessage());
+        logger.info("Incoming request to find all regions by multiple filters as pages: {}", regionMultipleFiltersRequest);
+        RegionResponse regionResponse = regionService.findByMultipleFilters(regionMultipleFiltersRequest, locale, username);
+        logger.info("Outgoing response after finding all regions by multiple filters as pages: {}", regionResponse.getMessage());
 
         return regionResponse;
     }

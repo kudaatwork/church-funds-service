@@ -7,6 +7,6 @@ import javax.annotation.processing.Generated;
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(Region.class)
 public class Region_ {
-    public static volatile SingularAttribute<Assembly, String> name;
-    public static volatile SingularAttribute<Assembly, String> entityStatus;
+    public static volatile SingularAttribute<Region, String> name;
+    public static volatile SingularAttribute<Region, String> entityStatus;
 }

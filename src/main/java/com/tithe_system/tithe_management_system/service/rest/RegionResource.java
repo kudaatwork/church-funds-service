@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.RegionServ
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
 import com.tithe_system.tithe_management_system.utils.requests.CreateRegionRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditRegionRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RegionMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.RegionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -90,17 +91,16 @@ public class RegionResource {
         return regionServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all regions as pages")
+    @Operation(summary = "Find all regions by multiple filters as pages")
     @GetMapping(value = "/pages")
-    public RegionResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    public RegionResponse findByMultipleFilters(@Valid @RequestBody RegionMultipleFiltersRequest regionMultipleFiltersRequest,
+                                                @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                                    description = "Bearer token", required = true)
                                            String authenticationToken,
-                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                            @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                            @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                    defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return regionServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return regionServiceProcessor.findByMultipleFilters(regionMultipleFiltersRequest, locale, authenticationToken);
     }
 }

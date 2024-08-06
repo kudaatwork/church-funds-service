@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.service.processor.api;
 
 import com.tithe_system.tithe_management_system.utils.requests.CreateRegionRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditRegionRequest;
+import com.tithe_system.tithe_management_system.utils.requests.RegionMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.RegionResponse;
 import java.util.Locale;
 
@@ -11,5 +12,5 @@ public interface RegionServiceProcessor {
     RegionResponse delete(Long id, Locale locale);
     RegionResponse findById(Long id, Locale locale);
     RegionResponse findAllAsAList(String username, Locale locale);
-    RegionResponse findAllAsPages(int page, int size, Locale locale, String username);
+    RegionResponse findByMultipleFilters(RegionMultipleFiltersRequest  regionMultipleFiltersRequest, Locale locale, String username);
 }
