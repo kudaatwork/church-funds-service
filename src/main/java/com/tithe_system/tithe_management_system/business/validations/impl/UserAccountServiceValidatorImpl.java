@@ -5,8 +5,11 @@ import com.tithe_system.tithe_management_system.domain.Gender;
 import com.tithe_system.tithe_management_system.domain.Title;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserAccountRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserAccountsMultipleFiltersRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class UserAccountServiceValidatorImpl implements UserAccountServiceValidator {
     private static Logger logger = LoggerFactory.getLogger(PaymentServiceValidatorImpl.class);
@@ -136,6 +139,35 @@ public class UserAccountServiceValidatorImpl implements UserAccountServiceValida
     @Override
     public boolean isIdValid(Long id) {
         return id != null && id > 0;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrieveUserAccountsByMultipleFilters(UserAccountsMultipleFiltersRequest userAccountsMultipleFiltersRequest) {
+
+        if (userAccountsMultipleFiltersRequest == null){
+            return false;
+        }
+
+        if (userAccountsMultipleFiltersRequest.getPage() < 0) {
+            return false;
+        }
+
+        return userAccountsMultipleFiltersRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
+    }
+
+    @Override
+    public boolean isListValid(List<String> listValue) {
+
+        if (listValue == null) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isGenderValid(String genderSupplied) {

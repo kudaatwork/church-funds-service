@@ -80,6 +80,7 @@ public enum I18Code {
     MESSAGE_USER_ACCOUNT_DOES_NOT_EXIST("message.user.account.does.not.exist"),
     MESSAGE_USER_ACCOUNT_DELETED_SUCCESSFULLY("message.user.account.deleted.successfully"),
     MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY("message.user.account.retrieved.successfully"),
+    MESSAGE_INVALID_USER_ACCOUNTS_MULTIPLE_FILTERS_REQUEST("message.invalid.user.accounts.multiple.filters.request"),
 
     MESSAGE_USER_GROUP_ALREADY_EXISTS("message.user.group.already.exists"),
     MESSAGE_CREATE_USER_GROUP_INVALID_REQUEST("message.create.user.group.invalid.request"),

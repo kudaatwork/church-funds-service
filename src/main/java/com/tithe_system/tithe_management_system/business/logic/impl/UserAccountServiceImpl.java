@@ -3,21 +3,26 @@ package com.tithe_system.tithe_management_system.business.logic.impl;
 import com.tithe_system.tithe_management_system.business.auditables.api.UserAccountServiceAuditable;
 import com.tithe_system.tithe_management_system.business.logic.api.UserAccountService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserAccountServiceValidator;
+import com.tithe_system.tithe_management_system.domain.Account;
 import com.tithe_system.tithe_management_system.domain.Assembly;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.Gender;
+import com.tithe_system.tithe_management_system.domain.Narration;
 import com.tithe_system.tithe_management_system.domain.Title;
 import com.tithe_system.tithe_management_system.domain.UserAccount;
 import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.UserAccountRepository;
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
+import com.tithe_system.tithe_management_system.repository.specification.AccountSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.UserAccountSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.PasswordEncryptionAlgorithm;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserAccountRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserAccountsMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserAccountResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,11 +30,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class UserAccountServiceImpl implements UserAccountService {
     private final UserAccountServiceValidator userAccountServiceValidator;
@@ -422,30 +430,99 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public UserAccountResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public UserAccountResponse findByMultipleFilters(UserAccountsMultipleFiltersRequest userAccountsMultipleFiltersRequest, Locale locale, String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<UserAccount> spec = null;
+        spec = addToSpec(spec, UserAccountSpecification::deleted);
 
-        Page<UserAccount> userAccountPage = userAccountRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = userAccountServiceValidator.isRequestValidToRetrieveUserAccountsByMultipleFilters(
+                userAccountsMultipleFiltersRequest);
 
-        Page<UserAccountDto> userAccountDtoPage = convertUserAccountEntityToUserAccountDto(userAccountPage);
+        if (!isRequestValid) {
 
-        if(userAccountPage.getContent().isEmpty()){
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_INVALID_USER_ACCOUNTS_MULTIPLE_FILTERS_REQUEST.getCode(), new String[]{}, locale);
 
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_NOT_FOUND.getCode(),
-                    new String[]{}, locale);
-
-            return buildUserAccountResponse(404, false, message, null, null,
-                    userAccountDtoPage);
+            return buildUserAccountResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
-                new String[]{}, locale);
+        Pageable pageable = PageRequest.of(userAccountsMultipleFiltersRequest.getPage(),
+                userAccountsMultipleFiltersRequest.getSize());
 
-        return buildUserAccountResponse(200, true, message, null,
-                null, userAccountDtoPage);
+        boolean isFirstNameValid = userAccountServiceValidator.isStringValid(
+                userAccountsMultipleFiltersRequest.getFirstName());
+
+        if (isFirstNameValid) {
+
+            spec = addToSpec(userAccountsMultipleFiltersRequest.getFirstName(), spec,
+                    UserAccountSpecification::firstNameLike);
+        }
+
+        boolean isLastNameValid = userAccountServiceValidator.isStringValid(
+                userAccountsMultipleFiltersRequest.getLastName());
+
+        if (isLastNameValid) {
+
+            spec = addToSpec(userAccountsMultipleFiltersRequest.getLastName(), spec,
+                    UserAccountSpecification::lastNameLike);
+        }
+
+        boolean isNarrationValid =
+                userAccountServiceValidator.isListValid(userAccountsMultipleFiltersRequest.getGender());
+
+        if (isNarrationValid) {
+
+            List<Gender> genderList = new ArrayList<>();
+
+            for (String gender: userAccountsMultipleFiltersRequest.getGender()
+            ) {
+                try{
+                    genderList.add(Gender.valueOf(gender));
+                }catch (Exception e){}
+            }
+
+            spec = addToGenderSpec(genderList, spec, UserAccountSpecification::genderIn);
+        }
+    }
+
+    private Specification<UserAccount> addToSpec(Specification<UserAccount> spec,
+                                             Function<EntityStatus, Specification<UserAccount>> predicateMethod) {
+        Specification<UserAccount> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<UserAccount> addToSpec(final String aString, Specification<UserAccount> spec, Function<String,
+            Specification<UserAccount>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<UserAccount> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<UserAccount> addToGenderSpec(final List<Gender> genderList, Specification<UserAccount> spec,
+                                                      Function<List<Gender>, Specification<UserAccount>> predicateMethod) {
+        if (genderList != null && !genderList.isEmpty()) {
+            Specification<UserAccount> localSpec = Specification.where(predicateMethod.apply(genderList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
+    }
+
+    private Specification<UserAccount> addToTitleSpec(final List<Title> titleList, Specification<UserAccount> spec,
+                                                       Function<List<Title>, Specification<UserAccount>> predicateMethod) {
+        if (titleList != null && !titleList.isEmpty()) {
+            Specification<UserAccount> localSpec = Specification.where(predicateMethod.apply(titleList));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private Page<UserAccountDto> convertUserAccountEntityToUserAccountDto(Page<UserAccount> userAccountPage){
