@@ -361,13 +361,6 @@ public class RegionServiceImpl implements RegionService {
         Pageable pageable = PageRequest.of(regionMultipleFiltersRequest.getPage(),
                 regionMultipleFiltersRequest.getSize());
 
-        boolean isNameValid = regionServiceValidator.isStringValid(regionMultipleFiltersRequest.getName());
-
-        if (isNameValid) {
-
-            spec = addToSpec(regionMultipleFiltersRequest.getName(), spec, RegionSpecification::nameLike);
-        }
-
         boolean isSearchValueValid = regionServiceValidator.isStringValid(regionMultipleFiltersRequest.getSearchValue());
 
         if (isSearchValueValid) {

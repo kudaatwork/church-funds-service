@@ -14,13 +14,6 @@ public class RegionSpecification {
         };
     }
 
-    public static Specification<Region> nameLike(final String name) {
-        return (root, query, cb) -> {
-            Predicate p = cb.like(root.get(Region_.name).as(String.class), name + "%");
-            return p;
-        };
-    }
-
     public static Specification<Region> any(final String search) {
 
         return (root, query, cb) -> {
