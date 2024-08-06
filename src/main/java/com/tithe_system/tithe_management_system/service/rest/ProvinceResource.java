@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.ProvinceSe
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
 import com.tithe_system.tithe_management_system.utils.requests.CreateProvinceRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditProvinceRequest;
+import com.tithe_system.tithe_management_system.utils.requests.ProvinceMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.ProvinceResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -103,17 +104,16 @@ public class ProvinceResource {
         return provinceServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all provinces as pages")
-    @GetMapping(value = "/pages")
-    public ProvinceResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
+    @Operation(summary = "Find all provinces by multiple filters as pages")
+    @PostMapping(value = "/multiple-filters")
+    public ProvinceResponse findAllAsPages(@Valid @RequestBody ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest,
+                                        @Parameter(name = "Authorization", in = ParameterIn.HEADER,
                                             description = "Bearer token", required = true)
                                            String authenticationToken,
-                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                            @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                            @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                    defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return provinceServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return provinceServiceProcessor.findByMultipleFilters(provinceMultipleFiltersRequest, locale, authenticationToken);
     }
 }

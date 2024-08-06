@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.business.validations.impl;
 import com.tithe_system.tithe_management_system.business.validations.api.ProvinceServiceValidator;
 import com.tithe_system.tithe_management_system.utils.requests.CreateProvinceRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditProvinceRequest;
+import com.tithe_system.tithe_management_system.utils.requests.ProvinceMultipleFiltersRequest;
 
 public class ProvinceServiceValidatorImpl implements ProvinceServiceValidator {
     @Override
@@ -57,6 +58,25 @@ public class ProvinceServiceValidatorImpl implements ProvinceServiceValidator {
     public boolean isIdValid(Long id) {
 
         return id != null && id >= 1;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrieveAssembliesByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest) {
+
+        if (provinceMultipleFiltersRequest == null){
+            return false;
+        }
+
+        if (provinceMultipleFiltersRequest.getPage() < 0) {
+            return false;
+        }
+
+        return provinceMultipleFiltersRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
     }
 
     static boolean checkUsingIsDigitMethod(String input) {

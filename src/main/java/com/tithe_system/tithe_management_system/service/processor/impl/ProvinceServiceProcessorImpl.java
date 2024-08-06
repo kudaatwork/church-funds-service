@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.logic.api.ProvinceServi
 import com.tithe_system.tithe_management_system.service.processor.api.ProvinceServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.requests.CreateProvinceRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditProvinceRequest;
+import com.tithe_system.tithe_management_system.utils.requests.ProvinceMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.ProvinceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,11 +81,12 @@ public class ProvinceServiceProcessorImpl implements ProvinceServiceProcessor {
     }
 
     @Override
-    public ProvinceResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public ProvinceResponse findByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest, Locale locale,
+                                                  String username) {
 
-        logger.info("Incoming request to find all provinces as pages");
-        ProvinceResponse provinceResponse = provinceService.findAllAsPages(page, size, locale, username);
-        logger.info("Outgoing response after finding all provinces as pages : {}", provinceResponse.getMessage());
+        logger.info("Incoming request to find all provinces by multiple filters as pages: {}", provinceMultipleFiltersRequest);
+        ProvinceResponse provinceResponse = provinceService.findByMultipleFilters(provinceMultipleFiltersRequest, locale, username);
+        logger.info("Outgoing response after finding all provinces by multiple filters as pages : {}", provinceResponse.getMessage());
 
         return provinceResponse;
     }

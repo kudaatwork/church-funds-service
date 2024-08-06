@@ -372,7 +372,7 @@ public class RegionServiceImpl implements RegionService {
 
         if (result.getContent().isEmpty()) {
 
-            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_REGION_NOT_FOUND.getCode(),
                     new String[]{}, locale);
 
             return buildRegionResponse(404, false, message,null, null,

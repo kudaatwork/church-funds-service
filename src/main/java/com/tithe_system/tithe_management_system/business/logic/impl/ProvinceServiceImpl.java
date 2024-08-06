@@ -15,6 +15,8 @@ import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
+import com.tithe_system.tithe_management_system.repository.specification.ProvinceSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.RegionSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
@@ -23,6 +25,7 @@ import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateProvinceRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditProvinceRequest;
+import com.tithe_system.tithe_management_system.utils.requests.ProvinceMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.ProvinceResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -30,11 +33,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class ProvinceServiceImpl implements ProvinceService {
 
@@ -377,30 +383,72 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public ProvinceResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public ProvinceResponse findByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest, Locale locale,
+                                                  String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<Province> spec = null;
+        spec = addToSpec(spec, ProvinceSpecification::deleted);
 
-        Page<Province> provincePage = provinceRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = provinceServiceValidator.isRequestValidToRetrieveAssembliesByMultipleFilters(
+                provinceMultipleFiltersRequest);
 
-        Page<ProvinceDto> provinceDtoPage = convertProvinceEntityToProvinceDto(provincePage);
+        if (!isRequestValid) {
 
-        if(provincePage.getContent().isEmpty()){
-
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_INVALID_REGIONS_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildProvinceResponse(404, false, message, null, null,
-                    provinceDtoPage);
+            return buildProvinceResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
+        Pageable pageable = PageRequest.of(provinceMultipleFiltersRequest.getPage(),
+                provinceMultipleFiltersRequest.getSize());
+
+        boolean isSearchValueValid = provinceServiceValidator.isStringValid(provinceMultipleFiltersRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(provinceMultipleFiltersRequest.getSearchValue(), spec, ProvinceSpecification::any);
+        }
+
+        Page<Province> result = provinceRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildProvinceResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<ProvinceDto> provinceDtoPage = convertProvinceEntityToProvinceDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_PROVINCE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
-        return buildProvinceResponse(200, true, message, null,
+        return buildProvinceResponse(200, true, message,null,
                 null, provinceDtoPage);
+    }
+
+    private Specification<Province> addToSpec(Specification<Province> spec,
+                                            Function<EntityStatus, Specification<Province>> predicateMethod) {
+        Specification<Province> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<Province> addToSpec(final String aString, Specification<Province> spec, Function<String,
+            Specification<Province>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<Province> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private Page<ProvinceDto> convertProvinceEntityToProvinceDto(Page<Province> provincePage){
