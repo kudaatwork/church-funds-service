@@ -6,6 +6,7 @@ import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToU
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserGroupMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +71,12 @@ public class UserGroupServiceProcessorImpl implements UserGroupServiceProcessor 
     }
 
     @Override
-    public UserGroupResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public UserGroupResponse findByMultipleFilters(UserGroupMultipleFiltersRequest userGroupMultipleFiltersRequest, Locale
+            locale, String username) {
 
         logger.info("Incoming request to find user groups as pages");
-        UserGroupResponse userGroupResponse = userGroupService.findAllAsPages(page, size, locale, username);
+        UserGroupResponse userGroupResponse = userGroupService.findByMultipleFilters(userGroupMultipleFiltersRequest,
+                locale, username);
         logger.info("Outgoing response after finding user groups as pages: {}", userGroupResponse);
 
         return userGroupResponse;

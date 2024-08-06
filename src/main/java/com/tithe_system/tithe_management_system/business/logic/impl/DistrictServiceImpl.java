@@ -13,6 +13,8 @@ import com.tithe_system.tithe_management_system.repository.AssemblyRepository;
 import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
+import com.tithe_system.tithe_management_system.repository.specification.DistrictSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.ProvinceSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
@@ -20,6 +22,7 @@ import com.tithe_system.tithe_management_system.utils.dtos.RegionDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateDistrictRequest;
+import com.tithe_system.tithe_management_system.utils.requests.DistrictMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditDistrictRequest;
 import com.tithe_system.tithe_management_system.utils.responses.DistrictResponse;
 import org.modelmapper.ModelMapper;
@@ -29,11 +32,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class DistrictServiceImpl implements DistrictService {
     private final DistrictServiceValidator districtServiceValidator;
@@ -379,30 +385,72 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public DistrictResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public DistrictResponse findByMultipleFilters(DistrictMultipleFiltersRequest districtMultipleFiltersRequest, Locale
+            locale, String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<District> spec = null;
+        spec = addToSpec(spec, DistrictSpecification::deleted);
 
-        Page<District> districtPage = districtRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = districtServiceValidator.isRequestValidToRetrieveDistrictsByMultipleFilters(
+                districtMultipleFiltersRequest);
 
-        Page<DistrictDto> districtDtoPage = convertDistrictEntityToDistrictDto(districtPage);
+        if (!isRequestValid) {
 
-        if(districtPage.getContent().isEmpty()){
-
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_INVALID_DISTRICTS_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildDistrictResponse(404, false, message, null, null,
-                    districtDtoPage);
+            return buildDistrictResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
+        Pageable pageable = PageRequest.of(districtMultipleFiltersRequest.getPage(),
+                districtMultipleFiltersRequest.getSize());
+
+        boolean isSearchValueValid = districtServiceValidator.isStringValid(districtMultipleFiltersRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(districtMultipleFiltersRequest.getSearchValue(), spec, DistrictSpecification::any);
+        }
+
+        Page<District> result = districtRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildDistrictResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<DistrictDto> districtDtoPage = convertDistrictEntityToDistrictDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
-        return buildDistrictResponse(200, true, message, null,
+        return buildDistrictResponse(200, true, message,null,
                 null, districtDtoPage);
+    }
+
+    private Specification<District> addToSpec(Specification<District> spec,
+                                              Function<EntityStatus, Specification<District>> predicateMethod) {
+        Specification<District> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<District> addToSpec(final String aString, Specification<District> spec, Function<String,
+            Specification<District>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<District> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private Page<DistrictDto> convertDistrictEntityToDistrictDto(Page<District> districtPage){

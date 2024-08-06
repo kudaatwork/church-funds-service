@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.service.processor.impl;
 import com.tithe_system.tithe_management_system.business.logic.api.DistrictService;
 import com.tithe_system.tithe_management_system.service.processor.api.DistrictServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.requests.CreateDistrictRequest;
+import com.tithe_system.tithe_management_system.utils.requests.DistrictMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditDistrictRequest;
 import com.tithe_system.tithe_management_system.utils.responses.DistrictResponse;
 import org.slf4j.Logger;
@@ -80,11 +81,13 @@ public class DistrictServiceProcessorImpl implements DistrictServiceProcessor {
     }
 
     @Override
-    public DistrictResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public DistrictResponse findByMultipleFilters(DistrictMultipleFiltersRequest districtMultipleFiltersRequest,
+                                                  Locale locale, String username) {
 
-        logger.info("Incoming request to find all districts as a list with pages");
-        DistrictResponse districtResponse = districtService.findAllAsPages(page, size, locale, username);
-        logger.info("Outgoing response after finding all districts as a list with pages: {}", districtResponse.getMessage());
+        logger.info("Incoming request to find all districts by multiple filters as pages: {}", districtMultipleFiltersRequest);
+        DistrictResponse districtResponse = districtService.findByMultipleFilters(districtMultipleFiltersRequest, locale,
+                username);
+        logger.info("Outgoing response after finding all districts by multiple filters as pages: {}", districtResponse.getMessage());
 
         return districtResponse;
     }

@@ -4,14 +4,18 @@ import com.tithe_system.tithe_management_system.business.auditables.api.UserRole
 import com.tithe_system.tithe_management_system.business.logic.api.UserRoleService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserRoleServiceValidator;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
+import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.domain.UserRole;
 import com.tithe_system.tithe_management_system.repository.UserRoleRepository;
+import com.tithe_system.tithe_management_system.repository.specification.UserGroupSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.UserRoleSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
 import com.tithe_system.tithe_management_system.utils.dtos.UserRoleDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.i18.api.ApplicationMessagesService;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserRoleRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserRoleRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserRoleMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserRoleResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -20,23 +24,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class UserRoleServiceImpl implements UserRoleService {
-    private final UserRoleServiceValidator userGroupServiceValidator;
+    private final UserRoleServiceValidator userRoleServiceValidator;
     private final UserRoleRepository userRoleRepository;
     private final ModelMapper modelMapper;
     private final UserRoleServiceAuditable userRoleServiceAuditable;
     private final ApplicationMessagesService applicationMessagesService;
 
-    public UserRoleServiceImpl(UserRoleServiceValidator userGroupServiceValidator, UserRoleRepository userRoleRepository,
+    public UserRoleServiceImpl(UserRoleServiceValidator userRoleServiceValidator, UserRoleRepository userRoleRepository,
                                ModelMapper modelMapper, UserRoleServiceAuditable userRoleServiceAuditable,
                                ApplicationMessagesService applicationMessagesService) {
-        this.userGroupServiceValidator = userGroupServiceValidator;
+        this.userRoleServiceValidator = userRoleServiceValidator;
         this.userRoleRepository = userRoleRepository;
         this.modelMapper = modelMapper;
         this.userRoleServiceAuditable = userRoleServiceAuditable;
@@ -48,7 +55,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         String message = "";
 
-        boolean isRequestValid = userGroupServiceValidator.isRequestValidForCreation(createUserRoleRequest);
+        boolean isRequestValid = userRoleServiceValidator.isRequestValidForCreation(createUserRoleRequest);
 
         if (!isRequestValid) {
 
@@ -90,7 +97,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         String message = "";
 
-        boolean isRequestValid = userGroupServiceValidator.isRequestValidForEditing(editUserRoleRequest);
+        boolean isRequestValid = userRoleServiceValidator.isRequestValidForEditing(editUserRoleRequest);
 
         if(!isRequestValid){
 
@@ -151,7 +158,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         String message = "";
 
-        boolean isIdValid = userGroupServiceValidator.isIdValid(id);
+        boolean isIdValid = userRoleServiceValidator.isIdValid(id);
 
         if (!isIdValid) {
 
@@ -193,7 +200,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         String message = "";
 
-        boolean isIdValid = userGroupServiceValidator.isIdValid(id);
+        boolean isIdValid = userRoleServiceValidator.isIdValid(id);
 
         if(!isIdValid) {
 
@@ -252,30 +259,72 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public UserRoleResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public UserRoleResponse findByMultipleFilters(UserRoleMultipleFiltersRequest userRoleMultipleFiltersRequest, Locale locale,
+                                                  String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<UserRole> spec = null;
+        spec = addToSpec(spec, UserRoleSpecification::deleted);
 
-        Page<UserRole> userRolePage = userRoleRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = userRoleServiceValidator.isRequestValidToRetrieveUserRolesByMultipleFilters(
+                userRoleMultipleFiltersRequest);
 
-        Page<UserRoleDto> userRoleDtoPage = convertUserRoleEntityToUserRoleDto(userRolePage);
+        if (!isRequestValid) {
 
-        if(userRoleDtoPage.getContent().isEmpty()){
-
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_INVALID_USER_ROLES_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildUserRoleResponse(404, false, message, null, null,
-                    userRoleDtoPage);
+            return buildUserRoleResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(),
+        Pageable pageable = PageRequest.of(userRoleMultipleFiltersRequest.getPage(),
+                userRoleMultipleFiltersRequest.getSize());
+
+        boolean isSearchValueValid = userRoleServiceValidator.isStringValid(userRoleMultipleFiltersRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(userRoleMultipleFiltersRequest.getSearchValue(), spec, UserRoleSpecification::any);
+        }
+
+        Page<UserRole> result = userRoleRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildUserRoleResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<UserRoleDto> userRoleDtoPage = convertUserRoleEntityToUserRoleDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ROLE_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
-        return buildUserRoleResponse(200, true, message, null,
+        return buildUserRoleResponse(200, true, message,null,
                 null, userRoleDtoPage);
+    }
+
+    private Specification<UserRole> addToSpec(Specification<UserRole> spec,
+                                               Function<EntityStatus, Specification<UserRole>> predicateMethod) {
+        Specification<UserRole> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<UserRole> addToSpec(final String aString, Specification<UserRole> spec, Function<String,
+            Specification<UserRole>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<UserRole> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     private Page<UserRoleDto> convertUserRoleEntityToUserRoleDto(Page<UserRole> userRolePage){

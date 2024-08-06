@@ -6,6 +6,7 @@ import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToU
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserGroupMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -122,17 +123,17 @@ public class UserGroupResource {
         return userGroupServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all user groups as pages")
-    @GetMapping(value = "/pages")
-    public UserGroupResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    @Operation(summary = "Find all user groups by multiple filters as pages")
+    @PostMapping(value = "/multiple-filters")
+    public UserGroupResponse findByMultipleFilters(@Valid @RequestBody UserGroupMultipleFiltersRequest
+                                                               userGroupMultipleFiltersRequest,
+                                                @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                                description = "Bearer token", required = true)
                                               String authenticationToken,
-                                              @RequestParam(value = "page", defaultValue = "0") int page,
-                                              @RequestParam(value = "size", defaultValue = "10") int size,
                                               @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                               @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                       defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return userGroupServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return userGroupServiceProcessor.findByMultipleFilters(userGroupMultipleFiltersRequest, locale, authenticationToken);
     }
 }

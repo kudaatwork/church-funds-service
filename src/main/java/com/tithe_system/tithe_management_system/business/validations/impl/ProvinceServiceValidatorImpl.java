@@ -61,7 +61,7 @@ public class ProvinceServiceValidatorImpl implements ProvinceServiceValidator {
     }
 
     @Override
-    public boolean isRequestValidToRetrieveAssembliesByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest) {
+    public boolean isRequestValidToRetrieveProvincesByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest) {
 
         if (provinceMultipleFiltersRequest == null){
             return false;

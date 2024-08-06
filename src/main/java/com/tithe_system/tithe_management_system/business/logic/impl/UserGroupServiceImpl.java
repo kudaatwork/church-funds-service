@@ -3,11 +3,15 @@ package com.tithe_system.tithe_management_system.business.logic.impl;
 import com.tithe_system.tithe_management_system.business.auditables.api.UserGroupServiceAuditable;
 import com.tithe_system.tithe_management_system.business.logic.api.UserGroupService;
 import com.tithe_system.tithe_management_system.business.validations.api.UserGroupServiceValidator;
+import com.tithe_system.tithe_management_system.domain.District;
 import com.tithe_system.tithe_management_system.domain.EntityStatus;
 import com.tithe_system.tithe_management_system.domain.UserGroup;
 import com.tithe_system.tithe_management_system.domain.UserRole;
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
 import com.tithe_system.tithe_management_system.repository.UserRoleRepository;
+import com.tithe_system.tithe_management_system.repository.specification.DistrictSpecification;
+import com.tithe_system.tithe_management_system.repository.specification.UserGroupSpecification;
+import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.UserGroupDto;
 import com.tithe_system.tithe_management_system.utils.dtos.UserRoleDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
@@ -16,6 +20,7 @@ import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToU
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserGroupMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -23,12 +28,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupServiceValidator userGroupServiceValidator;
@@ -258,30 +266,72 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public UserGroupResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public UserGroupResponse findByMultipleFilters(UserGroupMultipleFiltersRequest userGroupMultipleFiltersRequest, Locale
+            locale, String username) {
 
-        String message ="";
+        String message = "";
 
-        final Pageable pageable = PageRequest.of(page, size);
+        Specification<UserGroup> spec = null;
+        spec = addToSpec(spec, UserGroupSpecification::deleted);
 
-        Page<UserGroup> userGroupPage = userGroupRepository.findByEntityStatusNot(EntityStatus.DELETED, pageable);
+        boolean isRequestValid = userGroupServiceValidator.isRequestValidToRetrieveUserGroupsByMultipleFilters(
+                userGroupMultipleFiltersRequest);
 
-        Page<UserGroupDto> userGroupDtoPage = convertUserGroupEntityToUserGroupDto(userGroupPage);
+        if (!isRequestValid) {
 
-        if(userGroupDtoPage.getContent().isEmpty()){
-
-            message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(),
+            message = applicationMessagesService.getApplicationMessage(
+                    I18Code.MESSAGE_INVALID_USER_GROUPS_MULTIPLE_FILTERS_REQUEST.getCode(),
                     new String[]{}, locale);
 
-            return buildUserGroupResponse(404, false, message, null, null,
-                    userGroupDtoPage);
+            return buildUserGroupResponse(400, false, message,null, null,
+                    null);
         }
 
-        message =  applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(),
+        Pageable pageable = PageRequest.of(userGroupMultipleFiltersRequest.getPage(),
+                userGroupMultipleFiltersRequest.getSize());
+
+        boolean isSearchValueValid = userGroupServiceValidator.isStringValid(userGroupMultipleFiltersRequest.getSearchValue());
+
+        if (isSearchValueValid) {
+
+            spec = addToSpec(userGroupMultipleFiltersRequest.getSearchValue(), spec, UserGroupSpecification::any);
+        }
+
+        Page<UserGroup> result = userGroupRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildUserGroupResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<UserGroupDto> userGroupDtoPage = convertUserGroupEntityToUserGroupDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY.getCode(),
                 new String[]{}, locale);
 
-        return buildUserGroupResponse(200, true, message, null,
+        return buildUserGroupResponse(200, true, message,null,
                 null, userGroupDtoPage);
+    }
+
+    private Specification<UserGroup> addToSpec(Specification<UserGroup> spec,
+                                              Function<EntityStatus, Specification<UserGroup>> predicateMethod) {
+        Specification<UserGroup> localSpec = Specification.where(predicateMethod.apply(EntityStatus.DELETED));
+        spec = (spec == null) ? localSpec : spec.and(localSpec);
+        return spec;
+    }
+
+    private Specification<UserGroup> addToSpec(final String aString, Specification<UserGroup> spec, Function<String,
+            Specification<UserGroup>> predicateMethod) {
+        if (aString != null && !aString.isEmpty()) {
+            Specification<UserGroup> localSpec = Specification.where(predicateMethod.apply(aString));
+            spec = (spec == null) ? localSpec : spec.and(localSpec);
+            return spec;
+        }
+        return spec;
     }
 
     @Override

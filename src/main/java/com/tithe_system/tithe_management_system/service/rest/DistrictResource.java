@@ -3,6 +3,7 @@ package com.tithe_system.tithe_management_system.service.rest;
 import com.tithe_system.tithe_management_system.service.processor.api.DistrictServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
 import com.tithe_system.tithe_management_system.utils.requests.CreateDistrictRequest;
+import com.tithe_system.tithe_management_system.utils.requests.DistrictMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditDistrictRequest;
 import com.tithe_system.tithe_management_system.utils.responses.DistrictResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,17 +104,16 @@ public class DistrictResource {
         return districtServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all districts as pages")
-    @GetMapping(value = "/pages")
-    public DistrictResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    @Operation(summary = "Find all districts by multiple filters as pages")
+    @PostMapping(value = "/multiple-filters")
+    public DistrictResponse findByMultipleFilters(@Valid @RequestBody DistrictMultipleFiltersRequest districtMultipleFiltersRequest,
+                                            @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                            description = "Bearer token", required = true)
                                            String authenticationToken,
-                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                            @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                            @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                    defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return districtServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return districtServiceProcessor.findByMultipleFilters(districtMultipleFiltersRequest, locale, authenticationToken);
     }
 }

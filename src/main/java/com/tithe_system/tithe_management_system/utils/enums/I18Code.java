@@ -21,7 +21,7 @@ public enum I18Code {
     MESSAGE_INVALID_DISTRICT_ID_SUPPLIED("message.invalid.district.id.supplied"),
     MESSAGE_DISTRICT_DELETED_SUCCESSFULLY("message.district.deleted.successfully"),
     MESSAGE_DISTRICT_NOT_FOUND("message.district.not.found"),
-    MESSAGE_DELETE_ERROR_DISTRICT_NOT_FOUND("message.delete.error.district.not.found"),
+    MESSAGE_INVALID_DISTRICTS_MULTIPLE_FILTERS_REQUEST("message.invalid.districts.multiple.filters.request"),
     MESSAGE_DISTRICT_RETRIEVED_SUCCESSFULLY("message.district.retrieved.successfully"),
 
     MESSAGE_REGION_ALREADY_EXISTS("message.region.already.exists"),
@@ -91,6 +91,7 @@ public enum I18Code {
     MESSAGE_USER_GROUP_DOES_NOT_EXIST("message.user.group.does.not.exist"),
     MESSAGE_USER_GROUP_DELETED_SUCCESSFULLY("message.user.group.deleted.successfully"),
     MESSAGE_USER_GROUP_RETRIEVED_SUCCESSFULLY("message.user.group.retrieved.successfully"),
+    MESSAGE_INVALID_USER_GROUPS_MULTIPLE_FILTERS_REQUEST("message.invalid.user.groups.multiple.filters.request"),
 
     MESSAGE_CREATE_USER_ROLE_INVALID_REQUEST("message.create.user.role.invalid.request"),
     MESSAGE_USER_ROLE_ALREADY_EXISTS("message.user.role.already.exists"),
@@ -107,7 +108,8 @@ public enum I18Code {
     MESSAGE_USER_ROLE_ASSIGNED_SUCCESSFULLY("message.user.role.assigned.successfully"),
     MESSAGE_INVALID_REMOVE_USER_ROLES_FROM_USER_GROUP_REQUEST("message.invalid.remove.user.roles.from.user.group.request"),
     MESSAGE_USER_ROLE_NOT_ASSIGNED("message.user.roles.not.assigned"),
-    MESSAGE_USER_ROLES_REMOVED_SUCCESSFULLY("message.user.roles.removed.successfully");
+    MESSAGE_USER_ROLES_REMOVED_SUCCESSFULLY("message.user.roles.removed.successfully"),
+    MESSAGE_INVALID_USER_ROLES_MULTIPLE_FILTERS_REQUEST("message.invalid.user.roles.multiple.filters.request");
     private final String code;
 
     I18Code(String code) {

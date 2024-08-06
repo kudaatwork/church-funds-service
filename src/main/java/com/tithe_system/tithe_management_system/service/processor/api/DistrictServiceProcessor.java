@@ -1,6 +1,8 @@
 package com.tithe_system.tithe_management_system.service.processor.api;
 
+import com.tithe_system.tithe_management_system.repository.specification.UserRoleSpecification;
 import com.tithe_system.tithe_management_system.utils.requests.CreateDistrictRequest;
+import com.tithe_system.tithe_management_system.utils.requests.DistrictMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditDistrictRequest;
 import com.tithe_system.tithe_management_system.utils.responses.DistrictResponse;
 import java.util.Locale;
@@ -12,5 +14,6 @@ public interface DistrictServiceProcessor {
     DistrictResponse findById(Long id, Locale locale);
     DistrictResponse findByProvinceId(Long id, Locale locale, int page, int size);
     DistrictResponse findAllAsAList(String username, Locale locale);
-    DistrictResponse findAllAsPages(int page, int size, Locale locale, String username);
+    DistrictResponse findByMultipleFilters(DistrictMultipleFiltersRequest districtMultipleFiltersRequest, Locale locale,
+                                           String username);
 }

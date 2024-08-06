@@ -16,7 +16,6 @@ import com.tithe_system.tithe_management_system.repository.DistrictRepository;
 import com.tithe_system.tithe_management_system.repository.ProvinceRepository;
 import com.tithe_system.tithe_management_system.repository.RegionRepository;
 import com.tithe_system.tithe_management_system.repository.specification.ProvinceSpecification;
-import com.tithe_system.tithe_management_system.repository.specification.RegionSpecification;
 import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.DistrictDto;
 import com.tithe_system.tithe_management_system.utils.dtos.ProvinceDto;
@@ -391,7 +390,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         Specification<Province> spec = null;
         spec = addToSpec(spec, ProvinceSpecification::deleted);
 
-        boolean isRequestValid = provinceServiceValidator.isRequestValidToRetrieveAssembliesByMultipleFilters(
+        boolean isRequestValid = provinceServiceValidator.isRequestValidToRetrieveProvincesByMultipleFilters(
                 provinceMultipleFiltersRequest);
 
         if (!isRequestValid) {

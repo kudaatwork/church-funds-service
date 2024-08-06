@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.logic.api.UserRoleServi
 import com.tithe_system.tithe_management_system.service.processor.api.UserRoleServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserRoleRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserRoleRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserRoleMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserRoleResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,11 +69,13 @@ public class UserRoleServiceProcessorImpl implements UserRoleServiceProcessor {
     }
 
     @Override
-    public UserRoleResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public UserRoleResponse findByMultipleFilters(UserRoleMultipleFiltersRequest userRoleMultipleFiltersRequest, Locale
+            locale, String username) {
 
-        logger.info("Incoming request to find user roles as pages");
-        UserRoleResponse userRoleResponse = userRoleService.findAllAsPages(page, size, locale, username);
-        logger.info("Outgoing response after finding user roles as pages: {}", userRoleResponse);
+        logger.info("Incoming request to find user roles by multiple filters as pages");
+        UserRoleResponse userRoleResponse = userRoleService.findByMultipleFilters(userRoleMultipleFiltersRequest, locale,
+                username);
+        logger.info("Outgoing response after finding user roles by multiple filters as pages: {}", userRoleResponse);
 
         return userRoleResponse;
     }

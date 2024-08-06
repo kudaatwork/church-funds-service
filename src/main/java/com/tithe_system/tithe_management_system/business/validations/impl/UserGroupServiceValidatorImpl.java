@@ -5,6 +5,7 @@ import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToU
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserGroupMultipleFiltersRequest;
 
 public class UserGroupServiceValidatorImpl implements UserGroupServiceValidator {
     @Override
@@ -102,5 +103,24 @@ public class UserGroupServiceValidatorImpl implements UserGroupServiceValidator 
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrieveUserGroupsByMultipleFilters(UserGroupMultipleFiltersRequest userGroupMultipleFiltersRequest) {
+
+        if (userGroupMultipleFiltersRequest == null){
+            return false;
+        }
+
+        if (userGroupMultipleFiltersRequest.getPage() < 0) {
+            return false;
+        }
+
+        return userGroupMultipleFiltersRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
     }
 }

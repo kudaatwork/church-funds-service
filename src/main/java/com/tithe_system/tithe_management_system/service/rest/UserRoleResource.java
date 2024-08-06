@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.UserRoleSe
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserRoleRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserRoleRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserRoleMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserRoleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -91,17 +92,17 @@ public class UserRoleResource {
         return userRoleServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all user roles as pages")
-    @GetMapping(value = "/pages")
-    public UserRoleResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    @Operation(summary = "Find all user roles by multiple filters as pages")
+    @PostMapping(value = "/multiple-filters")
+    public UserRoleResponse findByMultipleFilters(@Valid @RequestBody UserRoleMultipleFiltersRequest
+                                                              userRoleMultipleFiltersRequest,
+                                            @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                                description = "Bearer token", required = true)
                                             String authenticationToken,
-                                            @RequestParam(value = "page", defaultValue = "0") int page,
-                                            @RequestParam(value = "size", defaultValue = "10") int size,
                                             @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                             @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                     defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return userRoleServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return userRoleServiceProcessor.findByMultipleFilters(userRoleMultipleFiltersRequest, locale, authenticationToken);
     }
 }

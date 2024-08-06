@@ -2,6 +2,7 @@ package com.tithe_system.tithe_management_system.business.validations.impl;
 
 import com.tithe_system.tithe_management_system.business.validations.api.DistrictServiceValidator;
 import com.tithe_system.tithe_management_system.utils.requests.CreateDistrictRequest;
+import com.tithe_system.tithe_management_system.utils.requests.DistrictMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditDistrictRequest;
 
 public class DistrictServiceValidatorImpl implements DistrictServiceValidator {
@@ -63,5 +64,25 @@ public class DistrictServiceValidatorImpl implements DistrictServiceValidator {
     public boolean isIdValid(Long id) {
 
         return id != null && id >= 1;
+    }
+
+    @Override
+    public boolean isRequestValidToRetrieveDistrictsByMultipleFilters(DistrictMultipleFiltersRequest
+                                                                                  districtMultipleFiltersRequest) {
+
+        if (districtMultipleFiltersRequest == null){
+            return false;
+        }
+
+        if (districtMultipleFiltersRequest.getPage() < 0) {
+            return false;
+        }
+
+        return districtMultipleFiltersRequest.getSize() > 0;
+    }
+
+    @Override
+    public boolean isStringValid(String stringValue) {
+        return stringValue != null && !stringValue.isEmpty();
     }
 }

@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.utils.requests.AssignUserRoleToU
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserGroupRequest;
 import com.tithe_system.tithe_management_system.utils.requests.RemoveUserRolesFromUserGroupRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserGroupMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserGroupResponse;
 import java.util.Locale;
 
@@ -13,7 +14,8 @@ public interface UserGroupServiceProcessor {
     UserGroupResponse delete(Long id, Locale locale);
     UserGroupResponse findById(Long id, Locale locale);
     UserGroupResponse findAllAsAList(String username, Locale locale);
-    UserGroupResponse findAllAsPages(int page, int size, Locale locale, String username);
+    UserGroupResponse findByMultipleFilters(UserGroupMultipleFiltersRequest userGroupMultipleFiltersRequest, Locale
+            locale, String username);
     UserGroupResponse assignUserRoleToUserGroup(AssignUserRoleToUserGroupRequest assignUserRoleToUserGroupRequest,
                                                 Locale locale, String username);
     UserGroupResponse removeUserRolesFromUserGroup(RemoveUserRolesFromUserGroupRequest removeUserRolesFromUserGroupRequest,

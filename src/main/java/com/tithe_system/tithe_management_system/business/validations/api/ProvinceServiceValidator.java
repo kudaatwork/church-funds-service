@@ -8,6 +8,6 @@ public interface ProvinceServiceValidator {
     boolean isRequestValidForCreation(CreateProvinceRequest createProvinceRequest);
     boolean isRequestValidForEditing(EditProvinceRequest editProvinceRequest);
     boolean isIdValid(Long id);
-    boolean isRequestValidToRetrieveAssembliesByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest);
+    boolean isRequestValidToRetrieveProvincesByMultipleFilters(ProvinceMultipleFiltersRequest provinceMultipleFiltersRequest);
     boolean isStringValid(String stringValue);
 }
