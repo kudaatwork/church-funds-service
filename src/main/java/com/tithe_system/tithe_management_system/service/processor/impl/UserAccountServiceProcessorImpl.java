@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.business.logic.api.UserAccountSe
 import com.tithe_system.tithe_management_system.service.processor.api.UserAccountServiceProcessor;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserAccountRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserAccountsMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserAccountResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,11 +89,13 @@ public class UserAccountServiceProcessorImpl implements UserAccountServiceProces
     }
 
     @Override
-    public UserAccountResponse findAllAsPages(int page, int size, Locale locale, String username) {
+    public UserAccountResponse findByMultipleFilters(UserAccountsMultipleFiltersRequest userAccountsMultipleFiltersRequest,
+                                                     Locale locale, String username) {
 
-        logger.info("Incoming request to find user accounts as pages");
-        UserAccountResponse userAccountResponse = userAccountService.findAllAsAList(username, locale);
-        logger.info("Outgoing response after finding user accounts as pages: {}", userAccountResponse);
+        logger.info("Incoming request to find user accounts by multiple filters as pages: {}", userAccountsMultipleFiltersRequest );
+        UserAccountResponse userAccountResponse = userAccountService.findByMultipleFilters(userAccountsMultipleFiltersRequest,
+                locale, username);
+        logger.info("Outgoing response after finding user accounts as pages: {}", userAccountResponse.getMessage());
 
         return userAccountResponse;
     }

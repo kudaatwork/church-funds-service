@@ -16,6 +16,7 @@ import com.tithe_system.tithe_management_system.repository.UserAccountRepository
 import com.tithe_system.tithe_management_system.repository.UserGroupRepository;
 import com.tithe_system.tithe_management_system.repository.specification.AccountSpecification;
 import com.tithe_system.tithe_management_system.repository.specification.UserAccountSpecification;
+import com.tithe_system.tithe_management_system.utils.dtos.AssemblyDto;
 import com.tithe_system.tithe_management_system.utils.dtos.UserAccountDto;
 import com.tithe_system.tithe_management_system.utils.enums.I18Code;
 import com.tithe_system.tithe_management_system.utils.generators.PasswordEncryptionAlgorithm;
@@ -470,10 +471,10 @@ public class UserAccountServiceImpl implements UserAccountService {
                     UserAccountSpecification::lastNameLike);
         }
 
-        boolean isNarrationValid =
+        boolean isGenderValid =
                 userAccountServiceValidator.isListValid(userAccountsMultipleFiltersRequest.getGender());
 
-        if (isNarrationValid) {
+        if (isGenderValid) {
 
             List<Gender> genderList = new ArrayList<>();
 
@@ -487,7 +488,68 @@ public class UserAccountServiceImpl implements UserAccountService {
             spec = addToGenderSpec(genderList, spec, UserAccountSpecification::genderIn);
         }
 
-        return null;
+        boolean isTitleValid =
+                userAccountServiceValidator.isListValid(userAccountsMultipleFiltersRequest.getTitle());
+
+        if (isTitleValid) {
+
+            List<Title> titleList = new ArrayList<>();
+
+            for (String gender: userAccountsMultipleFiltersRequest.getTitle()
+            ) {
+                try{
+                    titleList.add(Title.valueOf(gender));
+                }catch (Exception e){}
+            }
+
+            spec = addToTitleSpec(titleList, spec, UserAccountSpecification::titleIn);
+        }
+
+        boolean isPhoneNumberValid = userAccountServiceValidator.isStringValid(
+                userAccountsMultipleFiltersRequest.getPhoneNumber());
+
+        if (isPhoneNumberValid) {
+
+            spec = addToSpec(userAccountsMultipleFiltersRequest.getPhoneNumber(), spec,
+                    UserAccountSpecification::phoneNumberLike);
+        }
+
+        boolean isEmailAddressValid = userAccountServiceValidator.isStringValid(
+                userAccountsMultipleFiltersRequest.getEmailAddress());
+
+        if (isEmailAddressValid) {
+
+            spec = addToSpec(userAccountsMultipleFiltersRequest.getEmailAddress(), spec,
+                    UserAccountSpecification::emailAddressLike);
+        }
+
+        boolean isUsernameValid = userAccountServiceValidator.isStringValid(
+                userAccountsMultipleFiltersRequest.getUsername());
+
+        if (isUsernameValid) {
+
+            spec = addToSpec(userAccountsMultipleFiltersRequest.getUsername(), spec,
+                    UserAccountSpecification::usernameLike);
+        }
+
+        Page<UserAccount> result = userAccountRepository.findAll(spec, pageable);
+
+        if (result.getContent().isEmpty()) {
+
+            message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_ASSEMBLY_NOT_FOUND.getCode(),
+                    new String[]{}, locale);
+
+            return buildUserAccountResponse(404, false, message,null, null,
+                    null);
+        }
+
+        Page<UserAccountDto> userAccountDtoPage = convertUserAccountEntityToUserAccountDto(result);
+
+        message = applicationMessagesService.getApplicationMessage(I18Code.MESSAGE_USER_ACCOUNT_RETRIEVED_SUCCESSFULLY.getCode(),
+                new String[]{}, locale);
+
+        return buildUserAccountResponse(200, true, message,null,
+                null, userAccountDtoPage);
     }
 
     private Specification<UserAccount> addToSpec(Specification<UserAccount> spec,

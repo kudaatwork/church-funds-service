@@ -4,6 +4,7 @@ import com.tithe_system.tithe_management_system.service.processor.api.UserAccoun
 import com.tithe_system.tithe_management_system.utils.constants.Constants;
 import com.tithe_system.tithe_management_system.utils.requests.CreateUserAccountRequest;
 import com.tithe_system.tithe_management_system.utils.requests.EditUserAccountRequest;
+import com.tithe_system.tithe_management_system.utils.requests.UserAccountsMultipleFiltersRequest;
 import com.tithe_system.tithe_management_system.utils.responses.UserAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -114,17 +115,17 @@ public class UserAccountResource {
         return userAccountServiceProcessor.findAllAsAList(authenticationToken, locale);
     }
 
-    @Operation(summary = "Find all user accounts as pages")
-    @GetMapping(value = "/pages")
-    public UserAccountResponse findAllAsPages(@Parameter(name = "Authorization", in = ParameterIn.HEADER,
-            description = "Bearer token", required = true)
+    @Operation(summary = "Find all user accounts by multiple filters as pages")
+    @GetMapping(value = "/multiple-filters")
+    public UserAccountResponse findByMultipleFilters(@Valid @RequestBody UserAccountsMultipleFiltersRequest
+            userAccountsMultipleFiltersRequest,
+                                            @Parameter(name = "Authorization", in = ParameterIn.HEADER,
+                                            description = "Bearer token", required = true)
                                            String authenticationToken,
-                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "10") int size,
                                            @Parameter(description = Constants.LOCALE_LANGUAGE_NARRATIVE)
                                            @RequestHeader(value = Constants.LOCALE_LANGUAGE,
                                                    defaultValue = Constants.DEFAULT_LOCALE) final Locale locale)
     {
-        return userAccountServiceProcessor.findAllAsPages(page, size, locale, authenticationToken);
+        return userAccountServiceProcessor.findByMultipleFilters(userAccountsMultipleFiltersRequest, locale, authenticationToken);
     }
 }
