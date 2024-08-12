@@ -116,7 +116,7 @@ public class UserAccountResource {
     }
 
     @Operation(summary = "Find all user accounts by multiple filters as pages")
-    @GetMapping(value = "/multiple-filters")
+    @PostMapping(value = "/multiple-filters")
     public UserAccountResponse findByMultipleFilters(@Valid @RequestBody UserAccountsMultipleFiltersRequest
             userAccountsMultipleFiltersRequest,
                                             @Parameter(name = "Authorization", in = ParameterIn.HEADER,
